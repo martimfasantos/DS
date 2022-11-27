@@ -238,7 +238,7 @@ def get_variable_types(df: DataFrame) -> dict:
         if len(uniques) == 2:
             variable_types['Binary'].append(c)
             df[c].astype('bool')
-        elif df[c].dtype == 'datetime64':
+        elif df[c].dtype == 'datetime64[ns]':
             variable_types['Date'].append(c)
         elif df[c].dtype == 'int64':
             variable_types['Numeric'].append(c)
