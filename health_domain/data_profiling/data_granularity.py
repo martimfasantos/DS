@@ -7,7 +7,6 @@ register_matplotlib_converters()
 filename = '../datasets/classification/diabetic_data.csv'
 data = read_csv(filename, na_values='?')
 
-# print(data.shape)
 
 # -------------------------------- #
 # Histograms for numeric variables #
@@ -29,12 +28,17 @@ for i in range(rows):
 savefig('./images/granularity_study_numeric.png')
 # show()
 
+
 # --------------------------------- #
 # Histograms for symbolic variables #
 # --------------------------------- #
 
 variables = get_variable_types(data)['Symbolic']
 if [] == variables:
+    fig, axs = subplots(figsize=(8, 4)) 
+    axs.set_title("No Symbolic Variables")          # Do any Matplotlib customization you like
+    savefig('./images/granularity_study_symbolic.png')
+    # show()
     raise ValueError('There are no symbolic variables.')
 
 rows = len(variables)
@@ -50,12 +54,17 @@ for i in range(rows):
 savefig('./images/granularity_study_symbolic.png')
 # show()
 
+
 # ----------------------------- #
 # Histograms for date variables #
 # ----------------------------- #
 
 variables = get_variable_types(data)['Date']
 if [] == variables:
+    fig, axs = subplots(figsize=(8, 4)) 
+    axs.set_title("No Date Variables")          # Do any Matplotlib customization you like
+    savefig('./images/granularity_study_date.png')
+    # show()
     raise ValueError('There are no date variables.')
 
 rows = len(variables)

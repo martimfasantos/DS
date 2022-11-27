@@ -1,0 +1,168 @@
+from numpy import log
+from pandas import read_csv, Series
+from pandas.plotting import register_matplotlib_converters
+from matplotlib.pyplot import figure, savefig, show, subplots, Axes
+from ds_charts import get_variable_types, choose_grid, bar_chart, multiple_bar_chart, multiple_line_chart, HEIGHT
+from seaborn import distplot
+from scipy.stats import norm, expon, lognorm
+
+register_matplotlib_converters()
+filename = '../datasets/classification/drought.csv'
+data = read_csv(filename, na_values="na", sep=',', decimal='.', parse_dates=True, infer_datetime_format=True)
+summary5 = data.describe()
+
+# print(summary5)
+# print('Count: ', summary5['QV2M']['count'])
+# print('Mean: ', summary5['QV2M']['mean'])
+# print('StDev: ', summary5['QV2M']['std'])
+# print('Min: ', summary5['QV2M']['min'])
+# print('Q1: ', summary5['QV2M']['25%'])
+# print('Median: ', summary5['QV2M']['50%'])
+# print('Q3: ', summary5['QV2M']['75%'])
+# print('Max: ', summary5['QV2M']['max'])
+
+# -------------- #
+# Global boxplot #
+# -------------- #
+
+# data.boxplot(column="fips", rot=45)
+# savefig('./images/global_boxplot1.png')
+# # show()
+
+data.boxplot(rot=45)
+savefig('./images/global_boxplot2.png')
+# show()
+
+# data.iloc[:, 13:26].boxplot(rot=45)
+# savefig('./images/global_boxplot3.png')
+# # show()
+
+# data.iloc[:, 26:39].boxplot(rot=45)
+# savefig('./images/global_boxplot4.png')
+# # show()
+
+# data.iloc[:, 39:].boxplot(rot=45)
+# savefig('./images/global_boxplot5.png')
+# # show()
+
+# ---------------------------- #
+# Boxplots for numeric boxplot #
+# ---------------------------- #
+
+numeric_vars = get_variable_types(data)['Numeric']
+if [] == numeric_vars:
+    raise ValueError('There are no numeric variables.')
+# TODO verificar se tem que ser com os parametros da stora
+rows, cols = choose_grid(len(numeric_vars))
+fig, axs = subplots(rows, cols, figsize=(cols*HEIGHT, rows*HEIGHT), squeeze=False)
+i, j = 0, 0
+
+for n in range(len(numeric_vars)):
+    axs[i, j].set_title('Boxplot for %s'%numeric_vars[n])
+    axs[i, j].boxplot(data[numeric_vars[n]].dropna().values)
+    i, j = (i + 1, 0) if (n+1) % cols == 0 else (i, j + 1)
+savefig('./images/single_boxplots.png')
+# show()
+
+
+#--------- #
+# Outliers #
+# -------- #
+NR_STDEV: int = 2
+
+outliers_iqr = []
+outliers_stdev = []
+summary5 = data.describe(include='number')
+
+for var in numeric_vars:
+    iqr = 1.5 * (summary5[var]['75%'] - summary5[var]['25%'])
+    outliers_iqr += [
+        data[data[var] > summary5[var]['75%']  + iqr].count()[var] +
+        data[data[var] < summary5[var]['25%']  - iqr].count()[var]]
+    std = NR_STDEV * summary5[var]['std']
+    outliers_stdev += [
+        data[data[var] > summary5[var]['mean'] + std].count()[var] +
+        data[data[var] < summary5[var]['mean'] - std].count()[var]]
+
+outliers = {'iqr': outliers_iqr, 'stdev': outliers_stdev}
+figure(figsize=(24, HEIGHT)) #figure(figsize=(12, HEIGHT))
+multiple_bar_chart(numeric_vars, outliers, title='Nr of outliers per variable', xlabel='variables', ylabel='nr outliers', percentage=False)
+savefig('./images/outliers.png')
+# show()
+
+
+#----------------------- #
+# Histograms for numeric #
+# ---------------------- #
+
+fig, axs = subplots(rows, cols, figsize=(cols*HEIGHT, rows*HEIGHT), squeeze=False)
+i, j = 0, 0
+for n in range(len(numeric_vars)):
+    axs[i, j].set_title('Histogram for %s'%numeric_vars[n])
+    axs[i, j].set_xlabel(numeric_vars[n])
+    axs[i, j].set_ylabel("nr records")
+    axs[i, j].hist(data[numeric_vars[n]].dropna().values, 'auto')
+    i, j = (i + 1, 0) if (n+1) % cols == 0 else (i, j + 1)
+savefig('./images/single_histograms_numeric.png')
+# show()
+
+
+#-------------------------- #
+# Distributions for numeric #
+# ------------------------- #
+
+# fig, axs = subplots(rows, cols, figsize=(cols*HEIGHT, rows*HEIGHT), squeeze=False)
+# i, j = 0, 0
+# for n in range(len(numeric_vars)):
+#     axs[i, j].set_title('Histogram with trend for %s'%numeric_vars[n])
+#     distplot(data[numeric_vars[n]].dropna().values, norm_hist=True, ax=axs[i, j], axlabel=numeric_vars[n])
+#     i, j = (i + 1, 0) if (n+1) % cols == 0 else (i, j + 1)
+# savefig('./images/histograms_trend_numeric.png')
+# # show()
+
+def compute_known_distributions(x_values: list) -> dict:
+    distributions = dict()
+    # Gaussian
+    mean, sigma = norm.fit(x_values)
+    distributions['Normal(%.1f,%.2f)'%(mean,sigma)] = norm.pdf(x_values, mean, sigma)
+    # Exponential
+    loc, scale = expon.fit(x_values)
+    distributions['Exp(%.2f)'%(1/scale)] = expon.pdf(x_values, loc, scale)
+    # LogNorm
+    sigma, loc, scale = lognorm.fit(x_values)
+    distributions['LogNor(%.1f,%.2f)'%(log(scale),sigma)] = lognorm.pdf(x_values, sigma, loc, scale)
+    return distributions
+
+def histogram_with_distributions(ax: Axes, series: Series, var: str):
+    values = series.sort_values().values
+    ax.hist(values, 20, density=True)
+    distributions = compute_known_distributions(values)
+    multiple_line_chart(values, distributions, ax=ax, title='Best fit for %s'%var, xlabel=var, ylabel='')
+
+
+fig, axs = subplots(rows, cols, figsize=(cols*HEIGHT, rows*HEIGHT), squeeze=False)
+i, j = 0, 0
+for n in range(len(numeric_vars)):
+    histogram_with_distributions(axs[i, j], data[numeric_vars[n]].dropna(), numeric_vars[n])
+    i, j = (i + 1, 0) if (n+1) % cols == 0 else (i, j + 1)
+savefig('./images/histogram_numeric_distribution.png')
+# show()
+
+
+#------------------------ #
+# Histograms for symbolic #
+# ----------------------- #
+
+symbolic_vars = get_variable_types(data)['Symbolic']
+if [] == symbolic_vars:
+    raise ValueError('There are no symbolic variables.')
+
+rows, cols = choose_grid(len(symbolic_vars))
+fig, axs = subplots(rows, cols, figsize=(cols*HEIGHT, rows*HEIGHT), squeeze=False)
+i, j = 0, 0
+for n in range(len(symbolic_vars)):
+    counts = data[symbolic_vars[n]].value_counts()
+    bar_chart(counts.index.to_list(), counts.values, ax=axs[i, j], title='Histogram for %s'%symbolic_vars[n], xlabel=symbolic_vars[n], ylabel='nr records', percentage=False)
+    i, j = (i + 1, 0) if (n+1) % cols == 0 else (i, j + 1)
+savefig('./images/histograms_symbolic.png')
+# show()
