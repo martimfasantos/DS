@@ -196,7 +196,7 @@ for n in range(len(symbolic_vars)):
             x.append(el[0])
             y.append(el[1])
         
-        bar_chart(x, y, ax=axs[i, j], title='Histogram for %s with different granularity' %symbolic_vars[n], xlabel=symbolic_vars[n], ylabel='nr records', percentage=False, rotation=45)
+        bar_chart(x, y, ax=axs[i, j], title='Histogram for %s WITH 9 BINS' %symbolic_vars[n], xlabel=symbolic_vars[n], ylabel='nr records', percentage=False, rotation=45)
         i, j = (i + 1, 0) if (n_graphs + 1) % cols == 0 else (i, j + 1)
         n_graphs += 1
     
@@ -208,7 +208,7 @@ for n in range(len(symbolic_vars)):
             x.append(el[0])
             y.append(el[1])
         
-        bar_chart(x, y, ax=axs[i, j], title='Histogram for %s with different granularity' %symbolic_vars[n], xlabel=symbolic_vars[n], ylabel='nr records', percentage=False, rotation=45)
+        bar_chart(x, y, ax=axs[i, j], title='Histogram for %s WITH 3 BINS' %symbolic_vars[n], xlabel=symbolic_vars[n], ylabel='nr records', percentage=False, rotation=45)
         i, j = (i + 1, 0) if (n_graphs + 1) % cols == 0 else (i, j + 1)
         n_graphs += 1
     
@@ -220,7 +220,7 @@ for n in range(len(symbolic_vars)):
             x.append(el[0])
             y.append(el[1])
         
-        bar_chart(x, y, ax=axs[i, j], title='Histogram for %s with different granularity' %symbolic_vars[n], xlabel=symbolic_vars[n], ylabel='nr records', percentage=False, rotation=45)
+        bar_chart(x, y, ax=axs[i, j], title='Histogram for %s WITH 3 BINS' %symbolic_vars[n], xlabel=symbolic_vars[n], ylabel='nr records', percentage=False, rotation=45)
         i, j = (i + 1, 0) if (n_graphs + 1) % cols == 0 else (i, j + 1)
         n_graphs += 1
     
@@ -232,7 +232,7 @@ for n in range(len(symbolic_vars)):
             x.append(el[0])
             y.append(el[1])
         
-        bar_chart(x, y, ax=axs[i, j], title='Histogram for %s with different granularity' %symbolic_vars[n], xlabel=symbolic_vars[n], ylabel='nr records', percentage=False, rotation=45)
+        bar_chart(x, y, ax=axs[i, j], title='Histogram for %s WITH 3 BINS' %symbolic_vars[n], xlabel=symbolic_vars[n], ylabel='nr records', percentage=False, rotation=45)
         i, j = (i + 1, 0) if (n_graphs + 1) % cols == 0 else (i, j + 1)
         n_graphs += 1
         
@@ -244,7 +244,7 @@ for n in range(len(symbolic_vars)):
             x.append(el[0])
             y.append(el[1])
         
-        bar_chart(x, y, ax=axs[i, j], title='Histogram for %s with different granularity' %symbolic_vars[n], xlabel=symbolic_vars[n], ylabel='nr records', percentage=False, rotation=45)
+        bar_chart(x, y, ax=axs[i, j], title='Histogram for %s WITH 5 BINS' %symbolic_vars[n], xlabel=symbolic_vars[n], ylabel='nr records', percentage=False, rotation=45)
         i, j = (i + 1, 0) if (n_graphs + 1) % cols == 0 else (i, j + 1)
         n_graphs += 1
       
