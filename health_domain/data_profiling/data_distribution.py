@@ -158,7 +158,7 @@ savefig('images/histograms_trend_numeric.png')
 #     i, j = (i + 1, 0) if (n+1) % cols == 0 else (i, j + 1)
 # savefig('./images/histogram_numeric_distribution2.png')
 # # show()
-
+'''
 def compute_known_distributions(x_values: list) -> dict:
     distributions = dict()
 
@@ -200,7 +200,7 @@ for n in range(len(numeric_vars)):
     i, j = (i + 1, 0) if (n+1) % cols == 0 else (i, j + 1)
 savefig('./images/histogram_numeric_distribution2.png')
 # show()
-
+'''
 
 #------------------------ #
 # Histograms for symbolic #
@@ -211,13 +211,21 @@ if [] == symbolic_vars:
     raise ValueError("There are no symbolic variables.")
 
 rows, cols = choose_grid(len(symbolic_vars))
-fig, axs = subplots(rows, cols, figsize=(cols*HEIGHT*2, rows*HEIGHT*2), squeeze=False)
+fig, axs = subplots(rows, cols, figsize=(cols*HEIGHT*4, rows*HEIGHT*3), squeeze=False)
 i, j = 0, 0
 for n in range(len(symbolic_vars)):
     counts = data[symbolic_vars[n]].value_counts()
-    if ('?' in counts.index):
-        counts = counts.drop('?')
-    bar_chart(counts.index.to_list(), counts.values, ax=axs[i, j], title='Histogram for %s' %symbolic_vars[n], xlabel=symbolic_vars[n], ylabel='nr records', percentage=False)
+    if (counts.name in ('age', 'weight')):
+        #counts.sort_index()
+        counts = counts.reset_index().values.tolist()
+        counts.sort(key=lambda x: int(x[0].split('-')[0][1:]))
+        x, y = [], []
+        for el in counts:
+            x.append(el[0])
+            y.append(el[1])
+        bar_chart(x, y, ax=axs[i, j], title='Histogram for %s' %symbolic_vars[n], xlabel=symbolic_vars[n], ylabel='nr records', percentage=False, rotation=45)
+    else:
+        bar_chart(counts.index.to_list(), counts.values, ax=axs[i, j], title='Histogram for %s' %symbolic_vars[n], xlabel=symbolic_vars[n], ylabel='nr records', percentage=False, rotation=45)
     i, j = (i + 1, 0) if (n + 1) % cols == 0 else (i, j + 1)
 savefig('./images/histograms_symbolic.png')
 # show()
