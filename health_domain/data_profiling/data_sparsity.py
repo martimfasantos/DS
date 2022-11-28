@@ -56,12 +56,12 @@ savefig('./images/sparsity_study2.png')
 # show()
 
 all_vars3 = all_vars[2*len(all_vars)//3:]
-rows, cols = len(all_vars2)-1, len(all_vars2)-1
+rows, cols = len(all_vars3)-1, len(all_vars3)-1
 fig, axs = subplots(rows, cols, figsize=(cols*HEIGHT, rows*HEIGHT), squeeze=False)
-for i in range(len(all_vars2)):
-    var1 = all_vars2[i]
-    for j in range(i+1, len(all_vars2)):
-        var2 = all_vars2[j]
+for i in range(len(all_vars3)):
+    var1 = all_vars3[i]
+    for j in range(i+1, len(all_vars3)):
+        var2 = all_vars3[j]
         axs[i, j-1].set_title("%s x %s"%(var1,var2))
         axs[i, j-1].set_xlabel(var1)
         axs[i, j-1].set_ylabel(var2)
