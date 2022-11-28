@@ -15,7 +15,7 @@ data['date'] = to_datetime(data['date'])
 # Nr of records vs nr of variables #
 # -------------------------------- #
 
-figure(figsize=(4,4))
+figure(figsize=(4,3))
 values = {'nr records': data.shape[0], 'nr variables': data.shape[1]}
 bar_chart(list(values.keys()), list(values.values()), title='Nr of records vs nr variables')
 savefig('./images/records_variables.png')

@@ -13,10 +13,7 @@ data['date'] = to_datetime(data['date'])
 # Histograms for numeric variables #
 # -------------------------------- #
 
-numeric_vars = get_variable_types(data)['Numeric']
-# TODO is it really numeric??????
-binary_vars = get_variable_types(data)['Binary']
-variables = numeric_vars + binary_vars
+variables = get_variable_types(data)['Numeric']
 if [] == variables:
     raise ValueError('There are no numeric variables.')
 
@@ -38,10 +35,12 @@ savefig('./images/granularity_study_numeric.png')
 # Histograms for symbolic variables #
 # --------------------------------- #
 
-variables = get_variable_types(data)['Symbolic']
+symbolic_vars = get_variable_types(data)['Symbolic']
+binary_vars = get_variable_types(data)['Binary']
+variables = symbolic_vars + binary_vars
 if [] == variables:
-    fig, axs = subplots(figsize=(8, 4)) 
-    axs.set_title("No Symbolic Variables")          # Do any Matplotlib customization you like
+    raise ValueError('There are no symbolic variables.')
+
 else:
     rows = len(variables)
     bins = (5, 10, 50)
