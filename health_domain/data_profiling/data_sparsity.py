@@ -21,7 +21,7 @@ all_vars = numeric_vars + binary_vars + date_vars + symbolic_vars
 if [] == all_vars:
     raise ValueError('There are no variables.')
 
-all_vars1 = all_vars[:len(all_vars)//2]
+all_vars1 = all_vars[:len(all_vars)//3]
 rows, cols = len(all_vars1)-1, len(all_vars1)-1
 fig, axs = subplots(rows, cols, figsize=(cols*HEIGHT, rows*HEIGHT), squeeze=False)
 for i in range(len(all_vars1)):
@@ -31,11 +31,14 @@ for i in range(len(all_vars1)):
         axs[i, j-1].set_title("%s x %s"%(var1,var2))
         axs[i, j-1].set_xlabel(var1)
         axs[i, j-1].set_ylabel(var2)
-        axs[i, j-1].scatter(data[var1], data[var2])
+        try:
+            axs[i, j-1].scatter(data[var1], data[var2])
+        except:
+            pass
 savefig('./images/sparsity_study1.png')
 # show()
 
-all_vars2 = all_vars[len(all_vars)//2:]
+all_vars2 = all_vars[len(all_vars)//3:2*len(all_vars)//3]
 rows, cols = len(all_vars2)-1, len(all_vars2)-1
 fig, axs = subplots(rows, cols, figsize=(cols*HEIGHT, rows*HEIGHT), squeeze=False)
 for i in range(len(all_vars2)):
@@ -45,8 +48,28 @@ for i in range(len(all_vars2)):
         axs[i, j-1].set_title("%s x %s"%(var1,var2))
         axs[i, j-1].set_xlabel(var1)
         axs[i, j-1].set_ylabel(var2)
-        axs[i, j-1].scatter(data[var1], data[var2])
+        try:
+            axs[i, j-1].scatter(data[var1], data[var2])
+        except:
+            pass
 savefig('./images/sparsity_study2.png')
+# show()
+
+all_vars3 = all_vars[2*len(all_vars)//3:]
+rows, cols = len(all_vars2)-1, len(all_vars2)-1
+fig, axs = subplots(rows, cols, figsize=(cols*HEIGHT, rows*HEIGHT), squeeze=False)
+for i in range(len(all_vars2)):
+    var1 = all_vars2[i]
+    for j in range(i+1, len(all_vars2)):
+        var2 = all_vars2[j]
+        axs[i, j-1].set_title("%s x %s"%(var1,var2))
+        axs[i, j-1].set_xlabel(var1)
+        axs[i, j-1].set_ylabel(var2)
+        try:
+            axs[i, j-1].scatter(data[var1], data[var2])
+        except:
+            pass
+savefig('./images/sparsity_study3.png')
 # show()
 
 
