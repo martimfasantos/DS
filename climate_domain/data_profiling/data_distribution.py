@@ -4,46 +4,25 @@ from pandas.plotting import register_matplotlib_converters
 from matplotlib.pyplot import figure, savefig, show, subplots, Axes
 from ds_charts import get_variable_types, choose_grid, bar_chart, multiple_bar_chart, multiple_line_chart, HEIGHT
 from seaborn import distplot
+import random
 from scipy.stats import norm, expon, lognorm
 
 register_matplotlib_converters()
 filename = '../datasets/classification/drought.csv'
 data = read_csv(filename, na_values="na", sep=',', decimal='.', parse_dates=True, infer_datetime_format=True)
-summary5 = data.describe()
 
+# summary5 = data.describe()
 # print(summary5)
-# print('Count: ', summary5['QV2M']['count'])
-# print('Mean: ', summary5['QV2M']['mean'])
-# print('StDev: ', summary5['QV2M']['std'])
-# print('Min: ', summary5['QV2M']['min'])
-# print('Q1: ', summary5['QV2M']['25%'])
-# print('Median: ', summary5['QV2M']['50%'])
-# print('Q3: ', summary5['QV2M']['75%'])
-# print('Max: ', summary5['QV2M']['max'])
+
 
 # -------------- #
 # Global boxplot #
 # -------------- #
 
-# data.boxplot(column="fips", rot=45)
-# savefig('./images/global_boxplot1.png')
-# # show()
-
-data.boxplot(rot=45)
-savefig('./images/global_boxplot2.png')
+data.boxplot(rot=45, figsize=(3*HEIGHT, 1.5*HEIGHT))
+savefig('./images/global_boxplot.png')
 # show()
 
-# data.iloc[:, 13:26].boxplot(rot=45)
-# savefig('./images/global_boxplot3.png')
-# # show()
-
-# data.iloc[:, 26:39].boxplot(rot=45)
-# savefig('./images/global_boxplot4.png')
-# # show()
-
-# data.iloc[:, 39:].boxplot(rot=45)
-# savefig('./images/global_boxplot5.png')
-# # show()
 
 # ---------------------------- #
 # Boxplots for numeric boxplot #
@@ -52,7 +31,6 @@ savefig('./images/global_boxplot2.png')
 numeric_vars = get_variable_types(data)['Numeric']
 if [] == numeric_vars:
     raise ValueError('There are no numeric variables.')
-# TODO verificar se tem que ser com os parametros da stora
 rows, cols = choose_grid(len(numeric_vars))
 fig, axs = subplots(rows, cols, figsize=(cols*HEIGHT, rows*HEIGHT), squeeze=False)
 i, j = 0, 0
@@ -68,7 +46,12 @@ savefig('./images/single_boxplots.png')
 #--------- #
 # Outliers #
 # -------- #
+
 NR_STDEV: int = 2
+
+numeric_vars = get_variable_types(data)['Numeric']
+if [] == numeric_vars:
+    raise ValueError('There are no numeric variables.')
 
 outliers_iqr = []
 outliers_stdev = []
@@ -85,7 +68,7 @@ for var in numeric_vars:
         data[data[var] < summary5[var]['mean'] - std].count()[var]]
 
 outliers = {'iqr': outliers_iqr, 'stdev': outliers_stdev}
-figure(figsize=(24, HEIGHT)) #figure(figsize=(12, HEIGHT))
+figure(figsize=(32, HEIGHT)) #figure(figsize=(12, HEIGHT))
 multiple_bar_chart(numeric_vars, outliers, title='Nr of outliers per variable', xlabel='variables', ylabel='nr outliers', percentage=False)
 savefig('./images/outliers.png')
 # show()
@@ -94,6 +77,10 @@ savefig('./images/outliers.png')
 #----------------------- #
 # Histograms for numeric #
 # ---------------------- #
+
+numeric_vars = get_variable_types(data)['Numeric']
+if [] == numeric_vars:
+    raise ValueError('There are no numeric variables.')
 
 fig, axs = subplots(rows, cols, figsize=(cols*HEIGHT, rows*HEIGHT), squeeze=False)
 i, j = 0, 0
@@ -107,38 +94,105 @@ savefig('./images/single_histograms_numeric.png')
 # show()
 
 
+#---------------------------------- #
+# Histogram with trend for numeric  #
+# --------------------------------- #
+
+numeric_vars = get_variable_types(data)['Numeric']
+if [] == numeric_vars:
+    raise ValueError('There are no numeric variables.')
+
+fig, axs = subplots(rows, cols, figsize=(cols*HEIGHT, rows*HEIGHT), squeeze=False)
+i, j = 0, 0
+for n in range(len(numeric_vars)):
+    axs[i, j].set_title('Histogram with trend for %s'%numeric_vars[n])
+    distplot(data[numeric_vars[n]].dropna().values, norm_hist=True, ax=axs[i, j], axlabel=numeric_vars[n])
+    i, j = (i + 1, 0) if (n+1) % cols == 0 else (i, j + 1)
+savefig('./images/histograms_trend_numeric.png')
+# show()
+
+
 #-------------------------- #
 # Distributions for numeric #
 # ------------------------- #
 
+# exp_dist = ['admission_type_id', 'discharge_disposition_id', 'num_procedures',
+#             'number_outpatient', 'number_emergency', 'number_inpatient']
+# log_norm_dist = ['num_lab_procedures', 'num_medications']
+# norm_dist = ['number_diagnoses', 'time_in_hospital', 'patient_nbr', 'admission_source_id', 'encounter_id']
+
+# def compute_known_distributions(x_values: list, dist: str) -> dict:
+#     distributions = dict()
+#     if (dist == 'norm'):
+#         # Gaussian
+#         mean, sigma = norm.fit(x_values)
+#         distributions['Normal(%.1f,%.2f)'%(mean,sigma)] = norm.pdf(x_values, mean, sigma)
+#     elif (dist == 'lognorm'):
+#         # LogNorm
+#         sigma, loc, scale = lognorm.fit(x_values)
+#         distributions['LogNor(%.1f,%.2f)'%(log(scale),sigma)] = lognorm.pdf(x_values, sigma, loc, scale)
+#     elif (dist == 'exp'):
+#         # Exponential
+#         loc, scale = expon.fit(x_values)
+#         distributions['Exp(%.2f)'%(1/scale)] = expon.pdf(x_values, loc, scale)
+#     return distributions
+
+# def histogram_with_distributions(ax: Axes, series: Series, var: str):
+#     values = series.sort_values().values
+#     ax.hist(values, bins=20, density=True)
+#     if var in exp_dist:
+#         dist = 'exp'
+#     elif var in log_norm_dist:
+#         dist = 'lognorm'
+#     elif var in norm_dist:
+#         dist = 'norm'
+#     else:
+#         raise ValueError("Unknwon variable name.")
+#     distributions = compute_known_distributions(values, dist)
+#     multiple_line_chart(values, distributions, ax=ax, title='Best fit for %s'%var, xlabel=var, ylabel='')
+
+
 # fig, axs = subplots(rows, cols, figsize=(cols*HEIGHT, rows*HEIGHT), squeeze=False)
 # i, j = 0, 0
 # for n in range(len(numeric_vars)):
-#     axs[i, j].set_title('Histogram with trend for %s'%numeric_vars[n])
-#     distplot(data[numeric_vars[n]].dropna().values, norm_hist=True, ax=axs[i, j], axlabel=numeric_vars[n])
+#     histogram_with_distributions(axs[i, j], data[numeric_vars[n]].dropna(), numeric_vars[n])
 #     i, j = (i + 1, 0) if (n+1) % cols == 0 else (i, j + 1)
-# savefig('./images/histograms_trend_numeric.png')
+# savefig('./images/histogram_numeric_distribution.png')
 # # show()
 
 def compute_known_distributions(x_values: list) -> dict:
     distributions = dict()
+
     # Gaussian
     mean, sigma = norm.fit(x_values)
-    distributions['Normal(%.1f,%.2f)'%(mean,sigma)] = norm.pdf(x_values, mean, sigma)
+    x_values = x_values.tolist()
+    random.shuffle(x_values)
+    reduced_x_values = x_values[0:999]
+    reduced_x_values.sort()
+    distributions['Normal(%.1f,%.2f)'%(mean,sigma)] = norm.pdf(reduced_x_values, mean, sigma)
+
     # Exponential
     loc, scale = expon.fit(x_values)
-    distributions['Exp(%.2f)'%(1/scale)] = expon.pdf(x_values, loc, scale)
-    # LogNorm
+    distributions['Exp(%.2f)'%(1/scale)] = expon.pdf(reduced_x_values, loc, scale)
+
+    #LogNorm
     sigma, loc, scale = lognorm.fit(x_values)
-    distributions['LogNor(%.1f,%.2f)'%(log(scale),sigma)] = lognorm.pdf(x_values, sigma, loc, scale)
-    return distributions
+    distributions['LogNor(%.1f,%.2f)'%(log(scale),sigma)] = lognorm.pdf(reduced_x_values, sigma, loc, scale)
+
+    return distributions, reduced_x_values
+
 
 def histogram_with_distributions(ax: Axes, series: Series, var: str):
     values = series.sort_values().values
     ax.hist(values, 20, density=True)
-    distributions = compute_known_distributions(values)
+    distributions, values = compute_known_distributions(values)
     multiple_line_chart(values, distributions, ax=ax, title='Best fit for %s'%var, xlabel=var, ylabel='')
+    print("Another one...")
 
+
+numeric_vars = get_variable_types(data)['Numeric']
+if [] == numeric_vars:
+    raise ValueError('There are no numeric variables.')
 
 fig, axs = subplots(rows, cols, figsize=(cols*HEIGHT, rows*HEIGHT), squeeze=False)
 i, j = 0, 0
@@ -166,3 +220,17 @@ for n in range(len(symbolic_vars)):
     i, j = (i + 1, 0) if (n+1) % cols == 0 else (i, j + 1)
 savefig('./images/histograms_symbolic.png')
 # show()
+
+
+#------------------- #
+# Class distribution #
+# ------------------ #
+
+class_ = data['class'].dropna()
+rows, cols = choose_grid(1)
+fig, axs = subplots(rows, cols, figsize=(cols*HEIGHT, rows*HEIGHT), squeeze=False)
+
+counts = class_.value_counts()
+bar_chart(counts.index.to_list(), counts.values, ax=axs[0, 0], title='Class distribution', xlabel='class', ylabel='nr records', percentage=False)
+
+savefig('./images/class_distribution.png')

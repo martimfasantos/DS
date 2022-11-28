@@ -20,16 +20,17 @@ variables = numeric_vars + binary_vars
 if [] == variables:
     raise ValueError('There are no numeric variables.')
 
-rows, cols = choose_grid(len(variables))
+rows = len(variables)
+bins = (5, 10, 50)
+cols = len(bins)
 fig, axs = subplots(rows, cols, figsize=(cols*HEIGHT, rows*HEIGHT), squeeze=False)
-i, j = 0, 0
-for n in range(len(variables)):
-    axs[i, j].set_title('Histogram for %s'%variables[n])
-    axs[i, j].set_xlabel(variables[n])
-    axs[i, j].set_ylabel('nr records')
-    axs[i, j].hist(data[variables[n]].values, bins='auto')
-    i, j = (i + 1, 0) if (n+1) % cols == 0 else (i, j + 1)
-savefig('./images/numeric_granularity_single.png')
+for i in range(rows):
+    for j in range(cols):
+        axs[i, j].set_title('Histogram for %s %d bins'%(variables[i], bins[j]))
+        axs[i, j].set_xlabel(variables[i])
+        axs[i, j].set_ylabel('Nr records')
+        axs[i, j].hist(data[variables[i]].values, bins=bins[j])
+savefig('./images/granularity_study_numeric.png')
 # show()
 
 
@@ -41,19 +42,19 @@ variables = get_variable_types(data)['Symbolic']
 if [] == variables:
     fig, axs = subplots(figsize=(8, 4)) 
     axs.set_title("No Symbolic Variables")          # Do any Matplotlib customization you like
-    savefig('./images/granularity_study_symbolic.png')
-    # show()
-    raise ValueError('There are no symbolic variables.')
-
-rows, cols = choose_grid(len(variables))
-fig, axs = subplots(rows, cols, figsize=(cols*HEIGHT, rows*HEIGHT), squeeze=False)
-i, j = 0, 0
-for n in range(len(variables)):
-    axs[i, j].set_title('Histogram for %s'%variables[n])
-    axs[i, j].set_xlabel(variables[n])
-    axs[i, j].set_ylabel('nr records')
-    axs[i, j].hist(data[variables[n]].values, bins='auto')
-    i, j = (i + 1, 0) if (n+1) % cols == 0 else (i, j + 1)
+else:
+    rows = len(variables)
+    bins = (5, 10, 50)
+    cols = len(bins)
+    fig, axs = subplots(rows, cols, figsize=(cols*HEIGHT, rows*HEIGHT), squeeze=False)
+    i, j = 0, 0
+    for i in range(rows):
+        for j in range(cols):
+            axs[i, j].set_title('Histogram for %s %d bins'%(variables[i], bins[j]))
+            axs[i, j].set_xlabel(variables[i])
+            axs[i, j].set_ylabel('Nr records')
+            print(data[variables[i]].values)
+            axs[i, j].hist(data[variables[i]].values, bins=bins[j])
 savefig('./images/granularity_study_symbolic.png')
 # show()
 
@@ -65,14 +66,15 @@ variables = get_variable_types(data)['Date']
 if [] == variables:
     raise ValueError('There are no date variables.')
 
-rows, cols = choose_grid(len(variables))
+rows = len(variables)
+bins = (20, 60, 100)
+cols = len(bins)
 fig, axs = subplots(rows, cols, figsize=(cols*HEIGHT, rows*HEIGHT), squeeze=False)
-i, j = 0, 0
-for n in range(len(variables)):
-    axs[i, j].set_title('Histogram for %s'%variables[n])
-    axs[i, j].set_xlabel(variables[n])
-    axs[i, j].set_ylabel('nr records')
-    axs[i, j].hist(data[variables[n]].values, bins='auto')
-    i, j = (i + 1, 0) if (n+1) % cols == 0 else (i, j + 1)
+for i in range(rows):
+    for j in range(cols):
+        axs[i, j].set_title('Histogram for %s %d bins'%(variables[i], bins[j]))
+        axs[i, j].set_xlabel(variables[i])
+        axs[i, j].set_ylabel('Nr records')
+        axs[i, j].hist(data[variables[i]].values, bins=bins[j])
 savefig('./images/granularity_study_date.png')
-show()
+# show()

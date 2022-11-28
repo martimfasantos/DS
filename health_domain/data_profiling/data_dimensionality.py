@@ -47,8 +47,6 @@ for var in data:
 
 figure(figsize=(5,2))
 if (len(mv) == 0):
-    #bar_chart([], [], title='Nr of missing values per variable',
-           # xlabel='no missing values', ylabel='nr missing values')
     fig, axs = plt.subplots(figsize=(8, 4)) 
     axs.set_title("No Missing Values")          # Do any Matplotlib customization you like
 else:
