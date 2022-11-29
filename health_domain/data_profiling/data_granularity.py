@@ -12,22 +12,22 @@ data = read_csv(filename, na_values='?')
 # Histograms for numeric variables #
 # -------------------------------- #
 
-# variables = get_variable_types(data)['Numeric']
-# if [] == variables:
-#     raise ValueError('There are no numeric variables.')
+variables = get_variable_types(data)['Numeric']
+if [] == variables:
+    raise ValueError('There are no numeric variables.')
 
-# rows = len(variables)
-# bins = (5, 10, 50)
-# cols = len(bins)
-# fig, axs = subplots(rows, cols, figsize=(cols*HEIGHT, rows*HEIGHT), squeeze=False)
-# for i in range(rows):
-#     for j in range(cols):
-#         axs[i, j].set_title('Histogram for %s %d bins'%(variables[i], bins[j]))
-#         axs[i, j].set_xlabel(variables[i])
-#         axs[i, j].set_ylabel('Nr records')
-#         axs[i, j].hist(data[variables[i]].values, bins=bins[j])
-# savefig('./images/granularity_study_numeric.png')
-# show()
+rows = len(variables)
+bins = (5, 10, 50)
+cols = len(bins)
+fig, axs = subplots(rows, cols, figsize=(cols*HEIGHT, rows*HEIGHT), squeeze=False)
+for i in range(rows):
+    for j in range(cols):
+        axs[i, j].set_title('Histogram for %s %d bins'%(variables[i], bins[j]))
+        axs[i, j].set_xlabel(variables[i])
+        axs[i, j].set_ylabel('Nr records')
+        axs[i, j].hist(data[variables[i]].values, bins=bins[j])
+savefig('./images/granularity_study_numeric.png')
+show()
 
 # --------------------------------- #
 # Histograms for symbolic variables #
@@ -158,6 +158,7 @@ def do_group_5(counts: list) -> list:
 #     i, j = (i + 1, 0) if (n + 1) % cols == 0 else (i, j + 1)
 # savefig('./images/granularity_study_symbolic.png')
 # show()
+
 group_1 = ('diag_1', 'diag_2', 'diag_3') # diagnoses group
 group_2 = ('race')
 group_3 = ('age')
@@ -169,7 +170,6 @@ if [] == symbolic_vars:
     raise ValueError("There are no symbolic variables.")
     
 rows, cols = choose_grid(len(symbolic_vars) + 7)
-
 fig, axs = subplots(rows, cols, figsize=(cols*HEIGHT*4, rows*HEIGHT*3), squeeze=False)
 i, j = 0, 0
 n_graphs = 0
@@ -248,26 +248,26 @@ for n in range(len(symbolic_vars)):
         i, j = (i + 1, 0) if (n_graphs + 1) % cols == 0 else (i, j + 1)
         n_graphs += 1
       
-savefig('./images/study1.png')
+savefig('./images/granularity_study_symbolic.png', dpi=90)
       
 # ----------------------------- #
 # Histograms for date variables #
 # ----------------------------- #
 
-# variables = get_variable_types(data)['Date']
-# if [] == variables:
-#     fig, axs = subplots(figsize=(8, 4)) 
-#     axs.set_title("No Date Variables")          # Do any Matplotlib customization you like
-# else:
-#     rows = len(variables)
-#     bins = (5, 10, 50)
-#     cols = len(bins)
-#     fig, axs = subplots(rows, cols, figsize=(cols*HEIGHT, rows*HEIGHT), squeeze=False)
-#     for i in range(rows):
-#         for j in range(cols):
-#             axs[i, j].set_title('Histogram for %s %d bins'%(variables[i], bins[j]))
-#             axs[i, j].set_xlabel(variables[i])
-#             axs[i, j].set_ylabel('Nr records')
-#             axs[i, j].hist(data[variables[i]].values, bins=bins[j])
-# savefig('./images/granularity_study_date.png')
-# show()
+variables = get_variable_types(data)['Date']
+if [] == variables:
+    fig, axs = subplots(figsize=(8, 4)) 
+    axs.set_title("No Date Variables")          # Do any Matplotlib customization you like
+else:
+    rows = len(variables)
+    bins = (5, 10, 50)
+    cols = len(bins)
+    fig, axs = subplots(rows, cols, figsize=(cols*HEIGHT, rows*HEIGHT), squeeze=False)
+    for i in range(rows):
+        for j in range(cols):
+            axs[i, j].set_title('Histogram for %s %d bins'%(variables[i], bins[j]))
+            axs[i, j].set_xlabel(variables[i])
+            axs[i, j].set_ylabel('Nr records')
+            axs[i, j].hist(data[variables[i]].values, bins=bins[j])
+savefig('./images/granularity_study_date.png')
+show()

@@ -57,5 +57,3 @@ else:
             xlabel='variables', ylabel='nr missing values')
 savefig('./images/missing_values.png')
 # show()
-
-

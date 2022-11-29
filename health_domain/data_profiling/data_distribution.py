@@ -194,7 +194,7 @@ for n in range(len(symbolic_vars)):
     else:
         bar_chart(counts.index.to_list(), counts.values, ax=axs[i, j], title='Histogram for %s' %symbolic_vars[n], xlabel=symbolic_vars[n], ylabel='nr records', percentage=False, rotation=45)
     i, j = (i + 1, 0) if (n + 1) % cols == 0 else (i, j + 1)
-savefig('./images/histograms_symbolic.png')
+savefig('./images/histograms_symbolic.png', dpi=100)
 # show()
 
 
@@ -203,10 +203,7 @@ savefig('./images/histograms_symbolic.png')
 # ------------------ #
 
 class_ = data['readmitted'].dropna()
-rows, cols = choose_grid(1)
-fig, axs = subplots(rows, cols, figsize=(cols*HEIGHT, rows*HEIGHT), squeeze=False)
-
 counts = class_.value_counts()
-bar_chart(counts.index.to_list(), counts.values, ax=axs[0, 0], title='Class distribution', xlabel='readmitted', ylabel='nr records', percentage=False)
-
+bar_chart(counts.index.to_list(), list(counts.values), title='Class distribution', xlabel='readmitted', ylabel='nr records', percentage=False)
 savefig('./images/class_distribution.png')
+# show()

@@ -9,9 +9,9 @@ data = read_csv('../datasets/classification/drought.csv', na_values="na", sep=',
 data['date'] = to_datetime(data['date'])
 
 
-# ----------------------------------- #
-# Scatter all x all - including class #
-# ----------------------------------- #
+# # ----------------------------------- #
+# # Scatter all x all - including class #
+# # ----------------------------------- #
 
 numeric_vars = get_variable_types(data)['Numeric']
 binary_vars = get_variable_types(data)['Binary']
@@ -75,5 +75,5 @@ corr_mtx = abs(data.corr())
 fig = figure(figsize=[50, 50])
 heatmap(abs(corr_mtx), xticklabels=corr_mtx.columns, yticklabels=corr_mtx.columns, annot=True, cmap='Blues')
 title('Correlation analysis')
-savefig('./images/correlation_analysis.png')
+savefig('./images/correlation_analysis.png', dpi=80)
 # show()

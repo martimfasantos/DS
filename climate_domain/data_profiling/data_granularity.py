@@ -27,7 +27,7 @@ for i in range(rows):
         axs[i, j].set_xlabel(variables[i])
         axs[i, j].set_ylabel('Nr records')
         axs[i, j].hist(data[variables[i]].values, bins=bins[j])
-savefig('./images/granularity_study_numeric.png')
+savefig('./images/granularity_study_numeric.png', dpi=95)
 # show()
 
 
@@ -52,7 +52,6 @@ else:
             axs[i, j].set_title('Histogram for %s %d bins'%(variables[i], bins[j]))
             axs[i, j].set_xlabel(variables[i])
             axs[i, j].set_ylabel('Nr records')
-            print(data[variables[i]].values)
             axs[i, j].hist(data[variables[i]].values, bins=bins[j])
 savefig('./images/granularity_study_symbolic.png')
 # show()

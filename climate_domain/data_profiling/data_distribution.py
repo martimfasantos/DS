@@ -161,12 +161,13 @@ numeric_vars = get_variable_types(data)['Numeric']
 if [] == numeric_vars:
     raise ValueError('There are no numeric variables.')
 
+rows, cols = choose_grid(len(numeric_vars))
 fig, axs = subplots(rows, cols, figsize=(cols*HEIGHT, rows*HEIGHT), squeeze=False)
 i, j = 0, 0
 for n in range(len(numeric_vars)):
     histogram_with_distributions(axs[i, j], data[numeric_vars[n]].dropna(), numeric_vars[n])
     i, j = (i + 1, 0) if (n+1) % cols == 0 else (i, j + 1)
-savefig('./images/histogram_numeric_distribution.png')
+savefig('./images/histogram_numeric_distribution.png', dpi=90)
 # show()
 
 #------------------------ #
@@ -193,10 +194,7 @@ savefig('./images/histograms_symbolic.png')
 # ------------------ #
 
 class_ = data['class'].dropna()
-rows, cols = choose_grid(1)
-fig, axs = subplots(rows, cols, figsize=(cols*HEIGHT, rows*HEIGHT), squeeze=False)
-
 counts = class_.value_counts()
-bar_chart(counts.index.to_list(), counts.values, ax=axs[0, 0], title='Class distribution', xlabel='class', ylabel='nr records', percentage=False)
-
+bar_chart([str(i) for i in counts.index.to_list()], list(counts.values), title='Class distribution', xlabel='class', ylabel='nr records', percentage=False)
 savefig('./images/class_distribution.png')
+# show()
