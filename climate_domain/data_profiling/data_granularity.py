@@ -14,6 +14,12 @@ data['date'] = to_datetime(data['date'])
 # -------------------------------- #
 
 variables = get_variable_types(data)['Numeric']
+binary_vars = get_variable_types(data)['Binary']
+
+for v in binary_vars:
+    if v in variables:
+        variables.remove(v)
+        
 if [] == variables:
     raise ValueError('There are no numeric variables.')
 
@@ -43,7 +49,7 @@ if [] == variables:
 
 else:
     rows = len(variables)
-    bins = (5, 10, 50)
+    bins = (2)
     cols = len(bins)
     fig, axs = subplots(rows, cols, figsize=(cols*HEIGHT, rows*HEIGHT), squeeze=False)
     i, j = 0, 0

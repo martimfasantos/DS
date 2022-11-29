@@ -6,10 +6,13 @@ from ds_charts import get_variable_types, choose_grid, bar_chart, multiple_bar_c
 from seaborn import distplot
 import random
 from scipy.stats import norm, expon, lognorm
+from pandas import to_datetime
 
 register_matplotlib_converters()
 filename = '../datasets/classification/drought.csv'
 data = read_csv(filename, na_values="na", sep=',', decimal='.', parse_dates=True, infer_datetime_format=True)
+
+data['date'] = to_datetime(data['date'])
 
 # summary5 = data.describe()
 # print(summary5)
@@ -23,12 +26,17 @@ data.boxplot(rot=45, figsize=(3*HEIGHT, 1.5*HEIGHT))
 savefig('./images/global_boxplot.png')
 # show()
 
-
 # ---------------------------- #
 # Boxplots for numeric boxplot #
 # ---------------------------- #
 
 numeric_vars = get_variable_types(data)['Numeric']
+binary_vars = get_variable_types(data)['Binary']
+
+for v in binary_vars:
+    if v in numeric_vars:
+        numeric_vars.remove(v)
+
 if [] == numeric_vars:
     raise ValueError('There are no numeric variables.')
 rows, cols = choose_grid(len(numeric_vars))
@@ -42,7 +50,6 @@ for n in range(len(numeric_vars)):
 savefig('./images/single_boxplots.png')
 # show()
 
-
 #--------- #
 # Outliers #
 # -------- #
@@ -50,6 +57,12 @@ savefig('./images/single_boxplots.png')
 NR_STDEV: int = 2
 
 numeric_vars = get_variable_types(data)['Numeric']
+binary_vars = get_variable_types(data)['Binary']
+
+for v in binary_vars:
+    if v in numeric_vars:
+        numeric_vars.remove(v)
+        
 if [] == numeric_vars:
     raise ValueError('There are no numeric variables.')
 
@@ -73,12 +86,17 @@ multiple_bar_chart(numeric_vars, outliers, title='Nr of outliers per variable', 
 savefig('./images/outliers.png')
 # show()
 
-
 #----------------------- #
 # Histograms for numeric #
 # ---------------------- #
 
 numeric_vars = get_variable_types(data)['Numeric']
+binary_vars = get_variable_types(data)['Binary']
+
+for v in binary_vars:
+    if v in numeric_vars:
+        numeric_vars.remove(v)
+        
 if [] == numeric_vars:
     raise ValueError('There are no numeric variables.')
 
@@ -99,6 +117,12 @@ savefig('./images/single_histograms_numeric.png')
 # --------------------------------- #
 
 numeric_vars = get_variable_types(data)['Numeric']
+binary_vars = get_variable_types(data)['Binary']
+
+for v in binary_vars:
+    if v in numeric_vars:
+        numeric_vars.remove(v)
+        
 if [] == numeric_vars:
     raise ValueError('There are no numeric variables.')
 
@@ -158,6 +182,12 @@ def histogram_with_distributions(ax: Axes, series: Series, var: str):
 
 
 numeric_vars = get_variable_types(data)['Numeric']
+binary_vars = get_variable_types(data)['Binary']
+
+for v in binary_vars:
+    if v in numeric_vars:
+        numeric_vars.remove(v)
+        
 if [] == numeric_vars:
     raise ValueError('There are no numeric variables.')
 
@@ -175,6 +205,11 @@ savefig('./images/histogram_numeric_distribution.png', dpi=90)
 # ----------------------- #
 
 symbolic_vars = get_variable_types(data)['Symbolic']
+binary_vars = get_variable_types(data)['Binary']
+
+symbolic_vars = symbolic_vars + binary_vars
+print(symbolic_vars)
+        
 if [] == symbolic_vars:
     raise ValueError('There are no symbolic variables.')
 
@@ -188,13 +223,12 @@ for n in range(len(symbolic_vars)):
 savefig('./images/histograms_symbolic.png')
 # show()
 
-
 #------------------- #
 # Class distribution #
 # ------------------ #
 
 class_ = data['class'].dropna()
 counts = class_.value_counts()
-bar_chart([str(i) for i in counts.index.to_list()], list(counts.values), title='Class distribution', xlabel='class', ylabel='nr records', percentage=False)
+bar_chart(counts.index.to_list(), counts.values, title='Class distribution', xlabel='class', ylabel='nr records', percentage=False)
 savefig('./images/class_distribution.png')
 # show()
