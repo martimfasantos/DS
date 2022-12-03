@@ -107,13 +107,13 @@ from numpy import number
 
 def dummify(df, vars_to_dummify):
     other_vars = [c for c in df.columns if not c in vars_to_dummify]
-    encoder = OneHotEncoder(handle_unknown='ignore', sparse=False, dtype=bool)
+    encoder = OneHotEncoder(handle_unknown='ignore', sparse=False, dtype=int)
     X = df[vars_to_dummify]
     encoder.fit(X)
     new_vars = encoder.get_feature_names(vars_to_dummify)
     trans_X = encoder.transform(X)
     dummy = DataFrame(trans_X, columns=new_vars, index=X.index)
-    dummy = dummy.convert_dtypes(convert_boolean=True)
+    #dummy = dummy.convert_dtypes(convert_boolean=True)
 
     final_df = concat([df[other_vars], dummy], axis=1)
     return final_df
@@ -168,22 +168,22 @@ data = concat([data[other_vars], X[0]], axis=1)
 data = concat([data, X[1]], axis=1)
     
 # variables we made ordinal: level of % of readmissions (according to the paper)
-our_ordinal_vars = ('gender', 'race', 'medical_specialty', 'diag_1', 'diag_2', 'diag_3')
-our_ordinal_vars_mappings = [[] for _ in range(len(our_ordinal_vars))]
-for i in range(len(our_ordinal_vars)):
-    our_ordinal_vars_mappings[i] = mapping(our_ordinal_vars[i], data[our_ordinal_vars[i]])
+# our_ordinal_vars = ('gender', 'race', 'medical_specialty', 'diag_1', 'diag_2', 'diag_3')
+# our_ordinal_vars_mappings = [[] for _ in range(len(our_ordinal_vars))]
+# for i in range(len(our_ordinal_vars)):
+#     our_ordinal_vars_mappings[i] = mapping(our_ordinal_vars[i], data[our_ordinal_vars[i]])
 
-X = [0 for _ in range(len(our_ordinal_vars))]
-for i in range(len(our_ordinal_vars)):
-    var_mapping = our_ordinal_vars_mappings[i]
-    X[i] = data[our_ordinal_vars[i]]
-    for j in var_mapping:
-        X[i].replace(to_replace=j[0], value=j[1], inplace=True)
+# X = [0 for _ in range(len(our_ordinal_vars))]
+# for i in range(len(our_ordinal_vars)):
+#     var_mapping = our_ordinal_vars_mappings[i]
+#     X[i] = data[our_ordinal_vars[i]]
+#     for j in var_mapping:
+#         X[i].replace(to_replace=j[0], value=j[1], inplace=True)
         
-other_vars = [c for c in data.columns if not c in our_ordinal_vars]
-data = concat([data[other_vars], X[0]], axis=1)
-for i in range(1, len(X)):
-    data = concat([data, X[i]], axis=1)
+# other_vars = [c for c in data.columns if not c in our_ordinal_vars]
+# data = concat([data[other_vars], X[0]], axis=1)
+# for i in range(1, len(X)):
+#     data = concat([data, X[i]], axis=1)
 
 # variables whose values are in "No", "Steady", "Up", "Down": new mapping
 # "Prescribed?", "Variation" (-1,0,+1)
@@ -253,8 +253,8 @@ for el in binary_vars:
     symbolic_vars.remove(el)
 for el in ordinal_vars:
     symbolic_vars.remove(el)
-for el in our_ordinal_vars:
-    symbolic_vars.remove(el)
+# for el in our_ordinal_vars:
+#     symbolic_vars.remove(el)
 for el in bigger_vars:
     symbolic_vars.remove(el)
 for el in level_vars:
@@ -262,6 +262,6 @@ for el in level_vars:
 symbolic_vars.remove('readmitted')
 
 df = dummify(data, symbolic_vars)
-df.to_csv(f'../datasets/classification/{file}_variables_encoding.csv', index=False)
+df.to_csv(f'../datasets/classification/{file}_variables_encoding_2.csv', index=False)
 
-df.describe(include=[bool])
+#df.describe(include=[bool])
