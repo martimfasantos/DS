@@ -27,7 +27,7 @@ for i in range(rows):
         axs[i, j].set_ylabel('Nr records')
         axs[i, j].hist(data[variables[i]].values, bins=bins[j])
 savefig('./images/granularity_study_numeric.png')
-show()
+# show()
 
 # --------------------------------- #
 # Histograms for symbolic variables #
@@ -188,65 +188,32 @@ for n in range(len(symbolic_vars)):
     i, j = (i + 1, 0) if (n_graphs + 1) % cols == 0 else (i, j + 1)
     n_graphs += 1  
     
+    bins = 3
+    counts = counts.reset_index().values.tolist()
+
     if (symbolic_vars[n] in group_1):
-        counts = counts.reset_index().values.tolist()
         new_counts = do_group_1(counts)
-        x, y = [], []
-        for el in new_counts:
-            x.append(el[0])
-            y.append(el[1])
-        
-        bar_chart(x, y, ax=axs[i, j], title='Histogram for %s WITH 9 BINS' %symbolic_vars[n], xlabel=symbolic_vars[n], ylabel='nr records', percentage=False, rotation=45)
-        i, j = (i + 1, 0) if (n_graphs + 1) % cols == 0 else (i, j + 1)
-        n_graphs += 1
-    
+        bins = 9
     elif (symbolic_vars[n] in group_2):
-        counts = counts.reset_index().values.tolist()
         new_counts = do_group_2(counts)
-        x, y = [], []
-        for el in new_counts:
-            x.append(el[0])
-            y.append(el[1])
-        
-        bar_chart(x, y, ax=axs[i, j], title='Histogram for %s WITH 3 BINS' %symbolic_vars[n], xlabel=symbolic_vars[n], ylabel='nr records', percentage=False, rotation=45)
-        i, j = (i + 1, 0) if (n_graphs + 1) % cols == 0 else (i, j + 1)
-        n_graphs += 1
-    
     elif (symbolic_vars[n] in group_3):
-        counts = counts.reset_index().values.tolist()
         new_counts = do_group_3(counts)
-        x, y = [], []
-        for el in new_counts:
-            x.append(el[0])
-            y.append(el[1])
-        
-        bar_chart(x, y, ax=axs[i, j], title='Histogram for %s WITH 3 BINS' %symbolic_vars[n], xlabel=symbolic_vars[n], ylabel='nr records', percentage=False, rotation=45)
-        i, j = (i + 1, 0) if (n_graphs + 1) % cols == 0 else (i, j + 1)
-        n_graphs += 1
-    
     elif (symbolic_vars[n] in group_4):
-        counts = counts.reset_index().values.tolist()
         new_counts = do_group_4(counts)
-        x, y = [], []
-        for el in new_counts:
-            x.append(el[0])
-            y.append(el[1])
-        
-        bar_chart(x, y, ax=axs[i, j], title='Histogram for %s WITH 3 BINS' %symbolic_vars[n], xlabel=symbolic_vars[n], ylabel='nr records', percentage=False, rotation=45)
-        i, j = (i + 1, 0) if (n_graphs + 1) % cols == 0 else (i, j + 1)
-        n_graphs += 1
-        
     elif (symbolic_vars[n] in group_5):
-        counts = counts.reset_index().values.tolist()
         new_counts = do_group_5(counts)
-        x, y = [], []
-        for el in new_counts:
-            x.append(el[0])
-            y.append(el[1])
-        
-        bar_chart(x, y, ax=axs[i, j], title='Histogram for %s WITH 5 BINS' %symbolic_vars[n], xlabel=symbolic_vars[n], ylabel='nr records', percentage=False, rotation=45)
-        i, j = (i + 1, 0) if (n_graphs + 1) % cols == 0 else (i, j + 1)
-        n_graphs += 1
+        bins = 5
+    else:
+        continue
+    
+    x, y = [], []
+    for el in new_counts:
+        x.append(el[0])
+        y.append(el[1])
+    
+    bar_chart(x, y, ax=axs[i, j], title='Histogram for %s WITH %d BINS' %(symbolic_vars[n], bins), xlabel=symbolic_vars[n], ylabel='nr records', percentage=False, rotation=45)
+    i, j = (i + 1, 0) if (n_graphs + 1) % cols == 0 else (i, j + 1)
+    n_graphs += 1
       
 savefig('./images/granularity_study_symbolic.png', dpi=90)
       
@@ -270,4 +237,4 @@ else:
             axs[i, j].set_ylabel('Nr records')
             axs[i, j].hist(data[variables[i]].values, bins=bins[j])
 savefig('./images/granularity_study_date.png')
-show()
+# show()

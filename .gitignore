@@ -1,3 +1,6 @@
 # Python caches
 health_domain/data_profiling/__pycache__/
 climate_domain/data_profiling/__pycache__/
+
+health_domain/data_preparation/__pycache__/
+climate_domain/data_preparation/__pycache__/
