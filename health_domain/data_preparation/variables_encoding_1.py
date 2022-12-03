@@ -264,6 +264,6 @@ for el in level_vars:
 symbolic_vars.remove('readmitted')
 
 df = dummify(data, symbolic_vars)
-df.to_csv(f'../datasets/classification/{file}_variables_encoding_1.csv', index=False)
+df.to_csv(f'data/{file}_variables_encoding_1.csv', index=False)
 
 #df.describe(include=[bool])
