@@ -4,3 +4,6 @@ climate_domain/data_profiling/__pycache__/
 
 health_domain/data_preparation/__pycache__/
 climate_domain/data_preparation/__pycache__/
+
+health_domain/classification/__pycache__/
+climate_domain/classification/__pycache__/
