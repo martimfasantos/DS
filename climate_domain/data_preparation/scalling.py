@@ -117,8 +117,6 @@ df = read_csv('data/_scaled_zscore.csv')
 X = df.drop(columns=['class'])
 y = df['class'].values
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1, stratify=y)
-
 
 eval_metric = accuracy_score
 nvalues = [1, 3, 5, 7, 9, 11, 13, 15, 17, 19]
@@ -188,9 +186,6 @@ X = df.drop(columns=['class'])
 y = df['class'].values
 
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1, stratify=y)
-
-
 labels = unique(y_train)
 
 
@@ -231,9 +226,6 @@ df = read_csv('data/_scaled_zscore.csv')
 
 X = df.drop(columns=['class'])
 y = df['class'].values
-
-
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1, stratify=y)
 
 
 labels = unique(y_train)
