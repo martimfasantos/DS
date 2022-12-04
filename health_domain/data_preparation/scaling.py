@@ -34,7 +34,7 @@ df_bool = data[boolean_vars]
 transf = StandardScaler(with_mean=True, with_std=True, copy=True).fit(df_num)
 tmp = DataFrame(transf.transform(df_num), index=data.index, columns= numeric_vars)
 norm_data_zscore = concat([tmp, df_symb,  df_bool], axis=1)
-norm_data_zscore.to_csv(f'data/{file}_scaled_zscore.csv', index=False)
+norm_data_zscore.to_csv(f'data/scaling/{file}_scaled_zscore.csv', index=False)
 # print(norm_data_zscore.describe())
 
 
@@ -45,7 +45,7 @@ norm_data_zscore.to_csv(f'data/{file}_scaled_zscore.csv', index=False)
 transf = MinMaxScaler(feature_range=(0, 1), copy=True).fit(df_num)
 tmp = DataFrame(transf.transform(df_num), index=data.index, columns= numeric_vars)
 norm_data_minmax = concat([tmp, df_symb, df_bool], axis=1)
-norm_data_minmax.to_csv(f'data/{file}_scaled_minmax.csv', index=False)
+norm_data_minmax.to_csv(f'data/scaling/{file}_scaled_minmax.csv', index=False)
 # print(norm_data_minmax.describe())
 
 

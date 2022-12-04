@@ -38,7 +38,7 @@ for var in numeric_vars:
     top_threshold, bottom_threshold = determine_outlier_thresholds(summary5, var)
     outliers = df[(df[var] > top_threshold) | (df[var] < bottom_threshold)]
     df.drop(outliers.index, axis=0, inplace=True)
-df.to_csv(f'data/{file}_drop_outliers.csv', index=True)
+df.to_csv(f'data/outliers/{file}_drop_outliers.csv', index=True)
 print('data after dropping outliers:', df.shape)
 
 # # # # # # # # # # #
@@ -54,7 +54,7 @@ for var in numeric_vars:
     df[var] = df[var].apply(lambda x: median if x > top_threshold or x < bottom_threshold else x)
 
 print('data after replacing outliers:', df.describe())
-df.to_csv(f'data/{file}_replacing_outliers.csv', index=True)
+df.to_csv(f'data/outliers/{file}_replacing_outliers.csv', index=True)
 
 # # # # # # # # # # #
 # TRUNCATING OUTLIERS
@@ -68,4 +68,4 @@ for var in numeric_vars:
     df[var] = df[var].apply(lambda x: top_threshold if x > top_threshold else bottom_threshold if x < bottom_threshold else x)
 
 print('data after truncating outliers:', df.describe())
-df.to_csv(f'data/{file}_truncate_outliers.csv', index=True)
+df.to_csv(f'data/outliers/{file}_truncate_outliers.csv', index=True)
