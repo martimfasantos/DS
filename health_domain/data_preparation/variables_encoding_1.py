@@ -37,22 +37,27 @@ def mapping(var_name: str, variable) -> list:
     counts = variable.value_counts()
     counts = counts.reset_index().values.tolist()
     if (var_name == 'gender'):
-        counts[0][1] = 1
-        counts[1][1] = 2
+        counts[0][1] = -1
+        counts[1][1] = 1
+        counts[2][1] = 0
     elif (var_name == 'race'):
         counts[0][1] = 1
         counts[1][1] = 2
         counts[2][1] = 3
         counts[3][1] = 3
+        counts[4][1] = 3
     elif (var_name == 'medical_specialty'):
-        counts[0][1] = 6
-        counts[1][1] = 2
-        counts[2][1] = 5
-        counts[3][1] = 1
-        counts[4][1] = 4
-        counts[5][1] = 4
-        counts[6][1] = 4
-        counts[7][1] = 4
+        for c in counts:
+            if (c[0] == 'Family/GeneralPractice'):
+                c[1] = 1
+            elif (c[0] == 'InternalMedicine'):
+                c[1] = 2
+            elif (c[0][0:7] == 'Surgery'):
+                c[1] = 4
+            elif (c[0] == 'Cardiology'):
+                c[1] = 5
+            else:
+                c[1] = 3
     elif (var_name == 'diag_1') or (var_name == 'diag_2') or (var_name == 'diag_3'):
         # map codes into diagnoses
         new_counts = mapping_diagnosis(var_name, counts)
@@ -98,7 +103,7 @@ filename = '../datasets/classification/diabetic_data.csv'
 data = read_csv(filename, na_values='?')
 
 # Drop out all records with missing values
-data.dropna(inplace=True)
+#data.dropna(inplace=True)
 
 data.drop(columns=['payer_code'], inplace=True)
 
@@ -195,7 +200,7 @@ level_vars = ('metformin', 'repaglinide', 'nateglinide', 'chlorpropamide', 'glim
               'glyburide-metformin', 'acetohexamide', 'tolbutamide', 'troglitazone',
               'glipizide-metformin', 'glimepiride-pioglitazone', 'metformin-rosiglitazone',
               'metformin-pioglitazone')
-level_vars_mappings = [["No", [0, 0]], ["Steady", [1, 0]], ["Up", [1, 1]], ["Down", [1, -1]]]
+level_vars_mappings = [["No", [0, -2]], ["Steady", [1, 0]], ["Up", [1, 1]], ["Down", [1, -1]]]
 
 X = [[0, 0] for _ in range(len(level_vars))]
 for i in range(len(level_vars)):
@@ -220,8 +225,8 @@ for i in range(1, len(level_vars)):
 # "Measured?", "Level" (0, +1, +2)
 bigger_vars = ('max_glu_serum', 'A1Cresult')
 bigger_vars_mappings = [[], []]
-bigger_vars_mappings[0] = [["None", [0, 0]], [">200", [1, 2]], [">300", [1, 3]], ["Norm", [1, 1]]]
-bigger_vars_mappings[1] = [["None", [0, 0]], [">7", [1, 2]], [">8", [1, 3]], ["Norm", [1, 1]]]
+bigger_vars_mappings[0] = [["None", [0, -1]], [">200", [1, 2]], [">300", [1, 3]], ["Norm", [1, 1]]]
+bigger_vars_mappings[1] = [["None", [0, -1]], [">7", [1, 2]], [">8", [1, 3]], ["Norm", [1, 1]]]
 
 X = [[0, 0] for _ in range(len(bigger_vars))]
 for i in range(len(bigger_vars)):

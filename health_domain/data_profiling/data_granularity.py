@@ -40,81 +40,76 @@ def has_letter(word: str):
     return False
 
 def do_group_1(counts: list) -> list:
-    new_counts = [['injury', 0], ['circulatory', 0], ['neoplasms', 0], 
-                      ['other', 0], ['diabetes', 0], ['genitourinary', 0],
-                      ['musculoskeletal', 0], ['digestive', 0], ['respiratory', 0]]
+    new_counts = {'injury': 0, 'circulatory': 0, 'neoplasms': 0, 
+                  'other': 0, 'diabetes': 0, 'genitourinary': 0,
+                  'musculoskeletal': 0, 'digestive': 0, 'respiratory': 0 }
     for item in counts:
         if (has_letter(str(item[0]))):
-            new_counts[3][1] += item[1]
+            new_counts['other'] += item[1]
         else:
             code = int(str(item[0][0:3]))
             if   (code >= 800) and (code <= 999):
-                new_counts[0][1] += item[1]
+                new_counts['injury'] += item[1]
             elif ((code >= 390) and (code <= 459)) or (code == 785):
-                new_counts[1][1] += item[1]
+                new_counts['circulatory'] += item[1]
             elif (code >= 140) and (code <= 239):
-                new_counts[2][1] += item[1]
+                new_counts['neoplasms'] += item[1]
             elif (code == 250):
-                new_counts[4][1] += item[1]
+                new_counts['diabetes'] += item[1]
             elif ((code >= 580) and (code <= 629)) or (code == 788):
-                new_counts[5][1] += item[1]
+                new_counts['genitourinary'] += item[1]
             elif (code >= 710) and (code <= 739):
-                new_counts[6][1] += item[1]
+                new_counts['musculoskeletal'] += item[1]
             elif ((code >= 520) and (code <= 579)) or (code == 787):
-                new_counts[7][1] += item[1]
+                new_counts['digestive'] += item[1]
             elif ((code >= 460) and (code <= 519)) or (code == 786):
-                new_counts[8][1] += item[1]
+                new_counts['respiratory'] += item[1]
             else:
-                new_counts[3][1] += item[1]
+                new_counts['other'] += item[1]
     return new_counts
 
 def do_group_2(counts: list) -> list:
-    new_counts = [['Caucasian', 0], ['AfricanAmerican', 0], ['Other', 0]]
+    new_counts = {'Caucasian': 0, 'AfricanAmerican': 0, 'Other': 0 }
     for item in counts:
-        if (item[0] == 'Caucasian'):
-            new_counts[0][1] += item[1]
-        elif (item[0] == 'AfricanAmerican'):
-            new_counts[1][1] += item[1]
-        else:
-            new_counts[2][1] += item[1]
+        try:
+            new_counts[item[0]] += item[1]
+        except:
+            new_counts['Other'] += item[1]
     return new_counts
 
 def do_group_3(counts: list) -> list:
-    new_counts = [['[0,30]', 0], ['(30,60]', 0], ['(60, 100)', 0]]
+    new_counts = {'0,30]': 0, '(30,60]': 0, '(60, 100)': 0}
     for item in counts:
         if (item[0] in ('[0-10)', '[10-20)', '[20-30)')):
-            new_counts[0][1] += item[1]
+            new_counts['0,30]'] += item[1]
         elif (item[0] in ('[30-40)', '[40-50)', '[50-60)')):
-            new_counts[1][1] += item[1]
+            new_counts['(30,60]'] += item[1]
         else:
-            new_counts[2][1] += item[1]
+            new_counts['(60, 100)'] += item[1]
     return new_counts
 
 def do_group_4(counts: list) -> list:
-    new_counts = [['[0,50]', 0], ['(50,125]', 0], ['>100', 0]]
+    new_counts = {'[0,50]': 0, '(50,125]': 0, '>100': 0 }
     for item in counts: 
         if (item[0] in ('[0-25)', '[25-50)')):
-            new_counts[0][1] += item[1]
+            new_counts['[0,50]'] += item[1]
         elif (item[0] in ('[50-75)', '[75-100)', '[100-125)')):
-            new_counts[1][1] += item[1]
+            new_counts['(50,125]'] += item[1]
         else:
-            new_counts[2][1] += item[1]
+            new_counts['>100'] += item[1]
     return new_counts
 
 def do_group_5(counts: list) -> list:
-    new_counts = [['Family/GeneralPractice', 0], ['InternalMedicine', 0],
-                  ['Other', 0], ['Surgery', 0], ['Cardiology', 0]]
+    new_counts = {'Family/GeneralPractice': 0, 'InternalMedicine': 0,
+                  'Other': 0, 'Surgery': 0, 'Cardiology': 0 }
     for item in counts:
-        if (item[0] == 'Family/GeneralPractice'):
-            new_counts[0][1] += item[1]
-        elif (item[0] == 'InternalMedicine'):
-            new_counts[1][1] += item[1]
-        elif (item[0][0:7] == 'Surgery'):
-            new_counts[3][1] += item[1]
-        elif (item[0] == 'Cardiology'):
-            new_counts[4][1] += item[1]
-        else:
-            new_counts[2][1] += item[1]
+        try:
+            new_counts[item[0]] += item[1]
+        except:
+            if (item[0][0:7] == 'Surgery'):
+                new_counts['Surgery'] += item[1]
+            else:
+                new_counts['Other'] += item[1]
     return new_counts
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -188,6 +183,7 @@ for n in range(len(symbolic_vars)):
     i, j = (i + 1, 0) if (n_graphs + 1) % cols == 0 else (i, j + 1)
     n_graphs += 1  
     
+    # Created Groups 
     bins = 3
     counts = counts.reset_index().values.tolist()
 
@@ -207,9 +203,9 @@ for n in range(len(symbolic_vars)):
         continue
     
     x, y = [], []
-    for el in new_counts:
-        x.append(el[0])
-        y.append(el[1])
+    for key in new_counts:
+        x.append(key)
+        y.append(new_counts[key])
     
     bar_chart(x, y, ax=axs[i, j], title='Histogram for %s WITH %d BINS' %(symbolic_vars[n], bins), xlabel=symbolic_vars[n], ylabel='nr records', percentage=False, rotation=45)
     i, j = (i + 1, 0) if (n_graphs + 1) % cols == 0 else (i, j + 1)
