@@ -20,13 +20,10 @@ for file in os.listdir(dir_path):
         file_tags.append(file_tag)
         filenames.append(f'{dir_path}{file_tag}')
 
-# print(file_tags)
-# print(filenames)
-
 target = 'readmitted'
-NO = 'NO'
-LESSTHAN30 = '<30'
-MORETHAN30 = '>30'
+NO = 1
+LESSTHAN30 = 2
+MORETHAN30 = 0
 
 for i in range(len(file_tags)):
     file_tag = file_tags[i]
