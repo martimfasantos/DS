@@ -62,7 +62,7 @@ for d in dist:
 
 figure()
 multiple_line_chart(nvalues, values, title='KNN variants', xlabel='n', ylabel=str(accuracy_score), percentage=True)
-savefig('images/{file_tag}_knn_study.png')
+savefig(f'images/{file_tag}_knn_study.png')
 # show()
 # print('Best results with %d neighbors and %s'%(best[0], best[1]))
 
@@ -76,7 +76,7 @@ clf.fit(trnX, trnY)
 prd_trn = clf.predict(trnX)
 prd_tst = clf.predict(tstX)
 plot_evaluation_results(labels, trnY, prd_trn, tstY, prd_tst)
-savefig('images/{file_tag}_knn_best.png')
+savefig(f'images/{file_tag}_knn_best.png')
 # show()
 
 
@@ -88,7 +88,7 @@ def plot_overfitting_study(xvalues, prd_trn, prd_tst, name, xlabel, ylabel):
     evals = {'Train': prd_trn, 'Test': prd_tst}
     figure()
     multiple_line_chart(xvalues, evals, ax = None, title=f'Overfitting {name}', xlabel=xlabel, ylabel=ylabel, percentage=True)
-    savefig('images/overfitting_{name}.png')
+    savefig(f'images/overfitting_{name}.png')
 
 _, d = best
 eval_metric = accuracy_score
