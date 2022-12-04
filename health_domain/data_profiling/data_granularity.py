@@ -106,7 +106,10 @@ def do_group_5(counts: list) -> list:
         try:
             new_counts[item[0]] += item[1]
         except:
-            new_counts['Other'] += item[1]
+            if (item[0][0:7] == 'Surgery'):
+                new_counts['Surgery'] += item[1]
+            else:
+                new_counts['Other'] += item[1]
     return new_counts
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
