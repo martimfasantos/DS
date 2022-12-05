@@ -12,7 +12,10 @@ register_matplotlib_converters()
 file_name = 'drought'
 file_path = 'data/variables_encoding/drought_variables_encoding.csv'
 data = read_csv(file_path, na_values="na", sep=',', decimal='.', parse_dates=True, infer_datetime_format=True)
-# data['date'] = to_datetime(data['date'])
+first_column = data.columns[0]
+data = data.drop([first_column], axis = 1)
+variable_types = get_variable_types(data)
+print(variable_types)
 
 variable_types = get_variable_types(data)
 numeric_vars = variable_types['Numeric']
@@ -95,7 +98,7 @@ figure()
 multiple_line_chart(nvalues, values, title='KNN variants', xlabel='n', ylabel=str(accuracy_score), percentage=True)
 savefig(f'images/{file_name}_knn_minmax_study.png')
 # show()
-# print('Best results with %d neighbors and %s'%(best[0], best[1]))
+#print('Best results with %d neighbors and %s '%(best[0], best[1]))
 
 
 # ------------------ #
@@ -131,7 +134,8 @@ figure()
 multiple_line_chart(nvalues, values, title='KNN variants', xlabel='n', ylabel=str(accuracy_score), percentage=True)
 savefig(f'images/{file_name}_knn_zscore_study.png')
 # show()
-# print('Best results with %d neighbors and %s'%(best[0], best[1]))
+##print('Best results with %d neighbors and %s '%(best[0], best[1]))
+
 
 
 # ---------------- #
