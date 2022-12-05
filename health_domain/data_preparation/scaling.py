@@ -18,8 +18,8 @@ file_name = 'diabetic_data_1_drop_columns_then_most_frequent_mv'
 file_tag = 'diabetic_data'
 file_path = 'data/missing_values/diabetic_data_1_drop_columns_then_most_frequent_mv.csv'
 data = read_csv(file_path, na_values='?')
-first_column = data.columns[0]
-data = data.drop([first_column], axis=1)
+index_column = data.columns[0]
+data = data.drop([index_column], axis=1)
 
 variable_types = get_variable_types(data)
 numeric_vars = variable_types['Numeric']
@@ -31,6 +31,8 @@ boolean_vars = variable_types['Binary']
 # them in the normalization procedure
 numeric_vars.remove('patient_nbr')
 numeric_vars.remove('encounter_id')
+
+# Variables that do not require normalization for better results
 to_remove = ['metformin_variation', 'repaglinide_variation', 'nateglinide_variation', 
              'chlorpropamide_variation', 'glimepiride_variation', 'glipizide_variation', 
              'glyburide_variation', 'pioglitazone_variation', 'rosiglitazone_variation', 
@@ -50,7 +52,6 @@ for el in to_remove:
 numeric_vars.remove('readmitted')
 
 df_num = data[numeric_vars]
-print(numeric_vars)
 df_symb = data[symbolic_vars]
 df_bool = data[boolean_vars]
 df_target = data['readmitted']
@@ -95,7 +96,6 @@ temp_norm_data_minmax.boxplot(ax=axs[0, 2], rot=90)
 savefig(f'images/{file_tag}_scale_comparison.png')
 # show()
 
-print('IMAGES DONE')
 
 # ------------------ #
 #         KNN        #
@@ -131,6 +131,7 @@ for d in dist:
 figure()
 multiple_line_chart(nvalues, values, title='KNN Scaling Variants: NO SCALING', xlabel='n', ylabel=str(accuracy_score), percentage=True)
 savefig(f'images/{file_tag}_knn_no_scaling_study.png')
+
 
 # ------------------ #
 #     KNN Min Max    #
@@ -269,6 +270,7 @@ for clf in estimators:
 figure()
 bar_chart(xvalues, yvalues, title='NB Scaling Variants: NO SCALING', ylabel='accuracy', percentage=True)
 savefig(f'images/{file_tag}_nb_no_scaling_study.png')
+
 
 # ----------------------------- #
 #     Naive Bayes with MinMax   #
