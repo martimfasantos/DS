@@ -18,6 +18,8 @@ file_name = 'diabetic_data_1_drop_columns_then_most_frequent_mv'
 file_tag = 'diabetic_data'
 file_path = 'data/missing_values/diabetic_data_1_drop_columns_then_most_frequent_mv.csv'
 data = read_csv(file_path, na_values='?')
+first_column = data.columns[0]
+data = data.drop([first_column], axis=1)
 
 variable_types = get_variable_types(data)
 numeric_vars = variable_types['Numeric']
