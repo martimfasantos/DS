@@ -9,7 +9,7 @@ import os
 
 register_matplotlib_converters()
 file = 'diabetic_data'
-filenames = ['data/variables_encoding/diabetic_data_variables_encoding_1.csv', 'data/variables_encoding/diabetic_data_variables_encoding_1.csv']
+filenames = ['data/variables_encoding/diabetic_data_variables_encoding_1.csv', 'data/variables_encoding/diabetic_data_variables_encoding_2.csv']
 
 # fill with CONSTANT value
 def fill_with_constant(data: DataFrame) -> DataFrame:

@@ -31,11 +31,26 @@ boolean_vars = variable_types['Binary']
 # them in the normalization procedure
 numeric_vars.remove('patient_nbr')
 numeric_vars.remove('encounter_id')
+to_remove = ['metformin_variation', 'repaglinide_variation', 'nateglinide_variation', 
+             'chlorpropamide_variation', 'glimepiride_variation', 'glipizide_variation', 
+             'glyburide_variation', 'pioglitazone_variation', 'rosiglitazone_variation', 
+             'acarbose_variation', 'miglitol_variation', 'examide_prescribed', 'examide_variation', 
+             'citoglipton_prescribed', 'citoglipton_variation', 'insulin_variation', 
+             'glyburide-metformin_variation', 'acetohexamide_variation', 'tolbutamide_variation',
+             'troglitazone_variation', 'glipizide-metformin_variation', 'glimepiride-pioglitazone_variation', 
+             'metformin-rosiglitazone_variation', 'metformin-pioglitazone_variation'
+             'max_glu_serum_level', 'A1Cresult_level', 'medical_specialty', 'diag_1', 'diag_2', 'diag_3', 
+             'metformin-pioglitazone_variation', 'max_glu_serum_level']
+
+for el in to_remove:
+    if el in numeric_vars:
+        numeric_vars.remove(el)
 
 # Remove class (readmitted) from numeric vars
 numeric_vars.remove('readmitted')
 
 df_num = data[numeric_vars]
+print(numeric_vars)
 df_symb = data[symbolic_vars]
 df_bool = data[boolean_vars]
 df_target = data['readmitted']
@@ -70,17 +85,52 @@ norm_data_minmax.to_csv(f'data/scaling/{file_name}_scaled_minmax.csv', index=Fal
 # Comparison #
 # ---------- #
 
-fig, axs = subplots(1, 3, figsize=(42,8),squeeze=False)
+fig, axs = subplots(1, 3, figsize=(50,15),squeeze=False)
 axs[0, 0].set_title('Original data')
-data.boxplot(ax=axs[0, 0], rot=45)
+data.boxplot(ax=axs[0, 0], rot=90)
 axs[0, 1].set_title('Z-score normalization')
-temp_norm_data_zscore.boxplot(ax=axs[0, 1], rot=45)
+temp_norm_data_zscore.boxplot(ax=axs[0, 1], rot=90)
 axs[0, 2].set_title('MinMax normalization')
-temp_norm_data_minmax.boxplot(ax=axs[0, 2], rot=45)
+temp_norm_data_minmax.boxplot(ax=axs[0, 2], rot=90)
 savefig(f'images/{file_tag}_scale_comparison.png')
 # show()
 
 print('IMAGES DONE')
+
+# ------------------ #
+#         KNN        #
+# ------------------ #
+
+file_path = 'data/missing_values/diabetic_data_1_drop_columns_then_most_frequent_mv.csv'
+df = read_csv(file_path)
+
+X = df.drop(columns=['readmitted'])
+y = df['readmitted'].values
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, stratify=y, random_state=8)
+
+eval_metric = accuracy_score
+nvalues = [1, 3, 5, 7, 9, 11, 13, 15, 17, 19]
+dist = ['manhattan', 'euclidean', 'chebyshev']
+values = {}
+best = (0, '')
+last_best = 0
+
+for d in dist:
+    y_tst_values = []
+    for n in nvalues:
+        knn = KNeighborsClassifier(n_neighbors=n, metric=d)
+        knn.fit(X_train, y_train)
+        prd_tst_Y = knn.predict(X_test)
+        y_tst_values.append(eval_metric(y_test, prd_tst_Y))
+        if y_tst_values[-1] > last_best:
+            best = (n, d)
+            last_best = y_tst_values[-1]
+    values[d] = y_tst_values
+
+figure()
+multiple_line_chart(nvalues, values, title='KNN Scaling Variants: NO SCALING', xlabel='n', ylabel=str(accuracy_score), percentage=True)
+savefig(f'images/{file_tag}_knn_no_scaling_study.png')
 
 # ------------------ #
 #     KNN Min Max    #
@@ -113,7 +163,7 @@ for d in dist:
     values[d] = y_tst_values
 
 figure()
-multiple_line_chart(nvalues, values, title='KNN variants', xlabel='n', ylabel=str(accuracy_score), percentage=True)
+multiple_line_chart(nvalues, values, title='KNN Scaling Variants: MIN-MAX SCALING', xlabel='n', ylabel=str(accuracy_score), percentage=True)
 savefig(f'images/{file_tag}_knn_minmax_study.png')
 # show()
 # print('Best results with %d neighbors and %s'%(best[0], best[1]))
@@ -149,7 +199,7 @@ for d in dist:
     values[d] = y_tst_values
 
 figure()
-multiple_line_chart(nvalues, values, title='KNN variants', xlabel='n', ylabel=str(accuracy_score), percentage=True)
+multiple_line_chart(nvalues, values, title='KNN Scaling Variants: Z-SCORE SCALING', xlabel='n', ylabel=str(accuracy_score), percentage=True)
 savefig(f'images/{file_tag}_knn_zscore_study.png')
 # show()
 # print('Best results with %d neighbors and %s'%(best[0], best[1]))
@@ -167,7 +217,6 @@ savefig(f'images/{file_tag}_knn_zscore_study.png')
 # plot_evaluation_results(labels, y_train, prd_trn, y_test, prd_tst)
 # savefig('images/{file_tag}_knn_best.png')
 # # show()
-
 
 # ----------------------- #
 #     Overfitting KNN     #
@@ -192,6 +241,34 @@ for n in nvalues:
     y_trn_values.append(eval_metric(y_train, prd_trn_Y))
 plot_overfitting_study(nvalues, y_trn_values, y_tst_values, name=f'KNN_K={n}_{d}', xlabel='K', ylabel=str(eval_metric))
 
+# ----------------------------- #
+#           Naive Bayes         #
+# ----------------------------- #
+file_path = 'data/missing_values/diabetic_data_1_drop_columns_then_most_frequent_mv.csv'
+df = read_csv(file_path)
+
+X = df.drop(columns=['readmitted'])
+y = df['readmitted'].values
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, stratify=y, random_state=8)
+
+estimators = {'GaussianNB': GaussianNB(),
+              #'MultinomialNB': MultinomialNB(),
+              'BernoulliNB': BernoulliNB()
+              #'CategoricalNB': CategoricalNB
+              }
+
+xvalues = []
+yvalues = []
+for clf in estimators:
+    xvalues.append(clf)
+    estimators[clf].fit(X_train, y_train)
+    prdY = estimators[clf].predict(X_test)
+    yvalues.append(accuracy_score(y_test, prdY))
+
+figure()
+bar_chart(xvalues, yvalues, title='NB Scaling Variants: NO SCALING', ylabel='accuracy', percentage=True)
+savefig(f'images/{file_tag}_nb_no_scaling_study.png')
 
 # ----------------------------- #
 #     Naive Bayes with MinMax   #
@@ -230,7 +307,7 @@ for clf in estimators:
     yvalues.append(accuracy_score(y_test, prdY))
 
 figure()
-bar_chart(xvalues, yvalues, title='Comparison of Naive Bayes Models', ylabel='accuracy', percentage=True)
+bar_chart(xvalues, yvalues, title='NB Scaling Variants: MIN-MAX SCALING', ylabel='accuracy', percentage=True)
 savefig(f'images/{file_tag}_nb_minmax_study.png')
 # show()
 
@@ -272,6 +349,6 @@ for clf in estimators:
     yvalues.append(accuracy_score(y_test, prdY))
 
 figure()
-bar_chart(xvalues, yvalues, title='Comparison of Naive Bayes Models', ylabel='accuracy', percentage=True)
+bar_chart(xvalues, yvalues, title='NB Scaling Variants: Z-SCORE SCALING', ylabel='accuracy', percentage=True)
 savefig(f'images/{file_tag}_nb_zscore_study.png')
 # show()
