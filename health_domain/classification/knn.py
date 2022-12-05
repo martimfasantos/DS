@@ -9,34 +9,37 @@ from sklearn.metrics import accuracy_score
 dir_path = '../data_preparation/data/missing_values/'
 
 # List to store files
-file_tags = []
-filenames = []
+file_names = []
+file_paths = []
 
 # Iterate directory
 for file in os.listdir(dir_path):
     # check if current path is a file
     if os.path.isfile(os.path.join(dir_path, file)):
-        file_tag = os.path.splitext(file)[0]
-        file_tags.append(file_tag)
-        filenames.append(f'data/train_and_test/{file_tag}')
+        file_name = os.path.splitext(file)[0]
+        file_names.append(file_name)
+        file_paths.append(f'data/train_and_test/{file_name}')
 
-# print(file_tags)
-# print(filenames)
+# print(file_names)
+# print(file_paths)
 
 target = 'readmitted'
-for i in range(len(file_tags)):
-    file_tag = file_tags[i]
 
-    train = read_csv(f'{filenames[i]}_train.csv')
+for i in range(len(file_names)):
+    file_name = file_names[i]
+    file_path = file_paths[i]
+
+    train = read_csv(f'{file_path}_train.csv')
     trnY = train.pop(target).values
     trnX = train.values
     labels = unique(trnY)
     labels.sort()
 
-    test: DataFrame = read_csv(f'{filenames[i]}_test.csv')
+    test: DataFrame = read_csv(f'{file_path}_test.csv')
     tstY = test.pop(target).values
     tstX = test.values
-    print('CHECKPOINT 1')
+
+
     # ----- #
     #  KNN  #
     # ----- #
@@ -51,7 +54,6 @@ for i in range(len(file_tags)):
     for d in dist:
         y_tst_values = []
         for n in nvalues:
-            print('K CHECKPOINT BEGIN: ' + str(n))
             knn = KNeighborsClassifier(n_neighbors=n, metric=d)
             knn.fit(trnX, trnY)
             prd_tst_Y = knn.predict(tstX)
@@ -59,31 +61,29 @@ for i in range(len(file_tags)):
             if y_tst_values[-1] > last_best:
                 best = (n, d)
                 last_best = y_tst_values[-1]
-            print('K CHECKPOINT END: ' + str(n))
-        print(y_tst_values)
+        # print(f'{file_name} - Accuracies using {d} distance: {y_tst_values}')
         values[d] = y_tst_values
-    print('CHECKPOINT 2')
 
     figure()
-    multiple_line_chart(nvalues, values, title=f'KNN variants: {file_tag}', xlabel='n', ylabel=str(accuracy_score), percentage=True)
-    savefig(f'images/knn/{file_tag}_knn_study.png')
-    #show()
+    multiple_line_chart(nvalues, values, title=f'KNN variants: {file_name}', xlabel='n', ylabel=str(accuracy_score), percentage=True)
+    savefig(f'images/knn/{file_name}_knn_study.png')
+    # show()
     # print('Best results with %d neighbors and %s'%(best[0], best[1]))
-    print('CHECKPOINT 3')
 
-    # -------------- #
-    # Best KNN model #
-    # -------------- #
+
+    # # -------------- #
+    # # Best KNN model #
+    # # -------------- #
 
     # clf = knn = KNeighborsClassifier(n_neighbors=best[0], metric=best[1])
     # clf.fit(trnX, trnY)
     # prd_trn = clf.predict(trnX)
     # prd_tst = clf.predict(tstX)
     # plot_evaluation_results(labels, trnY, prd_trn, tstY, prd_tst)
-    # savefig(f'images/knn/{file_tag}_knn_best.png')
+    # savefig(f'images/knn/{file_name}_knn_best.png')
     # # show()
 
-    # print('CHECKPOINT 4')
+
     # # ----------------- #
     # # Overfitting study #
     # # ----------------- #
@@ -106,4 +106,3 @@ for i in range(len(file_tags)):
     #     y_tst_values.append(eval_metric(tstY, prd_tst_Y))
     #     y_trn_values.append(eval_metric(trnY, prd_trn_Y))
     # plot_overfitting_study(nvalues, y_trn_values, y_tst_values, name=f'KNN_K={n}_{d}', xlabel='K', ylabel=str(eval_metric))
-    # print('CHECKPOINT 5')
