@@ -15,6 +15,9 @@ data = read_csv(file_path, na_values="na", sep=',', decimal='.', parse_dates=Tru
 # data['date'] = to_datetime(data['date'])
 
 variable_types = get_variable_types(data)
+print(variable_types)
+
+variable_types = get_variable_types(data)
 numeric_vars = variable_types['Numeric']
 symbolic_vars = variable_types['Symbolic']
 boolean_vars = variable_types['Binary']
@@ -95,7 +98,7 @@ figure()
 multiple_line_chart(nvalues, values, title='KNN variants', xlabel='n', ylabel=str(accuracy_score), percentage=True)
 savefig(f'images/{file_name}_knn_minmax_study.png')
 # show()
-# print('Best results with %d neighbors and %s'%(best[0], best[1]))
+#print('Best results with %d neighbors and %s '%(best[0], best[1]))
 
 
 # ------------------ #
@@ -131,7 +134,8 @@ figure()
 multiple_line_chart(nvalues, values, title='KNN variants', xlabel='n', ylabel=str(accuracy_score), percentage=True)
 savefig(f'images/{file_name}_knn_zscore_study.png')
 # show()
-# print('Best results with %d neighbors and %s'%(best[0], best[1]))
+##print('Best results with %d neighbors and %s '%(best[0], best[1]))
+
 
 
 # ---------------- #
