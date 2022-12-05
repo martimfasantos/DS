@@ -80,6 +80,7 @@ temp_norm_data_minmax.boxplot(ax=axs[0, 2], rot=45)
 savefig(f'images/{file_tag}_scale_comparison.png')
 # show()
 
+print('IMAGES DONE')
 
 # ------------------ #
 #     KNN Min Max    #
