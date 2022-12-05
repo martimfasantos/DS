@@ -85,7 +85,7 @@ level_vars = ('metformin', 'repaglinide', 'nateglinide', 'chlorpropamide', 'glim
               'glyburide-metformin', 'acetohexamide', 'tolbutamide', 'troglitazone',
               'glipizide-metformin', 'glimepiride-pioglitazone', 'metformin-rosiglitazone',
               'metformin-pioglitazone')
-level_vars_mappings = [["No", [0, -2]], ["Steady", [1, 0]], ["Up", [1, 1]], ["Down", [1, -1]]]
+level_vars_mappings = [["No", [0, 0]], ["Steady", [1, 0]], ["Up", [1, 1]], ["Down", [1, -1]]]
 
 X = [[0, 0] for _ in range(len(level_vars))]
 for i in range(len(level_vars)):
