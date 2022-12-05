@@ -12,8 +12,8 @@ register_matplotlib_converters()
 file_name = 'drought'
 file_path = 'data/variables_encoding/drought_variables_encoding.csv'
 data = read_csv(file_path, na_values="na", sep=',', decimal='.', parse_dates=True, infer_datetime_format=True)
-first_column = data.columns[0]
-data = data.drop([first_column], axis = 1)
+index_column = data.columns[0]
+data = data.drop([index_column], axis = 1)
 variable_types = get_variable_types(data)
 print(variable_types)
 
