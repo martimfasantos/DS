@@ -121,13 +121,13 @@ for i in (1,2):
     # Filling Missing Values #
     # ---------------------- #
 
-    # CONSTANT
-    df = fill_with_constant(data)
-    df.to_csv(f'data/missing_values/{file}_{i}_mv_constant.csv', index=True)
-    # df.describe(include='all')
+    # # CONSTANT
+    # df = fill_with_constant(data)
+    # df.to_csv(f'data/missing_values/{file}_{i}_mv_constant.csv', index=True)
+    # # df.describe(include='all')
 
 
-    # MEAN & MOST FREQUENT
-    df = fill_with_most_frequent(data)
-    df.to_csv(f'data/missing_values/{file}_{i}_mv_most_frequent.csv', index=True)
-    # df.describe(include='all')
+    # # MEAN & MOST FREQUENT
+    # df = fill_with_most_frequent(data)
+    # df.to_csv(f'data/missing_values/{file}_{i}_mv_most_frequent.csv', index=True)
+    # # df.describe(include='all')

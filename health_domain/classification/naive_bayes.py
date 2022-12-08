@@ -2,7 +2,7 @@ import os
 import numpy as np
 from pandas import read_csv, unique
 from matplotlib.pyplot import figure, show, savefig
-from ds_charts import plot_evaluation_results, bar_chart
+from ds_charts import plot_evaluation_results, bar_chart, plot_evaluation_results_ternary
 from sklearn.naive_bayes import GaussianNB, MultinomialNB, BernoulliNB, CategoricalNB
 from sklearn.metrics import accuracy_score
 
@@ -67,7 +67,8 @@ for i in range(len(file_names)):
 
     figure()
     bar_chart(xvalues, yvalues, title='Comparison of Naive Bayes Models', ylabel='accuracy', percentage=True)
-    savefig(f'images/naive_bayes/{file_name}_nb_study.png')
+    savefig(f'../data_preparation/images/missing_values/naive_bayes/{file_name}_nb_study.png')
+
     # show()
 
 
@@ -75,16 +76,16 @@ for i in range(len(file_names)):
     # # Best NB model #
     # # ------------- #
 
-    # max = np.max(yvalues)
-    # max_index = yvalues.index(max)
-    # best_model = estimators[xvalues[max_index]]
+    max = np.max(yvalues)
+    max_index = yvalues.index(max)
+    best_model = estimators[xvalues[max_index]]
 
-    # # print(best_model)
+    # print(best_model)
 
-    # clf = best_model
-    # clf.fit(trnX, trnY)
-    # prd_trn = clf.predict(trnX)
-    # prd_tst = clf.predict(tstX)
-    # plot_evaluation_results(labels, trnY, prd_trn, tstY, prd_tst)
-    # savefig(f'images/naive_bayes/{file_name}_nb_best.png')
-    # # show()
+    clf = best_model
+    clf.fit(trnX, trnY)
+    prd_trn = clf.predict(trnX)
+    prd_tst = clf.predict(tstX)
+    plot_evaluation_results_ternary(labels, trnY, prd_trn, tstY, prd_tst)
+    savefig(f'../data_preparation/images/missing_values/naive_bayes/{file_name}_nb_best.png')
+    # show()
