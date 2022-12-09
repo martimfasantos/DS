@@ -7,7 +7,8 @@ from sklearn.naive_bayes import GaussianNB, MultinomialNB, BernoulliNB, Categori
 from sklearn.metrics import accuracy_score
 
 # Folder path
-dir_path = '../data_preparation/data/missing_values/'
+#dir_path = '../data_preparation/data/missing_values/'
+dir_path = '../data_preparation/data/outliers/'
 
 # List to store files
 file_names = []
@@ -19,8 +20,8 @@ for file in os.listdir(dir_path):
     if os.path.isfile(os.path.join(dir_path, file)):
         file_name = os.path.splitext(file)[0]
         file_names.append(file_name)
-        file_paths.append(f'data/train_and_test/{file_name}')
-
+        #file_paths.append(f'data/train_and_test/{file_name}')
+        file_paths.append(f'data/train_and_test/outliers/{file_name}')
 # print(file_names)
 # print(file_paths)
 
@@ -67,7 +68,7 @@ for i in range(len(file_names)):
 
     figure()
     bar_chart(xvalues, yvalues, title='Comparison of Naive Bayes Models', ylabel='accuracy', percentage=True)
-    savefig(f'../data_preparation/images/missing_values/naive_bayes/{file_name}_nb_study.png')
+    savefig(f'../data_preparation/images/outliers/naive_bayes/{file_name}_nb_study.png')
 
     # show()
 
@@ -87,5 +88,5 @@ for i in range(len(file_names)):
     prd_trn = clf.predict(trnX)
     prd_tst = clf.predict(tstX)
     plot_evaluation_results_ternary(labels, trnY, prd_trn, tstY, prd_tst)
-    savefig(f'../data_preparation/images/missing_values/naive_bayes/{file_name}_nb_best.png')
+    savefig(f'../data_preparation/images/outliers/naive_bayes/{file_name}_nb_best.png')
     # show()
