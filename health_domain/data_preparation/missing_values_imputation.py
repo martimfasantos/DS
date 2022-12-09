@@ -1,17 +1,15 @@
 from pandas import read_csv, concat, DataFrame
 from pandas.plotting import register_matplotlib_converters
-from matplotlib.pyplot import figure, subplots, savefig, show, title
 from ds_charts import get_variable_types
 from sklearn.impute import SimpleImputer
 from numpy import nan
-import os
 
 
 register_matplotlib_converters()
-file = 'diabetic_data'
-filenames = ['data/variables_encoding/diabetic_data_variables_encoding_1.csv', 'data/variables_encoding/diabetic_data_variables_encoding_2.csv']
+file_tag = 'diabetic_data'
+file_path = 'data/variables_encoding/diabetic_data_variables_encoding.csv'
 
-# fill with CONSTANT value
+# AUX: Fill with CONSTANT value
 def fill_with_constant(data: DataFrame) -> DataFrame:
     tmp_nr, tmp_sb, tmp_bool = None, None, None
     variables = get_variable_types(data)
@@ -34,7 +32,7 @@ def fill_with_constant(data: DataFrame) -> DataFrame:
 
     return df
 
-# fill with MOST FREQUENT value
+# AUX: Fill with MOST FREQUENT value
 def fill_with_most_frequent(data: DataFrame) -> DataFrame:
     tmp_nr, tmp_sb, tmp_bool = None, None, None
     variables = get_variable_types(data)
@@ -59,75 +57,39 @@ def fill_with_most_frequent(data: DataFrame) -> DataFrame:
     return df
 
 
-# Strategies for the different variables encoding techniques
-for i in (1,2):
-    data = read_csv(filenames[i-1], na_values='?', parse_dates=True, infer_datetime_format=True)
+data = read_csv(file_path, na_values='?', parse_dates=True, infer_datetime_format=True)
 
-    # --------------- #
-    # Missing Values  #
-    # --------------- #
+# --------------- #
+# Missing Values  #
+# --------------- #
 
-    mv = {}
-    figure()
-    for var in data:
-        nr = data[var].isna().sum()
-        if nr > 0:
-            mv[var] = nr
+mv = {}
+for var in data:
+    nr = data[var].isna().sum()
+    if nr > 0:
+        mv[var] = nr
 
 
-    # ----------------------- #
-    # Dropping Missing Values #
-    # ----------------------- #
+# ----------------------------------------------------------- #
+# APPROACH 1: DROP Missing Values & Fill with CONSTANT Value  #
+# ----------------------------------------------------------- #
 
-    # defines the number of records to discard entire COLUMNS
-    threshold = data.shape[0] * 0.90
+# defines the number of records to discard entire COLUMNS
+threshold = data.shape[0] * 0.90
 
-    # drop columns with more missing values than the defined threshold
-    missings = [c for c in mv.keys() if mv[c]>threshold]
-    df = data.drop(columns=missings, inplace=False)
+# drop columns with more missing values than the defined threshold
+missings = [c for c in mv.keys() if mv[c]>threshold]
+df = data.drop(columns=missings, inplace=False)
 
-    # Fill the rest with constant
-    df_const = fill_with_constant(df)
-    df_const.to_csv(f'data/missing_values/{file}_{i}_drop_columns_then_constant_mv.csv', index=True)
-
-    # Fill the rest with most frequent value
-    df_most_freq = fill_with_most_frequent(df)
-    df_most_freq.to_csv(f'data/missing_values/{file}_{i}_drop_columns_then_most_frequent_mv.csv', index=True)
-
-    # print(' - Dropping Missing Values - ')
-    # print('Dropped variables:', missings)
-    # print(f'Original: {data.shape}') 
-    # print(f'After: {df.shape}')
-    # print('----------------')
-
-    # defines the number of variables to discard entire RECORDS
-    threshold = data.shape[1] * 0.50
-
-    # drop records with more missing values than the defined threshold
-    df = data.dropna(thresh=threshold, inplace=False)
-    # df.to_csv(f'data/missing_values/{file}_{i}_drop_records_mv.csv', index=True)
-
-    ''' NO CHANGES so we do not need to make the fill step since the following
-        techinques cover those cases '''
-
-    # print(' - Dropping Missing Values - ')
-    # print('Dropped records:', data.shape[0] - df.shape[0])
-    # print(f'Original: {data.shape}') 
-    # print(f'After: {df.shape}')
-    # print('----------------')
+# Fill the rest with constant
+df_const = fill_with_constant(df)
+df_const.to_csv(f'data/missing_values/{file_tag}_drop_columns_then_constant_mv.csv', index=True)
 
 
-    # ---------------------- #
-    # Filling Missing Values #
-    # ---------------------- #
+# ----------------------------------------------------------- #
+# APPROACH 2: DROP Missing Values & Fill with CONSTANT Value  #
+# ----------------------------------------------------------- #
 
-    # # CONSTANT
-    # df = fill_with_constant(data)
-    # df.to_csv(f'data/missing_values/{file}_{i}_mv_constant.csv', index=True)
-    # # df.describe(include='all')
-
-
-    # # MEAN & MOST FREQUENT
-    # df = fill_with_most_frequent(data)
-    # df.to_csv(f'data/missing_values/{file}_{i}_mv_most_frequent.csv', index=True)
-    # # df.describe(include='all')
+# Fill the rest with most frequent value
+df_most_freq = fill_with_most_frequent(df)
+df_most_freq.to_csv(f'data/missing_values/{file_tag}_drop_columns_then_most_frequent_mv.csv', index=True)

@@ -10,7 +10,7 @@ from sklearn.naive_bayes import GaussianNB, MultinomialNB, BernoulliNB, Categori
 
 
 register_matplotlib_converters()
-file_name = 'drought'
+file_tag = 'drought'
 file_path = 'data/outliers/drought_TODO.csv'
 data = read_csv(file_path, na_values="na", sep=',', decimal='.', parse_dates=True, infer_datetime_format=True)
 index_column = data.columns[0]
@@ -33,7 +33,7 @@ df_bool = data[boolean_vars]
 transf = StandardScaler(with_mean=True, with_std=True, copy=True).fit(df_nr)
 tmp = DataFrame(transf.transform(df_nr), index=data.index, columns= numeric_vars)
 norm_data_zscore = concat([tmp, df_sb,  df_bool], axis=1)
-norm_data_zscore.to_csv(f'data/scaling/{file_name}_scaled_zscore.csv', index=False)
+norm_data_zscore.to_csv(f'data/scaling/{file_tag}_scaled_zscore.csv', index=False)
 
 
 # --------------------- #
@@ -43,7 +43,7 @@ norm_data_zscore.to_csv(f'data/scaling/{file_name}_scaled_zscore.csv', index=Fal
 transf = MinMaxScaler(feature_range=(0, 1), copy=True).fit(df_nr)
 tmp = DataFrame(transf.transform(df_nr), index=data.index, columns= numeric_vars)
 norm_data_minmax = concat([tmp, df_sb,  df_bool], axis=1)
-norm_data_minmax.to_csv(f'data/scaling/{file_name}_scaled_minmax.csv', index=False)
+norm_data_minmax.to_csv(f'data/scaling/{file_tag}_scaled_minmax.csv', index=False)
 # print(norm_data_minmax.describe())
 
 
@@ -58,7 +58,7 @@ axs[0, 1].set_title('Z-score normalization')
 norm_data_zscore.boxplot(ax=axs[0, 1], rot=45)
 axs[0, 2].set_title('MinMax normalization')
 norm_data_minmax.boxplot(ax=axs[0, 2], rot=45)
-savefig(f'images/{file_name}_scale_comparison.png')
+savefig(f'images/{file_tag}_scale_comparison.png')
 # show()
 
 
@@ -68,7 +68,7 @@ savefig(f'images/{file_name}_scale_comparison.png')
 
 target = 'class'
 
-df = read_csv(f'data/scaling/{file_name}_scaled_minmax.csv')
+df = read_csv(f'data/scaling/{file_tag}_scaled_minmax.csv')
 
 X = df.drop(columns=['class'])
 y = df['class'].values
@@ -95,7 +95,7 @@ for d in dist:
 
 figure()
 multiple_line_chart(nvalues, values, title='KNN variants', xlabel='n', ylabel=str(accuracy_score), percentage=True)
-savefig(f'images/{file_name}_knn_minmax_study.png')
+savefig(f'images/{file_tag}_knn_minmax_study.png')
 # show()
 #print('Best results with %d neighbors and %s '%(best[0], best[1]))
 
@@ -104,7 +104,7 @@ savefig(f'images/{file_name}_knn_minmax_study.png')
 #     KNN ZScore     #
 # ------------------ #
 
-df = read_csv(f'data/scaling/{file_name}_scaled_zscore.csv')
+df = read_csv(f'data/scaling/{file_tag}_scaled_zscore.csv')
 
 X = df.drop(columns=['class'])
 y = df['class'].values
@@ -131,7 +131,7 @@ for d in dist:
 
 figure()
 multiple_line_chart(nvalues, values, title='KNN variants', xlabel='n', ylabel=str(accuracy_score), percentage=True)
-savefig(f'images/{file_name}_knn_zscore_study.png')
+savefig(f'images/{file_tag}_knn_zscore_study.png')
 # show()
 ##print('Best results with %d neighbors and %s '%(best[0], best[1]))
 
@@ -147,7 +147,7 @@ clf.fit(X_train, y_train)
 prd_trn = clf.predict(X_train)
 prd_tst = clf.predict(X_test)
 plot_evaluation_results(labels, y_train, prd_trn, y_test, prd_tst)
-savefig(f'images/{file_name}_knn_best.png')
+savefig(f'images/{file_tag}_knn_best.png')
 # show()
 
 
@@ -158,8 +158,8 @@ savefig(f'images/{file_name}_knn_best.png')
 def plot_overfitting_study(xvalues, prd_trn, prd_tst, name, xlabel, ylabel):
     evals = {'Train': prd_trn, 'Test': prd_tst}
     figure()
-    multiple_line_chart(xvalues, evals, ax = None, title=f'Overfitting {file_name}', xlabel=xlabel, ylabel=ylabel, percentage=True)
-    savefig(f'images/overfitting_{file_name}.png')
+    multiple_line_chart(xvalues, evals, ax = None, title=f'Overfitting {file_tag}', xlabel=xlabel, ylabel=ylabel, percentage=True)
+    savefig(f'images/overfitting_{file_tag}.png')
 
 d = 'euclidean'
 eval_metric = accuracy_score
@@ -179,7 +179,7 @@ plot_overfitting_study(nvalues, y_trn_values, y_tst_values, name=f'KNN_K={n}_{d}
 #     Naive Bayes with MinMax   #
 # ----------------------------- #
 
-df = read_csv(f'data/scaling/{file_name}_scaled_minmax.csv')
+df = read_csv(f'data/scaling/{file_tag}_scaled_minmax.csv')
 
 X = df.drop(columns=['class'])
 y = df['class'].values
@@ -193,7 +193,7 @@ clf.fit(X_train, y_train)
 prd_trn = clf.predict(X_train)
 prd_tst = clf.predict(X_test)
 plot_evaluation_results(labels, y_train, prd_trn, y_test, prd_tst)
-savefig(f'images/{file_name}_nb_best.png')
+savefig(f'images/{file_tag}_nb_best.png')
 # show()
 
 estimators = {'GaussianNB': GaussianNB(),
@@ -212,7 +212,7 @@ for clf in estimators:
 
 figure()
 bar_chart(xvalues, yvalues, title='Comparison of Naive Bayes Models', ylabel='accuracy', percentage=True)
-savefig(f'images/{file_name}_nb_minmax_study.png')
+savefig(f'images/{file_tag}_nb_minmax_study.png')
 # show()
 
 
@@ -220,7 +220,7 @@ savefig(f'images/{file_name}_nb_minmax_study.png')
 #     Naive Bayes with Zscore   #
 # ----------------------------- #
 
-df = read_csv(f'data/scaling/{file_name}_scaled_zscore.csv')
+df = read_csv(f'data/scaling/{file_tag}_scaled_zscore.csv')
 
 X = df.drop(columns=['class'])
 y = df['class'].values
@@ -234,7 +234,7 @@ clf.fit(X_train, y_train)
 prd_trn = clf.predict(X_train)
 prd_tst = clf.predict(X_test)
 plot_evaluation_results(labels, y_train, prd_trn, y_test, prd_tst)
-savefig(f'images/{file_name}_nb_best.png')
+savefig(f'images/{file_tag}_nb_best.png')
 # show()
 
 estimators = {'GaussianNB': GaussianNB(),
@@ -253,6 +253,6 @@ for clf in estimators:
 
 figure()
 bar_chart(xvalues, yvalues, title='Comparison of Naive Bayes Models', ylabel='accuracy', percentage=True)
-savefig(f'images/{file_name}_nb_zscore_study.png')
+savefig(f'images/{file_tag}_nb_zscore_study.png')
 # show()
 

@@ -31,19 +31,19 @@
 
 from pandas import read_csv
 from pandas.plotting import register_matplotlib_converters
+from pandas import DataFrame
 
-file_name = 'diabetic_data_1_drop_columns_then_most_frequent_mv'
+# Best option
+file_name = 'diabetic_data_drop_columns_then_most_frequent_mv'
 file_tag = 'diabetic_data'
-file_path = 'data/missing_values/diabetic_data_1_drop_columns_then_most_frequent_mv.csv'
+file_path = 'data/missing_values/diabetic_data_drop_columns_then_most_frequent_mv.csv'
 data = read_csv(file_path, na_values='?')
 index_column = data.columns[0]
 data = data.drop([index_column], axis=1)
 
-from pandas import DataFrame
-from ds_charts import get_variable_types
 
-def determine_outlier_thresholds(summary5: DataFrame, var:str,outlier_param: int):
-    std = outlier_param * summary5[var]['std']
+def determine_outlier_thresholds(summary5: DataFrame, var:str, OUTLIER_PARAM: int):
+    std = OUTLIER_PARAM * summary5[var]['std']
     top_threshold = summary5[var]['mean'] + std
     bottom_threshold = summary5[var]['mean'] - std
     return top_threshold, bottom_threshold
@@ -56,6 +56,7 @@ numeric_vars = ['time_in_hospital', 'num_lab_procedures',
 
 df = data.copy(deep=True)
 summary5 = data.describe(include='number')
+
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # APPROACH 1: dropping outliers beyond 3 stdev          #
@@ -72,6 +73,7 @@ for var in numeric_vars:
 df.to_csv(f'data/outliers/{file_tag}_drop_outliers.csv', index=True)
 
 print('Data after dropping outliers:', df.shape)
+
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # APPROACH 2: truncating outliers beyond 3 stdev          #
