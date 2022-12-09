@@ -3,6 +3,8 @@ file:       ds_charts.py
 version:    2022.2
 '''
 
+from sklearn.metrics import accuracy_score
+from sklearn.metrics import confusion_matrix
 from itertools import product
 from warnings import simplefilter
 from datetime import datetime
@@ -132,6 +134,11 @@ def plot_evaluation_results(labels: ndarray, trn_y, prd_trn, tst_y, prd_tst):
     multiple_bar_chart(['Train', 'Test'], evaluation, ax=axs[0], title="Model's performance over Train and Test sets", percentage=True)
     plot_confusion_matrix(cnf_mtx_tst, labels, ax=axs[1], title='Test')
 
+def plot_evaluation_results_ternary(labels: ndarray, trn_y, prd_trn, tst_y, prd_tst):
+    evaluation = { 'Accuracy': accuracy_score(tst_y, prd_tst) }
+    _, axs = subplots(1, 2, figsize=(2 * HEIGHT, HEIGHT))
+    multiple_bar_chart(['Train', 'Test'], evaluation, ax=axs[0], title="Model's performance over Train and Test sets", percentage=True)
+    plot_confusion_matrix(confusion_matrix(tst_y, prd_tst), labels, ax=axs[1], title='Test')
 
 def horizontal_bar_chart(elements: list, values: list, error: list, ax: Axes = None, title: str = '', xlabel: str = '', ylabel: str = ''):
     ax = set_elements(ax=ax, title=title, xlabel=xlabel, ylabel=ylabel)

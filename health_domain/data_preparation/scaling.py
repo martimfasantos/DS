@@ -1,6 +1,6 @@
 from pandas import DataFrame, read_csv, to_datetime, concat, unique
 from pandas.plotting import register_matplotlib_converters
-from ds_charts import get_variable_types, bar_chart, plot_evaluation_results, multiple_line_chart, plot_overfitting_study
+from ds_charts import get_variable_types, bar_chart, plot_evaluation_results, multiple_line_chart, plot_overfitting_study, plot_evaluation_results_ternary
 from matplotlib.pyplot import figure, savefig, show, subplots
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from sklearn.neighbors import KNeighborsClassifier
@@ -93,7 +93,7 @@ axs[0, 1].set_title('Z-score normalization')
 temp_norm_data_zscore.boxplot(ax=axs[0, 1], rot=90)
 axs[0, 2].set_title('MinMax normalization')
 temp_norm_data_minmax.boxplot(ax=axs[0, 2], rot=90)
-savefig(f'images/{file_tag}_scale_comparison.png')
+savefig(f'images/scaling/{file_tag}_scale_comparison.png')
 # show()
 
 
@@ -130,7 +130,7 @@ for d in dist:
 
 figure()
 multiple_line_chart(nvalues, values, title='KNN Scaling Variants: NO SCALING', xlabel='n', ylabel=str(accuracy_score), percentage=True)
-savefig(f'images/{file_tag}_knn_no_scaling_study.png')
+savefig(f'images/scaling/{file_tag}_knn_no_scaling_study.png')
 
 
 # ------------------ #
@@ -165,7 +165,7 @@ for d in dist:
 
 figure()
 multiple_line_chart(nvalues, values, title='KNN Scaling Variants: MIN-MAX SCALING', xlabel='n', ylabel=str(accuracy_score), percentage=True)
-savefig(f'images/{file_tag}_knn_minmax_study.png')
+savefig(f'images/scaling/{file_tag}_knn_minmax_study.png')
 # show()
 # print('Best results with %d neighbors and %s'%(best[0], best[1]))
 
@@ -201,7 +201,7 @@ for d in dist:
 
 figure()
 multiple_line_chart(nvalues, values, title='KNN Scaling Variants: Z-SCORE SCALING', xlabel='n', ylabel=str(accuracy_score), percentage=True)
-savefig(f'images/{file_tag}_knn_zscore_study.png')
+savefig(f'images/scaling/{file_tag}_knn_zscore_study.png')
 # show()
 # print('Best results with %d neighbors and %s'%(best[0], best[1]))
 
@@ -210,14 +210,14 @@ savefig(f'images/{file_tag}_knn_zscore_study.png')
 # #     Best KNN     #
 # # ---------------- #
 
-# labels = unique(y_train)
-# clf = knn = KNeighborsClassifier(n_neighbors=best[0], metric=best[1])
-# clf.fit(X_train, y_train)
-# prd_trn = clf.predict(X_train)
-# prd_tst = clf.predict(X_test)
-# plot_evaluation_results(labels, y_train, prd_trn, y_test, prd_tst)
-# savefig('images/{file_tag}_knn_best.png')
-# # show()
+labels = unique(y_train)
+clf = knn = KNeighborsClassifier(n_neighbors=best[0], metric=best[1])
+clf.fit(X_train, y_train)
+prd_trn = clf.predict(X_train)
+prd_tst = clf.predict(X_test)
+plot_evaluation_results_ternary(labels, y_train, prd_trn, y_test, prd_tst)
+savefig(f'images/scaling/{file_tag}_knn_best.png')
+# show()
 
 # ----------------------- #
 #     Overfitting KNN     #
@@ -227,7 +227,7 @@ def plot_overfitting_study(xvalues, prd_trn, prd_tst, name, xlabel, ylabel):
     evals = {'Train': prd_trn, 'Test': prd_tst}
     figure()
     multiple_line_chart(xvalues, evals, ax = None, title=f'Overfitting {file_name}', xlabel=xlabel, ylabel=ylabel, percentage=True)
-    savefig(f'images/overfitting_{file_name}.png')
+    savefig(f'images/scaling/overfitting_{file_name}.png')
 
 d = 'euclidean'
 eval_metric = accuracy_score
@@ -269,7 +269,7 @@ for clf in estimators:
 
 figure()
 bar_chart(xvalues, yvalues, title='NB Scaling Variants: NO SCALING', ylabel='accuracy', percentage=True)
-savefig(f'images/{file_tag}_nb_no_scaling_study.png')
+savefig(f'images/scaling/{file_tag}_nb_no_scaling_study.png')
 
 
 # ----------------------------- #
@@ -284,15 +284,15 @@ y = df['readmitted'].values
 X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7, stratify=y, random_state=8)
 
 # NOT BINARY CLASSIFICATION
-# labels = unique(y_train)
+labels = unique(y_train)
 
-# clf = GaussianNB()
-# clf.fit(X_train, y_train)
-# prd_trn = clf.predict(X_train)
-# prd_tst = clf.predict(X_test)
-# plot_evaluation_results(labels, y_train, prd_trn, y_test, prd_tst)
-# savefig(f'images/{file_tag}_nb_best.png')
-# # show()
+clf = GaussianNB()
+clf.fit(X_train, y_train)
+prd_trn = clf.predict(X_train)
+prd_tst = clf.predict(X_test)
+plot_evaluation_results_ternary(labels, y_train, prd_trn, y_test, prd_tst)
+savefig(f'images/scaling/{file_tag}_nb_best.png')
+# show()
 
 estimators = {'GaussianNB': GaussianNB(),
               #'MultinomialNB': MultinomialNB(),
@@ -310,7 +310,7 @@ for clf in estimators:
 
 figure()
 bar_chart(xvalues, yvalues, title='NB Scaling Variants: MIN-MAX SCALING', ylabel='accuracy', percentage=True)
-savefig(f'images/{file_tag}_nb_minmax_study.png')
+savefig(f'images/scaling/{file_tag}_nb_minmax_study.png')
 # show()
 
 
@@ -326,15 +326,15 @@ y = df['readmitted'].values
 X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7, stratify=y, random_state=8)
 
 # NOT BINARY CLASSIFICATION
-# labels = unique(y_train)
+labels = unique(y_train)
 
-# clf = GaussianNB()
-# clf.fit(X_train, y_train)
-# prd_trn = clf.predict(X_train)
-# prd_tst = clf.predict(X_test)
-# plot_evaluation_results(labels, y_train, prd_trn, y_test, prd_tst)
-# savefig(f'images/{file_tag}_nb_best.png')
-# # show()
+clf = GaussianNB()
+clf.fit(X_train, y_train)
+prd_trn = clf.predict(X_train)
+prd_tst = clf.predict(X_test)
+plot_evaluation_results_ternary(labels, y_train, prd_trn, y_test, prd_tst)
+savefig(f'images/scaling/{file_tag}_nb_best.png')
+# show()
 
 estimators = {'GaussianNB': GaussianNB(),
               #'MultinomialNB': MultinomialNB(),
@@ -352,5 +352,5 @@ for clf in estimators:
 
 figure()
 bar_chart(xvalues, yvalues, title='NB Scaling Variants: Z-SCORE SCALING', ylabel='accuracy', percentage=True)
-savefig(f'images/{file_tag}_nb_zscore_study.png')
+savefig(f'images/scaling/{file_tag}_nb_zscore_study.png')
 # show()
