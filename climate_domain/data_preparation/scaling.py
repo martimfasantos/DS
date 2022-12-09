@@ -8,14 +8,13 @@ from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import GaussianNB, MultinomialNB, BernoulliNB, CategoricalNB
 
+
 register_matplotlib_converters()
 file_name = 'drought'
-file_path = 'data/variables_encoding/drought_variables_encoding.csv'
+file_path = 'data/outliers/drought_TODO.csv'
 data = read_csv(file_path, na_values="na", sep=',', decimal='.', parse_dates=True, infer_datetime_format=True)
 index_column = data.columns[0]
 data = data.drop([index_column], axis = 1)
-variable_types = get_variable_types(data)
-print(variable_types)
 
 variable_types = get_variable_types(data)
 numeric_vars = variable_types['Numeric']
@@ -74,7 +73,7 @@ df = read_csv(f'data/scaling/{file_name}_scaled_minmax.csv')
 X = df.drop(columns=['class'])
 y = df['class'].values
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, stratify=y, random_state=1)
+X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7, stratify=y, random_state=8)
 
 eval_metric = accuracy_score
 nvalues = [1, 3, 5, 7, 9, 11, 13, 15, 17, 19]
@@ -110,7 +109,7 @@ df = read_csv(f'data/scaling/{file_name}_scaled_zscore.csv')
 X = df.drop(columns=['class'])
 y = df['class'].values
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, stratify=y, random_state=1)
+X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7, stratify=y, random_state=8)
 
 eval_metric = accuracy_score
 nvalues = [1, 3, 5, 7, 9, 11, 13, 15, 17, 19]
@@ -185,7 +184,7 @@ df = read_csv(f'data/scaling/{file_name}_scaled_minmax.csv')
 X = df.drop(columns=['class'])
 y = df['class'].values
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, stratify=y, random_state=1)
+X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7, stratify=y, random_state=8)
 
 labels = unique(y_train)
 
@@ -226,7 +225,7 @@ df = read_csv(f'data/scaling/{file_name}_scaled_zscore.csv')
 X = df.drop(columns=['class'])
 y = df['class'].values
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, stratify=y, random_state=1)
+X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7, stratify=y, random_state=8)
 
 labels = unique(y_train)
 

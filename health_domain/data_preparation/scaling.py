@@ -107,7 +107,7 @@ df = read_csv(file_path)
 X = df.drop(columns=['readmitted'])
 y = df['readmitted'].values
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, stratify=y, random_state=8)
+X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7, stratify=y, random_state=8)
 
 eval_metric = accuracy_score
 nvalues = [1, 3, 5, 7, 9, 11, 13, 15, 17, 19]
@@ -142,7 +142,7 @@ df = read_csv(f'data/scaling/{file_name}_scaled_minmax.csv')
 X = df.drop(columns=['readmitted'])
 y = df['readmitted'].values
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, stratify=y, random_state=8)
+X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7, stratify=y, random_state=8)
 
 eval_metric = accuracy_score
 nvalues = [1, 3, 5, 7, 9, 11, 13, 15, 17, 19]
@@ -179,7 +179,7 @@ df = read_csv(f'data/scaling/{file_name}_scaled_zscore.csv')
 X = df.drop(columns=['readmitted'])
 y = df['readmitted'].values
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, stratify=y, random_state=8)
+X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7, stratify=y, random_state=8)
 
 eval_metric = accuracy_score
 nvalues = [1, 3, 5, 7, 9, 11, 13, 15, 17, 19]
@@ -251,7 +251,7 @@ df = read_csv(file_path)
 X = df.drop(columns=['readmitted'])
 y = df['readmitted'].values
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, stratify=y, random_state=8)
+X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7, stratify=y, random_state=8)
 
 estimators = {'GaussianNB': GaussianNB(),
               #'MultinomialNB': MultinomialNB(),
@@ -281,7 +281,7 @@ df = read_csv(f'data/scaling/{file_name}_scaled_minmax.csv')
 X = df.drop(columns=['readmitted'])
 y = df['readmitted'].values
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, stratify=y, random_state=8)
+X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7, stratify=y, random_state=8)
 
 # NOT BINARY CLASSIFICATION
 # labels = unique(y_train)
@@ -323,7 +323,7 @@ df = read_csv(f'data/scaling/{file_name}_scaled_zscore.csv')
 X = df.drop(columns=['readmitted'])
 y = df['readmitted'].values
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, stratify=y, random_state=8)
+X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7, stratify=y, random_state=8)
 
 # NOT BINARY CLASSIFICATION
 # labels = unique(y_train)
