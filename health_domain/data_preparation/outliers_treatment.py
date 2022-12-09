@@ -42,35 +42,34 @@ data = read_csv(file_path, na_values='?')
 index_column = data.columns[0]
 data = data.drop([index_column], axis=1)
 
-
-def determine_outlier_thresholds(summary5: DataFrame, var:str, OUTLIER_PARAM: int):
-    std = OUTLIER_PARAM * summary5[var]['std']
-    top_threshold = summary5[var]['mean'] + std
-    bottom_threshold = summary5[var]['mean'] - std
+def determine_outlier_thresholds(summary5: DataFrame, var:str, OUTLIER_PARAM: int, option:str):
+    if 'iqr' == option:
+        iqr = OUTLIER_PARAM * (summary5[var]['75%'] - summary5[var]['25%'])
+        top_threshold = summary5[var]['75%']  + iqr
+        bottom_threshold = summary5[var]['25%']  - iqr
+    else:
+        std = OUTLIER_PARAM * summary5[var]['std']
+        top_threshold = summary5[var]['mean'] + std
+        bottom_threshold = summary5[var]['mean'] - std
     return top_threshold, bottom_threshold
 
 # variables in which we'll need to treat outliers
-
-numeric_vars = ['time_in_hospital', 'num_lab_procedures', 
-                'num_procedures', 'num_medications', 
-                'number_outpatient','number_emergency',
-                'number_inpatient', 'number_diagnoses']
-
-# TODO dizer o que e normal e nao
+expon_vars = ['time_in_hospital', 'num_procedures', 'number_inpatient']
+norml_vars = ['num_lab_procedures', 'num_medications', 'number_outpatient', 'number_emergency', 'number_diagnoses']
 
 df = data.copy(deep=True)
 summary5 = data.describe(include='number')
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-# APPROACH 1: dropping outliers beyond 3 stdev            #
+# APPROACH 1: dropping outliers beyond 2.5 iqr            #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 print('Original data:', data.shape)
 
 summary5 = data.describe(include='number')
 df = data.copy(deep=True)
-for var in numeric_vars:
-    top_threshold, bottom_threshold = determine_outlier_thresholds(summary5, var, 3)
+for var in expon_vars + norml_vars:
+    top_threshold, bottom_threshold = determine_outlier_thresholds(summary5, var, 2.5, 'iqr')
     outliers = df[(df[var] > top_threshold) | (df[var] < bottom_threshold)]
     df.drop(outliers.index, axis=0, inplace=True)
 df.to_csv(f'data/outliers/{file_tag}_drop_outliers.csv', index=True)
@@ -78,15 +77,14 @@ df.to_csv(f'data/outliers/{file_tag}_drop_outliers.csv', index=True)
 print('Data after dropping outliers:', df.shape)
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-# APPROACH 2: truncating outliers beyond 3 stdev          #
+# APPROACH 2: truncating outliers beyond 2.5 iqr          #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 summary5 = data.describe(include='number')
 df = data.copy(deep=True)
-for var in numeric_vars:
-    top_threshold, bottom_threshold = determine_outlier_thresholds(summary5, var, 3)
+for var in expon_vars + norml_vars:
+    top_threshold, bottom_threshold = determine_outlier_thresholds(summary5, var, 2.5, 'iqr')
     df[var] = df[var].apply(lambda x: top_threshold if x > top_threshold else bottom_threshold if x < bottom_threshold else x)
-df.to_csv(f'data/outliers/{file_tag}_truncate_outliers.csv', index=True)
 
 print('Data after truncating outliers:', df.shape)
 
