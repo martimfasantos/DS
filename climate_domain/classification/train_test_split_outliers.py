@@ -61,10 +61,10 @@ for i in range(len(file_names)):
     for ind in data.index:
         data['date'][ind] = dates[ind]
     
-    train = data.loc[0:train_size-1]
+    train = data.loc[0:train_size-1].sample(frac=1)
     #print(train)
     
-    test = data.loc[train_size:]
+    test = data.loc[train_size:].sample(frac=1)
     #print(test)
     
     # Train CSV

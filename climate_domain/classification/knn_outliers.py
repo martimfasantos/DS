@@ -80,6 +80,7 @@ for i in range(len(file_names)):
     # show()
     # print('Best results with %d neighbors and %s'%(best[0], best[1]))
 
+
     # -------------- #
     # Best KNN model #
     # -------------- #
@@ -91,6 +92,7 @@ for i in range(len(file_names)):
     plot_evaluation_results(labels, trnY, prd_trn, tstY, prd_tst)
     savefig(f'../data_preparation/images/outliers/knn/{file_name}_knn_best.png')
     # show()
+
 
     # ----------------- #
     # Overfitting study #
