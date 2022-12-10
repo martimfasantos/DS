@@ -15,6 +15,7 @@ import matplotlib.font_manager as fm
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.tree import export_graphviz
 from sklearn.metrics import confusion_matrix, plot_roc_curve
+from sklearn.metrics import accuracy_score
 
 import config as cfg
 

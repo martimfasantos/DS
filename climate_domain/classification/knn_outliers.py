@@ -36,16 +36,16 @@ for i in range(len(file_names)):
     file_path = file_paths[i]
 
     train = read_csv(f'{file_path}_train.csv')
-    unnamed_column = train.columns[0]
-    train = train.drop([unnamed_column], axis=1)
+    # unnamed_column = train.columns[0]
+    # train = train.drop([unnamed_column], axis=1)
     trnY = train.pop(target).values
     trnX = train.values
     labels = unique(trnY)
     labels.sort()
 
     test = read_csv(f'{file_path}_test.csv')
-    unnamed_column = test.columns[0]
-    test = test.drop([unnamed_column], axis=1)
+    # unnamed_column = test.columns[0]
+    # test = test.drop([unnamed_column], axis=1)
     tstY = test.pop(target).values
     tstX = test.values
 

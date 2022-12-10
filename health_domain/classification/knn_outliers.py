@@ -23,7 +23,8 @@ for file in os.listdir(dir_path):
 
 target = 'readmitted'
 
-for i in range(len(file_names)):
+for i in range(1,len(file_names)):
+    print("BEGIN=" + file_names[i])
     file_name = file_names[i]
     file_path = file_paths[i]
 
@@ -63,7 +64,9 @@ for i in range(len(file_names)):
             if y_tst_values[-1] > last_best:
                 best = (n, d)
                 last_best = y_tst_values[-1]
+            print("VALUE=" + str(n))
         # print(f'{file_name} - Accuracies using {d} distance: {y_tst_values}')
+        print("DISTANCE=" + d)
         values[d] = y_tst_values
 
     figure()
@@ -83,7 +86,7 @@ for i in range(len(file_names)):
     plot_evaluation_results_ternary(labels, trnY, prd_trn, tstY, prd_tst)
     savefig(f'../data_preparation/images/outliers/knn/{file_name}_knn_best.png')
     # show()
-
+    print("BEST")
     # ----------------- #
     # Overfitting study #
     # ----------------- #
@@ -106,3 +109,6 @@ for i in range(len(file_names)):
         y_tst_values.append(eval_metric(tstY, prd_tst_Y))
         y_trn_values.append(eval_metric(trnY, prd_trn_Y))
     plot_overfitting_study(nvalues, y_trn_values, y_tst_values, name=f'KNN_K={n}_{d}', xlabel='K', ylabel=str(eval_metric))
+    print("OVERFITTING")
+    
+    print("END=" + file_names[i])
