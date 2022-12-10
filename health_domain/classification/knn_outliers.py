@@ -23,7 +23,7 @@ for file in os.listdir(dir_path):
 
 target = 'readmitted'
 
-for i in range(len(file_names)):
+for i in range(1,len(file_names)):
     print("BEGIN=" + file_names[i])
     file_name = file_names[i]
     file_path = file_paths[i]
