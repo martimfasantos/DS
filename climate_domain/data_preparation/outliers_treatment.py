@@ -10,7 +10,6 @@ index_column = data.columns[0]
 data = data.drop([index_column], axis = 1)
 # print(data.describe())
 
-
 # variables that have a Normal distribution
 norm_dist_variables = ['WS10M', 'WS10M_MAX', 'WS10M_MIN', 'WS10M_RANGE',
                        'WS50M', 'WS50M_MAX', 'WS50M_MIN', 'WS50M_RANGE' ]
@@ -36,11 +35,25 @@ if [] == numeric_vars:
     raise ValueError('There are no numeric variables.')
 
 # Remove non numeric variables (ordinal but not numeric)
-to_remove = ['SQ1', 'SQ2', 'SQ3', 'SQ4', 'SQ7']
+# to_remove = ['fips', 'date', 'Year', 'Month', 'slope1',
+#              'slope5', 'slope6', 'slope7', 'slope8', 'aspectN', 'aspectE', 'aspectS', 'aspectW', 
+#              'aspectUnknown', 'FOR_LAND', 'CULTRF_LAND', 'CULT_LAND', 'SQ1', 'SQ2', 'SQ3', 'SQ4', 'SQ7']
+# 'lat', 'lon', 'aspectN', 'aspectE', 'aspectS', 'aspectW',
+# 
+# to_remove = ['fips', 'date', 'Year', 'Month', 'QV2M', 'elevation',
+#              'aspectUnknown', 'SQ1', 'SQ2', 'SQ3', 'SQ4', 'SQ7'] 
 
-for el in to_remove:
-    if el in numeric_vars:
+# 0.54
+to_remove = ['fips', 'date', 'Year', 'Month', 'QV2M', 'elevation',
+             'aspectUnknown', 'FOR_LAND', 'CULTRF_LAND', 'CULT_LAND', 'SQ1', 'SQ2', 'SQ3', 'SQ4', 'SQ7']
+
+print(numeric_vars)
+for el in numeric_vars.copy():
+    var = el.split(' ')[0]
+    if var in to_remove:
         numeric_vars.remove(el)
+
+print(numeric_vars)
 
 print('Original data:', data.shape)
 summary5 = data.describe(include='number')
@@ -50,16 +63,16 @@ summary5 = data.describe(include='number')
 # APPROACH 1: Drop outliers #
 # ------------------------- #
 
-STDEV_PARAM = 3
-IQR_PARAM = 10
+# STDEV_PARAM = 2
+IQR_PARAM = 2
 
 df = data.copy(deep=True)
 
 for var in numeric_vars:
-    if var in norm_dist_variables:
-        top_threshold, bottom_threshold = determine_outlier_thresholds(summary5, var, 'stdev', STDEV_PARAM)
-    else:
-        top_threshold, bottom_threshold = determine_outlier_thresholds(summary5, var, 'iqr', IQR_PARAM)
+    # if var in norm_dist_variables:
+    #     top_threshold, bottom_threshold = determine_outlier_thresholds(summary5, var, 'stdev', STDEV_PARAM)
+    # else:
+    top_threshold, bottom_threshold = determine_outlier_thresholds(summary5, var, 'iqr', IQR_PARAM)
     outliers = df[(df[var] > top_threshold) | (df[var] < bottom_threshold)]
     df.drop(outliers.index, axis=0, inplace=True)
 df.to_csv(f'data/outliers/{file_tag}_drop_outliers.csv', index=True)
@@ -70,12 +83,17 @@ print('data after dropping outliers:', df.shape)
 # APPROACH 2: Truncate outliers #
 # ----------------------------- #
 
-IQR_PARAM = 8
+# 0.54 - 2
+IQR_PARAM = 2
+# STDEV_PARAM = 2
 
 df = data.copy(deep=True)
 
 for var in numeric_vars:
-    top_threshold, bottom_threshold = determine_outlier_thresholds(summary5, var, 'iqr', 8)
+    # if var in norm_dist_variables:
+    #     top_threshold, bottom_threshold = determine_outlier_thresholds(summary5, var, 'stdev', STDEV_PARAM)
+    # else:
+    top_threshold, bottom_threshold = determine_outlier_thresholds(summary5, var, 'iqr', IQR_PARAM)
     df[var] = df[var].apply(lambda x: top_threshold if x > top_threshold else bottom_threshold if x < bottom_threshold else x)
 
 df.to_csv(f'data/outliers/{file_tag}_truncate_outliers.csv', index=True)
