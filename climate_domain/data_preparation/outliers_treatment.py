@@ -10,11 +10,6 @@ index_column = data.columns[0]
 data = data.drop([index_column], axis = 1)
 # print(data.describe())
 
-# variables that have a Normal distribution
-norm_dist_variables = ['WS10M', 'WS10M_MAX', 'WS10M_MIN', 'WS10M_RANGE',
-                       'WS50M', 'WS50M_MAX', 'WS50M_MIN', 'WS50M_RANGE' ]
-
-
 def determine_outlier_thresholds(summary5: DataFrame, var: str, OPTION: str, OUTLIER_PARAM: int):
     # default parameter
     if OPTION == 'iqr':

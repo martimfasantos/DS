@@ -11,7 +11,7 @@ from sklearn.naive_bayes import GaussianNB, MultinomialNB, BernoulliNB, Categori
 
 register_matplotlib_converters()
 file_tag = 'drought'
-file_path = 'data/outliers/drought_TODO.csv'
+file_path = f'data/outliers/{file_tag}_truncate_outliers.csv'
 data = read_csv(file_path, na_values="na", sep=',', decimal='.', parse_dates=True, infer_datetime_format=True)
 index_column = data.columns[0]
 data = data.drop([index_column], axis = 1)
@@ -58,201 +58,201 @@ axs[0, 1].set_title('Z-score normalization')
 norm_data_zscore.boxplot(ax=axs[0, 1], rot=45)
 axs[0, 2].set_title('MinMax normalization')
 norm_data_minmax.boxplot(ax=axs[0, 2], rot=45)
-savefig(f'images/{file_tag}_scale_comparison.png')
+savefig(f'images/scaling/{file_tag}_scale_comparison.png')
 # show()
 
 
-# ------------------ #
-#     KNN Min Max    #
-# ------------------ #
+# # ------------------ #
+# #     KNN Min Max    #
+# # ------------------ #
 
-target = 'class'
+# target = 'class'
 
-df = read_csv(f'data/scaling/{file_tag}_scaled_minmax.csv')
+# df = read_csv(f'data/scaling/{file_tag}_scaled_minmax.csv')
 
-X = df.drop(columns=['class'])
-y = df['class'].values
+# X = df.drop(columns=['class'])
+# y = df['class'].values
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7, stratify=y, random_state=8)
+# X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7, stratify=y, random_state=8)
 
-eval_metric = accuracy_score
-nvalues = [1, 3, 5, 7, 9, 11, 13, 15, 17, 19]
-dist = ['manhattan', 'euclidean', 'chebyshev']
-values = {}
-best = (0, '')
-last_best = 0
-for d in dist:
-    y_tst_values = []
-    for n in nvalues:
-        knn = KNeighborsClassifier(n_neighbors=n, metric=d)
-        knn.fit(X_train, y_train)
-        prd_tst_Y = knn.predict(X_test)
-        y_tst_values.append(eval_metric(y_test, prd_tst_Y))
-        if y_tst_values[-1] > last_best:
-            best = (n, d)
-            last_best = y_tst_values[-1]
-    values[d] = y_tst_values
+# eval_metric = accuracy_score
+# nvalues = [1, 3, 5, 7, 9, 11, 13, 15, 17, 19]
+# dist = ['manhattan', 'euclidean', 'chebyshev']
+# values = {}
+# best = (0, '')
+# last_best = 0
+# for d in dist:
+#     y_tst_values = []
+#     for n in nvalues:
+#         knn = KNeighborsClassifier(n_neighbors=n, metric=d)
+#         knn.fit(X_train, y_train)
+#         prd_tst_Y = knn.predict(X_test)
+#         y_tst_values.append(eval_metric(y_test, prd_tst_Y))
+#         if y_tst_values[-1] > last_best:
+#             best = (n, d)
+#             last_best = y_tst_values[-1]
+#     values[d] = y_tst_values
 
-figure()
-multiple_line_chart(nvalues, values, title='KNN variants', xlabel='n', ylabel=str(accuracy_score), percentage=True)
-savefig(f'images/{file_tag}_knn_minmax_study.png')
-# show()
-#print('Best results with %d neighbors and %s '%(best[0], best[1]))
-
-
-# ------------------ #
-#     KNN ZScore     #
-# ------------------ #
-
-df = read_csv(f'data/scaling/{file_tag}_scaled_zscore.csv')
-
-X = df.drop(columns=['class'])
-y = df['class'].values
-
-X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7, stratify=y, random_state=8)
-
-eval_metric = accuracy_score
-nvalues = [1, 3, 5, 7, 9, 11, 13, 15, 17, 19]
-dist = ['manhattan', 'euclidean', 'chebyshev']
-values = {}
-best = (0, '')
-last_best = 0
-for d in dist:
-    y_tst_values = []
-    for n in nvalues:
-        knn = KNeighborsClassifier(n_neighbors=n, metric=d)
-        knn.fit(X_train, y_train)
-        prd_tst_Y = knn.predict(X_test)
-        y_tst_values.append(eval_metric(y_test, prd_tst_Y))
-        if y_tst_values[-1] > last_best:
-            best = (n, d)
-            last_best = y_tst_values[-1]
-    values[d] = y_tst_values
-
-figure()
-multiple_line_chart(nvalues, values, title='KNN variants', xlabel='n', ylabel=str(accuracy_score), percentage=True)
-savefig(f'images/{file_tag}_knn_zscore_study.png')
-# show()
-##print('Best results with %d neighbors and %s '%(best[0], best[1]))
+# figure()
+# multiple_line_chart(nvalues, values, title='KNN variants', xlabel='n', ylabel=str(accuracy_score), percentage=True)
+# savefig(f'images/{file_tag}_knn_minmax_study.png')
+# # show()
+# #print('Best results with %d neighbors and %s '%(best[0], best[1]))
 
 
+# # ------------------ #
+# #     KNN ZScore     #
+# # ------------------ #
 
-# ---------------- #
-#     Best KNN     #
-# ---------------- #
+# df = read_csv(f'data/scaling/{file_tag}_scaled_zscore.csv')
 
-labels = unique(y_train)
-clf = knn = KNeighborsClassifier(n_neighbors=best[0], metric=best[1])
-clf.fit(X_train, y_train)
-prd_trn = clf.predict(X_train)
-prd_tst = clf.predict(X_test)
-plot_evaluation_results(labels, y_train, prd_trn, y_test, prd_tst)
-savefig(f'images/{file_tag}_knn_best.png')
-# show()
+# X = df.drop(columns=['class'])
+# y = df['class'].values
 
+# X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7, stratify=y, random_state=8)
 
-# ----------------------- #
-#     Overfitting KNN     #
-# ----------------------- #
+# eval_metric = accuracy_score
+# nvalues = [1, 3, 5, 7, 9, 11, 13, 15, 17, 19]
+# dist = ['manhattan', 'euclidean', 'chebyshev']
+# values = {}
+# best = (0, '')
+# last_best = 0
+# for d in dist:
+#     y_tst_values = []
+#     for n in nvalues:
+#         knn = KNeighborsClassifier(n_neighbors=n, metric=d)
+#         knn.fit(X_train, y_train)
+#         prd_tst_Y = knn.predict(X_test)
+#         y_tst_values.append(eval_metric(y_test, prd_tst_Y))
+#         if y_tst_values[-1] > last_best:
+#             best = (n, d)
+#             last_best = y_tst_values[-1]
+#     values[d] = y_tst_values
 
-def plot_overfitting_study(xvalues, prd_trn, prd_tst, name, xlabel, ylabel):
-    evals = {'Train': prd_trn, 'Test': prd_tst}
-    figure()
-    multiple_line_chart(xvalues, evals, ax = None, title=f'Overfitting {file_tag}', xlabel=xlabel, ylabel=ylabel, percentage=True)
-    savefig(f'images/overfitting_{file_tag}.png')
-
-d = 'euclidean'
-eval_metric = accuracy_score
-y_tst_values = []
-y_trn_values = []
-for n in nvalues:
-    knn = KNeighborsClassifier(n_neighbors=n, metric=d)
-    knn.fit(X_train, y_train)
-    prd_tst_Y = knn.predict(X_test)
-    prd_trn_Y = knn.predict(X_train)
-    y_tst_values.append(eval_metric(y_test, prd_tst_Y))
-    y_trn_values.append(eval_metric(y_train, prd_trn_Y))
-plot_overfitting_study(nvalues, y_trn_values, y_tst_values, name=f'KNN_K={n}_{d}', xlabel='K', ylabel=str(eval_metric))
+# figure()
+# multiple_line_chart(nvalues, values, title='KNN variants', xlabel='n', ylabel=str(accuracy_score), percentage=True)
+# savefig(f'images/{file_tag}_knn_zscore_study.png')
+# # show()
+# ##print('Best results with %d neighbors and %s '%(best[0], best[1]))
 
 
-# ----------------------------- #
-#     Naive Bayes with MinMax   #
-# ----------------------------- #
 
-df = read_csv(f'data/scaling/{file_tag}_scaled_minmax.csv')
+# # ---------------- #
+# #     Best KNN     #
+# # ---------------- #
 
-X = df.drop(columns=['class'])
-y = df['class'].values
-
-X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7, stratify=y, random_state=8)
-
-labels = unique(y_train)
-
-clf = GaussianNB()
-clf.fit(X_train, y_train)
-prd_trn = clf.predict(X_train)
-prd_tst = clf.predict(X_test)
-plot_evaluation_results(labels, y_train, prd_trn, y_test, prd_tst)
-savefig(f'images/{file_tag}_nb_best.png')
-# show()
-
-estimators = {'GaussianNB': GaussianNB(),
-              'MultinomialNB': MultinomialNB(),
-              'BernoulliNB': BernoulliNB()
-              #'CategoricalNB': CategoricalNB
-              }
-
-xvalues = []
-yvalues = []
-for clf in estimators:
-    xvalues.append(clf)
-    estimators[clf].fit(X_train, y_train)
-    prdY = estimators[clf].predict(X_test)
-    yvalues.append(accuracy_score(y_test, prdY))
-
-figure()
-bar_chart(xvalues, yvalues, title='Comparison of Naive Bayes Models', ylabel='accuracy', percentage=True)
-savefig(f'images/{file_tag}_nb_minmax_study.png')
-# show()
+# labels = unique(y_train)
+# clf = knn = KNeighborsClassifier(n_neighbors=best[0], metric=best[1])
+# clf.fit(X_train, y_train)
+# prd_trn = clf.predict(X_train)
+# prd_tst = clf.predict(X_test)
+# plot_evaluation_results(labels, y_train, prd_trn, y_test, prd_tst)
+# savefig(f'images/{file_tag}_knn_best.png')
+# # show()
 
 
-# ----------------------------- #
-#     Naive Bayes with Zscore   #
-# ----------------------------- #
+# # ----------------------- #
+# #     Overfitting KNN     #
+# # ----------------------- #
 
-df = read_csv(f'data/scaling/{file_tag}_scaled_zscore.csv')
+# def plot_overfitting_study(xvalues, prd_trn, prd_tst, name, xlabel, ylabel):
+#     evals = {'Train': prd_trn, 'Test': prd_tst}
+#     figure()
+#     multiple_line_chart(xvalues, evals, ax = None, title=f'Overfitting {file_tag}', xlabel=xlabel, ylabel=ylabel, percentage=True)
+#     savefig(f'images/overfitting_{file_tag}.png')
 
-X = df.drop(columns=['class'])
-y = df['class'].values
+# d = 'euclidean'
+# eval_metric = accuracy_score
+# y_tst_values = []
+# y_trn_values = []
+# for n in nvalues:
+#     knn = KNeighborsClassifier(n_neighbors=n, metric=d)
+#     knn.fit(X_train, y_train)
+#     prd_tst_Y = knn.predict(X_test)
+#     prd_trn_Y = knn.predict(X_train)
+#     y_tst_values.append(eval_metric(y_test, prd_tst_Y))
+#     y_trn_values.append(eval_metric(y_train, prd_trn_Y))
+# plot_overfitting_study(nvalues, y_trn_values, y_tst_values, name=f'KNN_K={n}_{d}', xlabel='K', ylabel=str(eval_metric))
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7, stratify=y, random_state=8)
 
-labels = unique(y_train)
+# # ----------------------------- #
+# #     Naive Bayes with MinMax   #
+# # ----------------------------- #
 
-clf = GaussianNB()
-clf.fit(X_train, y_train)
-prd_trn = clf.predict(X_train)
-prd_tst = clf.predict(X_test)
-plot_evaluation_results(labels, y_train, prd_trn, y_test, prd_tst)
-savefig(f'images/{file_tag}_nb_best.png')
-# show()
+# df = read_csv(f'data/scaling/{file_tag}_scaled_minmax.csv')
 
-estimators = {'GaussianNB': GaussianNB(),
-              #'MultinomialNB': MultinomialNB(),
-              'BernoulliNB': BernoulliNB()
-              #'CategoricalNB': CategoricalNB
-              }
+# X = df.drop(columns=['class'])
+# y = df['class'].values
 
-xvalues = []
-yvalues = []
-for clf in estimators:
-    xvalues.append(clf)
-    estimators[clf].fit(X_train, y_train)
-    prdY = estimators[clf].predict(X_test)
-    yvalues.append(accuracy_score(y_test, prdY))
+# X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7, stratify=y, random_state=8)
 
-figure()
-bar_chart(xvalues, yvalues, title='Comparison of Naive Bayes Models', ylabel='accuracy', percentage=True)
-savefig(f'images/{file_tag}_nb_zscore_study.png')
-# show()
+# labels = unique(y_train)
+
+# clf = GaussianNB()
+# clf.fit(X_train, y_train)
+# prd_trn = clf.predict(X_train)
+# prd_tst = clf.predict(X_test)
+# plot_evaluation_results(labels, y_train, prd_trn, y_test, prd_tst)
+# savefig(f'images/{file_tag}_nb_best.png')
+# # show()
+
+# estimators = {'GaussianNB': GaussianNB(),
+#               'MultinomialNB': MultinomialNB(),
+#               'BernoulliNB': BernoulliNB()
+#               #'CategoricalNB': CategoricalNB
+#               }
+
+# xvalues = []
+# yvalues = []
+# for clf in estimators:
+#     xvalues.append(clf)
+#     estimators[clf].fit(X_train, y_train)
+#     prdY = estimators[clf].predict(X_test)
+#     yvalues.append(accuracy_score(y_test, prdY))
+
+# figure()
+# bar_chart(xvalues, yvalues, title='Comparison of Naive Bayes Models', ylabel='accuracy', percentage=True)
+# savefig(f'images/{file_tag}_nb_minmax_study.png')
+# # show()
+
+
+# # ----------------------------- #
+# #     Naive Bayes with Zscore   #
+# # ----------------------------- #
+
+# df = read_csv(f'data/scaling/{file_tag}_scaled_zscore.csv')
+
+# X = df.drop(columns=['class'])
+# y = df['class'].values
+
+# X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7, stratify=y, random_state=8)
+
+# labels = unique(y_train)
+
+# clf = GaussianNB()
+# clf.fit(X_train, y_train)
+# prd_trn = clf.predict(X_train)
+# prd_tst = clf.predict(X_test)
+# plot_evaluation_results(labels, y_train, prd_trn, y_test, prd_tst)
+# savefig(f'images/{file_tag}_nb_best.png')
+# # show()
+
+# estimators = {'GaussianNB': GaussianNB(),
+#               #'MultinomialNB': MultinomialNB(),
+#               'BernoulliNB': BernoulliNB()
+#               #'CategoricalNB': CategoricalNB
+#               }
+
+# xvalues = []
+# yvalues = []
+# for clf in estimators:
+#     xvalues.append(clf)
+#     estimators[clf].fit(X_train, y_train)
+#     prdY = estimators[clf].predict(X_test)
+#     yvalues.append(accuracy_score(y_test, prdY))
+
+# figure()
+# bar_chart(xvalues, yvalues, title='Comparison of Naive Bayes Models', ylabel='accuracy', percentage=True)
+# savefig(f'images/{file_tag}_nb_zscore_study.png')
+# # show()
 
