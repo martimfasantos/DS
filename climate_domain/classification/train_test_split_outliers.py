@@ -47,25 +47,28 @@ for i in range(len(file_names)):
     values = {'Original': [len(data[data[target] == ZERO]), len(data[data[target] == ONE])]}
     
     train_size = int(0.7 * data.shape[0])
-    
-    dates = data['date'].copy(deep=True)
+
+    date_column = ''
+    for column in data:
+        if column.split(' ')[0] == 'date':
+            date_column = column
+            break
+        
+    dates = data[date_column].copy(deep=True)
     for ind in data.index:
-        data['date'][ind] = format_date(str(data['date'][ind]))
+        data[date_column][ind] = format_date(str(data[date_column][ind]))
     
     # convert to date
-    data['date'] = pd.to_datetime(data['date'], format='%Y-%m-%d')
+    data[date_column] = pd.to_datetime(data[date_column], format='%Y-%m-%d')
     
     # sort    
-    data.sort_values(by='date', inplace=True)
+    data.sort_values(by=date_column, inplace=True)
     
     for ind in data.index:
-        data['date'][ind] = dates[ind]
+        data[date_column][ind] = dates[ind]
     
-    train = data.loc[0:train_size-1].sample(frac=1)
-    #print(train)
-    
+    train = data.loc[0:train_size-1].sample(frac=1)    
     test = data.loc[train_size:].sample(frac=1)
-    #print(test)
     
     # Train CSV
     train.to_csv(f'data/train_and_test/outliers/{file_name}_train.csv', index=False)
@@ -73,10 +76,10 @@ for i in range(len(file_names)):
     # Test CSV
     test.to_csv(f'data/train_and_test/outliers/{file_name}_test.csv', index=False)
     
-    values['Train'] = [ train[(train['class'] != ZERO)].shape[0], train[(train['class'] != ONE)].shape[0] ]
-    values['Test'] = [ test[(test['class'] != ZERO)].shape[0], test[(test['class'] != ONE)].shape[0] ]
+    values['Train'] = [ train[(train[target] == ZERO)].shape[0], train[(train[target] == ONE)].shape[0] ]
+    values['Test'] = [ test[(test[target] == ZERO)].shape[0], test[(test[target] == ONE)].shape[0] ]
 
     figure(figsize=(12,4))
     multiple_bar_chart([ZERO, ONE], values, title='Data distribution per dataset')
     savefig(f'../data_preparation/images/outliers/distributions_train_test/{file_name}_distribution_train_test.png')
-    # # show()
+    # show()
