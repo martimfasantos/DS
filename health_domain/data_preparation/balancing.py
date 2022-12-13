@@ -22,11 +22,18 @@ test = read_csv(f'{file_path}_test.csv')
 test.to_csv(f'../classification/data/train_and_test/balancing/{file_tag}_test.csv', index=False)
 
 
+# ------------ #
+# NO Balancing #
+# ------------ #
+
+train = read_csv(f'{file_path}_train.csv')
+train.to_csv(f'data/balancing/{file_tag}_without_balancing_train.csv', index=False)
+train.to_csv(f'../classification/data/train_and_test/balancing/{file_tag}_without_balancing_train.csv', index=False)
+
+
 # ---------------------- #
 # Balancing Training Set #
 # ---------------------- #
-
-train = read_csv(f'{file_path}_train.csv')
 
 y = train['readmitted'].values
 y_train = pd.Index(y)
