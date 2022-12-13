@@ -10,11 +10,11 @@ from sklearn.metrics import accuracy_score
 
 # Parse terminal input
 FLAG = ''
-valid_flags = ('missing_values', 'outliers', 'scaling')
+valid_flags = ('missing_values', 'outliers', 'scaling', 'balancing')
 if len(sys.argv) == 2 and sys.argv[1] in valid_flags:
     FLAG = sys.argv[1]
 else:
-    print("Invalid format, try:  python naive_bayes.py [missing_values|outliers|scaling]")
+    print("Invalid format, try:  python naive_bayes.py [missing_values|outliers|scaling|balancing]")
     exit(1)
 
 # Folder path
@@ -31,71 +31,85 @@ for file in os.listdir(dir_path):
         file_name = os.path.splitext(file)[0]
         file_names.append(file_name)
         #file_paths.append(f'data/train_and_test/{file_name}')
-        file_paths.append(f'data/train_and_test/{FLAG}/{file_name}')
-# print(file_paths)
+        if (FLAG != 'balancing'):
+            file_paths.append(f'data/train_and_test/{FLAG}/{file_name}')
+
+if (FLAG == 'balancing'):
+    for file in os.listdir(dir_path):
+        file_name = os.path.splitext(file)[0]
+        file_paths.append(f'../data_preparation/data/{FLAG}/{file_name}')
+
+print(file_paths)
 
 target = 'readmitted'
 
 for i in range(len(file_names)):
-    file_name = file_names[i]
-    file_path = file_paths[i]
+        file_name = file_names[i]
+        file_path = file_paths[i]
 
-    # Train
-    train = read_csv(f'{file_path}_train.csv')
-    unnamed_column = train.columns[0]
-    train = train.drop([unnamed_column], axis=1)
-    trnY = train.pop(target).values
-    trnX = train.values
-    labels = unique(trnY)
-    labels.sort()
+        # Train 
+        if (FLAG == 'balancing'):
+            print("Train csv: ", file_path)
+            train = read_csv(f'{file_path}.csv')
+        else:
+            train = read_csv(f'{file_path}_train.csv')
+        unnamed_column = train.columns[0]
+        train = train.drop([unnamed_column], axis=1)
+        trnY = train.pop(target).values
+        trnX = train.values
+        labels = unique(trnY)
+        labels.sort()
 
-    # Test
-    test = read_csv(f'{file_path}_test.csv')
-    unnamed_column = test.columns[0]
-    test = test.drop([unnamed_column], axis=1)
-    tstY = test.pop(target).values
-    tstX = test.values
-    
-    # ----------- #
-    # Naive Bayes #
-    # ----------- #
+        # Test
+        if (FLAG == 'balancing'):
+            test = read_csv(f'../classification/data/train_and_test/scaling/diabetic_data_scaled_zscore_test.csv')
+        else:
+            test = read_csv(f'{file_path}_test.csv')
+        unnamed_column = test.columns[0]
+        test = test.drop([unnamed_column], axis=1)
+        tstY = test.pop(target).values
+        tstX = test.values
+        
+        # ----------- #
+        # Naive Bayes #
+        # ----------- #
 
-    # Comparison of Naive Bayes Models
-    estimators = {'GaussianNB': GaussianNB(),
-                 #'MultinomialNB': MultinomialNB(),
-                  'BernoulliNB': BernoulliNB()
-                 #'CategoricalNB': CategoricalNB
-                 }
+        # Comparison of Naive Bayes Models
+        estimators = {'GaussianNB': GaussianNB(),
+                    #'MultinomialNB': MultinomialNB(),
+                    'BernoulliNB': BernoulliNB()
+                    #'CategoricalNB': CategoricalNB
+                    }
 
-    xvalues = []
-    yvalues = []
-    for clf in estimators:
-        xvalues.append(clf)
-        estimators[clf].fit(trnX, trnY)
-        prdY = estimators[clf].predict(tstX)
-        yvalues.append(accuracy_score(tstY, prdY))
+        xvalues = []
+        yvalues = []
+        for clf in estimators:
+            xvalues.append(clf)
+            estimators[clf].fit(trnX, trnY)
+            prdY = estimators[clf].predict(tstX)
+            yvalues.append(accuracy_score(tstY, prdY))
 
-    figure()
-    bar_chart(xvalues, yvalues, title='Comparison of Naive Bayes Models', ylabel='accuracy', percentage=True)
-    savefig(f'../data_preparation/images/{FLAG}/naive_bayes/{file_name}_nb_study.png')
+        figure()
+        bar_chart(xvalues, yvalues, title='Comparison of Naive Bayes Models', ylabel='accuracy', percentage=True)
+        savefig(f'../data_preparation/images/{FLAG}/naive_bayes/{file_name}_nb_study.png')
 
-    # show()
+        # show()
 
 
-    # # ------------- #
-    # # Best NB model #
-    # # ------------- #
+        # # ------------- #
+        # # Best NB model #
+        # # ------------- #
 
-    max = np.max(yvalues)
-    max_index = yvalues.index(max)
-    best_model = estimators[xvalues[max_index]]
+        max = np.max(yvalues)
+        max_index = yvalues.index(max)
+        best_model = estimators[xvalues[max_index]]
 
-    # print(best_model)
+        # print(best_model)
 
-    clf = best_model
-    clf.fit(trnX, trnY)
-    prd_trn = clf.predict(trnX)
-    prd_tst = clf.predict(tstX)
-    plot_evaluation_results_ternary(labels, trnY, prd_trn, tstY, prd_tst)
-    savefig(f'../data_preparation/images/{FLAG}/naive_bayes/{file_name}_nb_best.png')
-    # show()
+        clf = best_model
+        clf.fit(trnX, trnY)
+        prd_trn = clf.predict(trnX)
+        prd_tst = clf.predict(tstX)
+        plot_evaluation_results_ternary(labels, trnY, prd_trn, tstY, prd_tst)
+        savefig(f'../data_preparation/images/{FLAG}/naive_bayes/{file_name}_nb_best.png')
+        # show()

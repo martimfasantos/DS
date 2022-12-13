@@ -8,11 +8,11 @@ from sklearn.metrics import accuracy_score
 
 # Parse terminal input
 FLAG = ''
-valid_flags = ('missing_values', 'outliers', 'scaling')
+valid_flags = ('missing_values', 'outliers', 'scaling', 'balancing')
 if len(sys.argv) == 2 and sys.argv[1] in valid_flags:
     FLAG = sys.argv[1]
 else:
-    print("Invalid format, try:  python knn.py [missing_values|outliers|scaling]")
+    print("Invalid format, try:  python knn.py [missing_values|outliers|scaling|balancing]")
     exit(1)
 
 # Folder path
@@ -28,16 +28,30 @@ for file in os.listdir(dir_path):
     if os.path.isfile(os.path.join(dir_path, file)):
         file_name = os.path.splitext(file)[0]
         file_names.append(file_name)
-        file_paths.append(f'data/train_and_test/{FLAG}/{file_name}')
-# print(file_paths)
+        #file_paths.append(f'data/train_and_test/{file_name}')
+        if (FLAG != 'balancing'):
+            file_paths.append(f'data/train_and_test/{FLAG}/{file_name}')
+
+if (FLAG == 'balancing'):
+    for file in os.listdir(dir_path):
+        file_name = os.path.splitext(file)[0]
+        file_paths.append(f'../data_preparation/data/{FLAG}/{file_name}')
+
+print(file_paths)
 
 target = 'readmitted'
+
 
 for i in range(len(file_names)):
     file_name = file_names[i]
     file_path = file_paths[i]
 
-    train = read_csv(f'{file_path}_train.csv')
+
+    # Train 
+    if (FLAG == 'balancing'):
+        train = read_csv(f'{file_path}.csv')
+    else:
+        train = read_csv(f'{file_path}_train.csv')
     unnamed_column = train.columns[0]
     train = train.drop([unnamed_column], axis=1)
     trnY = train.pop(target).values
@@ -45,7 +59,10 @@ for i in range(len(file_names)):
     labels = unique(trnY)
     labels.sort()
 
-    test = read_csv(f'{file_path}_test.csv')
+    if (FLAG == 'balancing'):
+        test = read_csv(f'../classification/data/train_and_test/scaling/diabetic_data_scaled_zscore_test.csv')
+    else:
+        test = read_csv(f'{file_path}_test.csv')
     unnamed_column = test.columns[0]
     test = test.drop([unnamed_column], axis=1)
     tstY = test.pop(target).values
