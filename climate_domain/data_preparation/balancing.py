@@ -51,7 +51,7 @@ for i in range(len(file_names)):
     print('class 0 = ', target_count.values[0])
     values = {'Original': [target_count[0], target_count[1]]}
     plt.clf()
-    bar_chart([0, 1], target_count.values, title='class balance')
+    bar_chart(['0', '1'], target_count.values, title='class balance')
     savefig(f'images/balancing/{file_name}_class_balance.png')
 
     class_one = train[train['class'] == 1]
