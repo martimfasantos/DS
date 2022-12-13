@@ -1,14 +1,8 @@
-from pandas import DataFrame, read_csv, to_datetime, concat, unique
+from pandas import DataFrame, read_csv, concat
 from pandas.plotting import register_matplotlib_converters
-from ds_charts import get_variable_types, bar_chart, plot_evaluation_results, multiple_line_chart, plot_overfitting_study, plot_evaluation_results_ternary
+from ds_charts import get_variable_types
 from matplotlib.pyplot import figure, savefig, show, subplots
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.metrics import accuracy_score
-from sklearn.model_selection import train_test_split
-from sklearn.naive_bayes import GaussianNB, MultinomialNB, BernoulliNB, CategoricalNB
-from sklearn.metrics import accuracy_score
-import numpy as np
 
 register_matplotlib_converters()
 

@@ -136,20 +136,25 @@ def plot_evaluation_results(labels: ndarray, trn_y, prd_trn, tst_y, prd_tst):
     plot_confusion_matrix(cnf_mtx_tst, labels, ax=axs[1], title='Test')
 
 def plot_evaluation_results_ternary(labels: ndarray, trn_y, prd_trn, tst_y, prd_tst):
-    recall = recall_score(tst_y, prd_tst, average=None)
-    precision = precision_score(tst_y, prd_tst, average=None)
+    recall_train = recall_score(trn_y, prd_trn, average=None)
+    precision_train = precision_score(trn_y, prd_trn, average=None)
+    recall_test = recall_score(tst_y, prd_tst, average=None)
+    precision_test = precision_score(tst_y, prd_tst, average=None)
     evaluation = { 
-        'Accuracy': accuracy_score(tst_y, prd_tst), 
-        'Recall Label=0.0': recall[0], 
-        'Recall Label=1.0': recall[1],
-        'Recall Label=2.0': recall[2],
-        'Precision Label=0.0': precision[0],
-        'Precision Label=1.0': precision[1],
-        'Precision Label=2.0': precision[2]
+        'Accuracy': [accuracy_score(trn_y, prd_trn), accuracy_score(tst_y, prd_tst)], 
+        'Recall Label=0.0': [recall_train[0], recall_test[0]], 
+        'Recall Label=1.0': [recall_train[1], recall_test[1]],
+        'Recall Label=2.0': [recall_train[2], recall_test[2]],
+        'Precision Label=0.0': [precision_train[0], precision_test[0]],
+        'Precision Label=1.0': [precision_train[1], precision_test[1]],
+        'Precision Label=2.0': [precision_train[2], precision_test[2]]
         }
+
+    print(recall_train)
+    print(recall_test)
     
     _, axs = subplots(1, 2, figsize=(2 * HEIGHT, HEIGHT))
-    multiple_bar_chart(['Test'], evaluation, ax=axs[0], title="Model's performance over Test set", percentage=True)
+    multiple_bar_chart(['Train', 'Test'], evaluation, ax=axs[0], title="Model's performance over Train and Test set", percentage=True)
     plot_confusion_matrix(confusion_matrix(tst_y, prd_tst), labels, ax=axs[1], title='Test')
 
 def horizontal_bar_chart(elements: list, values: list, error: list, ax: Axes = None, title: str = '', xlabel: str = '', ylabel: str = ''):

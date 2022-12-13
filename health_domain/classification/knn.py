@@ -28,24 +28,14 @@ for file in os.listdir(dir_path):
     if os.path.isfile(os.path.join(dir_path, file)):
         file_name = os.path.splitext(file)[0]
         file_names.append(file_name)
-        #file_paths.append(f'data/train_and_test/{file_name}')
-        if (FLAG != 'balancing'):
-            file_paths.append(f'data/train_and_test/{FLAG}/{file_name}')
-
-if (FLAG == 'balancing'):
-    for file in os.listdir(dir_path):
-        file_name = os.path.splitext(file)[0]
-        file_paths.append(f'../data_preparation/data/{FLAG}/{file_name}')
-
-print(file_paths)
+        file_paths.append(f'data/train_and_test/{FLAG}/{file_name}')
+# print(file_paths)
 
 target = 'readmitted'
-
 
 for i in range(len(file_names)):
     file_name = file_names[i]
     file_path = file_paths[i]
-
 
     # Train 
     if (FLAG == 'balancing'):
@@ -60,7 +50,7 @@ for i in range(len(file_names)):
     labels.sort()
 
     if (FLAG == 'balancing'):
-        test = read_csv(f'../classification/data/train_and_test/scaling/diabetic_data_scaled_zscore_test.csv')
+        test = read_csv(f'data/train_and_test/balancing/diabetic_data_test.csv')
     else:
         test = read_csv(f'{file_path}_test.csv')
     unnamed_column = test.columns[0]
