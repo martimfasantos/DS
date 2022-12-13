@@ -16,6 +16,8 @@ from sklearn.preprocessing import OneHotEncoder
 from sklearn.tree import export_graphviz
 from sklearn.metrics import confusion_matrix, plot_roc_curve
 from sklearn.metrics import accuracy_score
+from sklearn.metrics import recall_score
+from sklearn.metrics import precision_score
 
 import config as cfg
 
@@ -134,9 +136,20 @@ def plot_evaluation_results(labels: ndarray, trn_y, prd_trn, tst_y, prd_tst):
     plot_confusion_matrix(cnf_mtx_tst, labels, ax=axs[1], title='Test')
 
 def plot_evaluation_results_ternary(labels: ndarray, trn_y, prd_trn, tst_y, prd_tst):
-    evaluation = { 'Accuracy': accuracy_score(tst_y, prd_tst) }
+    recall = recall_score(tst_y, prd_tst, average=None)
+    precision = precision_score(tst_y, prd_tst, average=None)
+    evaluation = { 
+        'Accuracy': accuracy_score(tst_y, prd_tst), 
+        'Recall Label=0.0': recall[0], 
+        'Recall Label=1.0': recall[1],
+        'Recall Label=2.0': recall[2],
+        'Precision Label=0.0': precision[0],
+        'Precision Label=1.0': precision[1],
+        'Precision Label=2.0': precision[2]
+        }
+    
     _, axs = subplots(1, 2, figsize=(2 * HEIGHT, HEIGHT))
-    multiple_bar_chart(['Train', 'Test'], evaluation, ax=axs[0], title="Model's performance over Train and Test sets", percentage=True)
+    multiple_bar_chart(['Test'], evaluation, ax=axs[0], title="Model's performance over Test set", percentage=True)
     plot_confusion_matrix(confusion_matrix(tst_y, prd_tst), labels, ax=axs[1], title='Test')
 
 def horizontal_bar_chart(elements: list, values: list, error: list, ax: Axes = None, title: str = '', xlabel: str = '', ylabel: str = ''):
