@@ -67,8 +67,8 @@ for i in range(len(file_names)):
 
         # Comparison of Naive Bayes Models
         estimators = {'GaussianNB': GaussianNB(),
-                    #'MultinomialNB': MultinomialNB(),
-                    'BernoulliNB': BernoulliNB()
+                      'MultinomialNB': MultinomialNB(),
+                      'BernoulliNB': BernoulliNB()
                     #'CategoricalNB': CategoricalNB
                     }
 
@@ -76,9 +76,12 @@ for i in range(len(file_names)):
         yvalues = []
         for clf in estimators:
             xvalues.append(clf)
-            estimators[clf].fit(trnX, trnY)
-            prdY = estimators[clf].predict(tstX)
-            yvalues.append(accuracy_score(tstY, prdY))
+            try:
+                estimators[clf].fit(trnX, trnY)
+                prdY = estimators[clf].predict(tstX)
+                yvalues.append(accuracy_score(tstY, prdY))
+            except:
+                xvalues.remove(clf)
 
         figure()
         bar_chart(xvalues, yvalues, title='Comparison of Naive Bayes Models', ylabel='accuracy', percentage=True)

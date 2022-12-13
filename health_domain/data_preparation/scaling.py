@@ -8,7 +8,7 @@ register_matplotlib_converters()
 
 # Choose the BEST MODEL based on results from KNN and NB:
 file_tag = 'diabetic_data'
-file_path = 'data/outliers/diabetic_data_drop_outliers.csv'
+file_path = 'data/outliers/diabetic_data_truncate_outliers.csv'
 data = read_csv(file_path, na_values='?')
 index_column = data.columns[0]
 data = data.drop([index_column], axis=1)
