@@ -52,12 +52,12 @@ for d in dist:
         if y_tst_values[-1] > last_best:
             best = (n, d)
             last_best = y_tst_values[-1]
-    # print(f'{file_name} - Accuracies using {d} distance: {y_tst_values}')
+    # print(f'{file_tag} - Accuracies using {d} distance: {y_tst_values}')
     values[d] = y_tst_values
 
 figure()
-multiple_line_chart(nvalues, values, title=f'KNN variants: {file_name}', xlabel='n', ylabel=str(accuracy_score), percentage=True)
-savefig(f'../data_preparation/images/best_results/knn/{file_name}_knn_study.png')
+multiple_line_chart(nvalues, values, title=f'KNN variants: {file_tag}', xlabel='n', ylabel=str(accuracy_score), percentage=True)
+savefig(f'../data_preparation/images/best_results/knn/{file_tag}_knn_study.png')
 # show()
 # print('Best results with %d neighbors and %s'%(best[0], best[1]))
 print("KNN 1")
@@ -72,7 +72,7 @@ clf.fit(trnX, trnY)
 prd_trn = clf.predict(trnX)
 prd_tst = clf.predict(tstX)
 plot_evaluation_results_ternary(labels, trnY, prd_trn, tstY, prd_tst)
-savefig(f'../data_preparation/images/best_results/knn/{file_name}_knn_best.png')
+savefig(f'../data_preparation/images/best_results/knn/{file_tag}_knn_best.png')
 # show()
 
 print("KNN 2")
@@ -99,12 +99,12 @@ for d in dist:
         if y_tst_values[-1] > last_best and n < 100:
             best = (n, d)
             last_best = y_tst_values[-1]
-    # print(f'{file_name} - Accuracies using {d} distance: {y_tst_values}')
+    # print(f'{file_tag} - Accuracies using {d} distance: {y_tst_values}')
     values_int[d] = y_tst_values
 
 figure()
-multiple_line_chart(nvalues_int, values_int, title=f'KNN variants: {file_name}', xlabel='n', ylabel=str(accuracy_score), percentage=True)
-savefig(f'../data_preparation/images/best_results/knn/{file_name}_knn_study_interval.png')
+multiple_line_chart(nvalues_int, values_int, title=f'KNN variants: {file_tag}', xlabel='n', ylabel=str(accuracy_score), percentage=True)
+savefig(f'../data_preparation/images/best_results/knn/{file_tag}_knn_study_interval.png')
 
 print("KNN 3")
 
@@ -126,7 +126,7 @@ for d in dist:
 
 figure()
 bar_chart(dist, y_values, title=f'Comparison of distances for KNN_K={k}', ylabel='accuracy', percentage=True)
-savefig(f'../data_preparation/images/best_results/knn/{file_name}_knn_best_distances.png')
+savefig(f'../data_preparation/images/best_results/knn/{file_tag}_knn_best_distances.png')
 # show()
 
 print("KNN 4")
@@ -139,7 +139,7 @@ def plot_overfitting_study(xvalues, prd_trn, prd_tst, name, xlabel, ylabel):
     evals = {'Train': prd_trn, 'Test': prd_tst}
     figure()
     multiple_line_chart(xvalues, evals, ax = None, title=f'Overfitting {name}', xlabel=xlabel, ylabel=ylabel, percentage=True)
-    savefig(f'../data_preparation/images/best_results/knn/overfitting_{file_name}.png')
+    savefig(f'../data_preparation/images/best_results/knn/overfitting_{file_tag}.png')
 
 _, d = best
 eval_metric = accuracy_score
@@ -181,7 +181,7 @@ for clf in estimators:
 
 figure()
 bar_chart(xvalues, yvalues, title='Comparison of Naive Bayes Models', ylabel='accuracy', percentage=True)
-savefig(f'../data_preparation/images/best_results/naive_bayes/{file_name}_nb_study.png')
+savefig(f'../data_preparation/images/best_results/naive_bayes/{file_tag}_nb_study.png')
 # show()
 
 print("NB 1")
@@ -202,7 +202,7 @@ clf.fit(trnX, trnY)
 prd_trn = clf.predict(trnX)
 prd_tst = clf.predict(tstX)
 plot_evaluation_results_ternary(labels, trnY, prd_trn, tstY, prd_tst)
-savefig(f'../data_preparation/images/best_results/naive_bayes/{file_name}_nb_best.png')
+savefig(f'../data_preparation/images/best_results/naive_bayes/{file_tag}_nb_best.png')
 # show()
 
 print("NB 2")
