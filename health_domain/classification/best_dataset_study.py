@@ -9,7 +9,7 @@ from sklearn.metrics import accuracy_score
 
 # Best option
 file_tag = 'diabetic_data'
-file_name = f'{file_tag}_without_balancing'
+file_name = f'{file_tag}_under'
 file_path = f'data/train_and_test/balancing/{file_name}'
 
 target = 'readmitted'
@@ -85,7 +85,7 @@ print("KNN 2")
 eval_metric = accuracy_score
 nvalues_int = list(range(best[0]-5, best[0]+6))
 dist = ['manhattan', 'euclidean', 'chebyshev']
-values = {}
+values_int = {}
 best = (0, '')
 last_best = 0
 
@@ -100,10 +100,10 @@ for d in dist:
             best = (n, d)
             last_best = y_tst_values[-1]
     # print(f'{file_name} - Accuracies using {d} distance: {y_tst_values}')
-    values[d] = y_tst_values
+    values_int[d] = y_tst_values
 
 figure()
-multiple_line_chart(nvalues_int, values, title=f'KNN variants: {file_name}', xlabel='n', ylabel=str(accuracy_score), percentage=True)
+multiple_line_chart(nvalues_int, values_int, title=f'KNN variants: {file_name}', xlabel='n', ylabel=str(accuracy_score), percentage=True)
 savefig(f'../data_preparation/images/best_results/knn/{file_name}_knn_study_interval.png')
 
 print("KNN 3")
