@@ -9,11 +9,11 @@ from sklearn.metrics import accuracy_score
 
 # Parse terminal input
 FLAG = ''
-valid_flags = ('outliers', 'scaling')
+valid_flags = ('outliers', 'scaling', 'balancing')
 if len(sys.argv) == 2 and sys.argv[1] in valid_flags:
     FLAG = sys.argv[1]
 else:
-    print("Invalid format, try:  python naive_bayes.py [outliers|scaling]")
+    print("Invalid format, try:  python naive_bayes.py [outliers|scaling|balancing]")
     exit(1)
 
 # Folder path
@@ -39,8 +39,12 @@ for i in range(len(file_names)):
     file_name = file_names[i]
     file_path = file_paths[i]
 
-    # Train
-    train = read_csv(f'{file_path}_train.csv')
+    # Train 
+    if (FLAG == 'balancing'):
+        train = read_csv(f'{file_path}.csv')
+    else:
+        train = read_csv(f'{file_path}_train.csv')
+    #train = read_csv(f'{file_path}_train.csv')
     # unnamed_column = train.columns[0]
     # train = train.drop([unnamed_column], axis=1)
     trnY = train.pop(target).values
@@ -49,7 +53,11 @@ for i in range(len(file_names)):
     labels.sort()
 
     # Test
-    test = read_csv(f'{file_path}_test.csv')
+    if (FLAG == 'balancing'):
+        test = read_csv(f'data/train_and_test/balancing/drought_test.csv')
+    else:
+        test = read_csv(f'{file_path}_test.csv')
+    #test = read_csv(f'{file_path}_test.csv')
     # unnamed_column = test.columns[0]
     # test = test.drop([unnamed_column], axis=1)
     tstY = test.pop(target).values
