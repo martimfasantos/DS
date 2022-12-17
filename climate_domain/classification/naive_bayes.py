@@ -9,11 +9,11 @@ from sklearn.metrics import accuracy_score
 
 # Parse terminal input
 FLAG = ''
-valid_flags = ('outliers', 'scaling', 'balancing')
+valid_flags = ('outliers', 'scaling', 'balancing', 'feature_selection', 'feature_extraction')
 if len(sys.argv) == 2 and sys.argv[1] in valid_flags:
     FLAG = sys.argv[1]
 else:
-    print("Invalid format, try:  python naive_bayes.py [outliers|scaling|balancing]")
+    print("Invalid format, try:  python naive_bayes.py [outliers|scaling|balancing|feature_selection|feature_extraction]")
     exit(1)
 
 # Folder path

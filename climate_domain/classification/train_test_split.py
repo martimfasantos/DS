@@ -9,11 +9,11 @@ from sklearn.model_selection import train_test_split
 
 # Parse terminal input
 FLAG = ''
-valid_flags = ('outliers', 'scaling', 'feature_selection')
+valid_flags = ('outliers', 'scaling', 'feature_selection', 'feature_extraction')
 if len(sys.argv) == 2 and sys.argv[1] in valid_flags:
     FLAG = sys.argv[1]
 else:
-    print("Invalid format, try:  python train_test_split.py [outliers|scaling|feature_selection]")
+    print("Invalid format, try:  python train_test_split.py [outliers|scaling|feature_selection|feature_extraction]")
     exit(1)
 
 # Folder path

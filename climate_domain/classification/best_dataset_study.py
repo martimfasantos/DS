@@ -9,7 +9,7 @@ from sklearn.metrics import accuracy_score
 
 # Best option
 file_tag = 'drought'
-file_path = f'data/train_and_test/scaling/{file_tag}_scaled_zscore'
+file_path = f'data/train_and_test/balancing/{file_tag}_under'
 
 target = 'class'
 
@@ -23,7 +23,7 @@ labels = unique(trnY)
 labels.sort()
 
 # Test
-test = read_csv(f'{file_path}_test.csv')
+test = read_csv('data/train_and_test/balancing/drought_test.csv')
 unnamed_column = test.columns[0]
 test = test.drop([unnamed_column], axis=1)
 tstY = test.pop(target).values
@@ -61,10 +61,12 @@ savefig(f'../data_preparation/images/best_results/knn/{file_tag}_knn_study.png')
 # print('Best results with %d neighbors and %s'%(best[0], best[1]))
 print("KNN 1")
 
-
 # -------------- #
 # Best KNN model #
 # -------------- #
+
+print(best[0])
+# best = 15
 
 clf = knn = KNeighborsClassifier(n_neighbors=best[0], metric=best[1])
 clf.fit(trnX, trnY)
