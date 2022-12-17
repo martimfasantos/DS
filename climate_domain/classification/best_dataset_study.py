@@ -15,8 +15,6 @@ target = 'class'
 
 # Train 
 train = read_csv(f'{file_path}_train.csv')
-unnamed_column = train.columns[0]
-train = train.drop([unnamed_column], axis=1)
 trnY = train.pop(target).values
 trnX = train.values
 labels = unique(trnY)
@@ -24,8 +22,6 @@ labels.sort()
 
 # Test
 test = read_csv('data/train_and_test/balancing/drought_test.csv')
-unnamed_column = test.columns[0]
-test = test.drop([unnamed_column], axis=1)
 tstY = test.pop(target).values
 tstX = test.values
 
@@ -61,24 +57,6 @@ savefig(f'../data_preparation/images/best_results/knn/{file_tag}_knn_study.png')
 # print('Best results with %d neighbors and %s'%(best[0], best[1]))
 print("KNN 1")
 
-# -------------- #
-# Best KNN model #
-# -------------- #
-
-print(best[0])
-# best = 15
-
-clf = knn = KNeighborsClassifier(n_neighbors=best[0], metric=best[1])
-clf.fit(trnX, trnY)
-prd_trn = clf.predict(trnX)
-prd_tst = clf.predict(tstX)
-plot_evaluation_results(labels, trnY, prd_trn, tstY, prd_tst)
-savefig(f'../data_preparation/images/best_results/knn/{file_tag}_knn_best.png')
-# show()
-
-print("KNN 2")
-
-
 # ------------------------------ #
 # Neighbours near best KNN model #
 # ------------------------------ #
@@ -107,8 +85,21 @@ figure()
 multiple_line_chart(nvalues_int, values_int, title=f'KNN variants: {file_tag}', xlabel='n', ylabel=str(accuracy_score), percentage=True)
 savefig(f'../data_preparation/images/best_results/knn/{file_tag}_knn_study_interval.png')
 
-print("KNN 3")
+# -------------- #
+# Best KNN model #
+# -------------- #
 
+# best = 17
+print(best[0])
+
+clf = knn = KNeighborsClassifier(n_neighbors=best[0], metric=best[1])
+clf.fit(trnX, trnY)
+prd_trn = clf.predict(trnX)
+prd_tst = clf.predict(tstX)
+plot_evaluation_results(labels, trnY, prd_trn, tstY, prd_tst)
+savefig(f'../data_preparation/images/best_results/knn/{file_tag}_knn_best.png')
+
+print("KNN 3")
 
 # -------------------------------- #
 # All Distances for best KNN Model #
