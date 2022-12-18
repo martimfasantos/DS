@@ -86,9 +86,9 @@ df_const = fill_with_constant(df)
 df_const.to_csv(f'data/missing_values/{file_tag}_drop_columns_then_constant_mv.csv', index=True)
 
 
-# ----------------------------------------------------------- #
-# APPROACH 2: DROP Missing Values & Fill with CONSTANT Value  #
-# ----------------------------------------------------------- #
+# ---------------------------------------------------------------- #
+# APPROACH 2: DROP Missing Values & Fill with MOST FREQUENT Value  #
+# ---------------------------------------------------------------- #
 
 # Fill the rest with most frequent value
 df_most_freq = fill_with_most_frequent(df)

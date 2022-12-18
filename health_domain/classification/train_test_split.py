@@ -32,17 +32,18 @@ for file in os.listdir(dir_path):
         file_paths.append(f'{dir_path}{file_name}')
 
 target = 'readmitted'
-NO = 1
-LESSTHAN30 = 2
-MORETHAN30 = 0
+NO = 0
+LESSTHAN30 = 1
+MORETHAN30 = 2
 
 for i in range(len(file_names)):
     file_name = file_names[i]
     file_path = file_paths[i]
 
     data = read_csv(f'{file_path}.csv')
-    index_column = data.columns[0]
-    data = data.drop([index_column], axis=1)
+    if (FLAG == 'missing_values' or FLAG == 'outliers'):
+        index_column = data.columns[0]
+        data = data.drop([index_column], axis=1)
     
     values = {'Original': [len(data[data[target] == NO]), len(data[data[target] == LESSTHAN30]),
                         len(data[data[target] == MORETHAN30])]}
@@ -52,7 +53,7 @@ for i in range(len(file_names)):
     labels = unique(y)
     labels.sort()
 
-    trnX, tstX, trnY, tstY = train_test_split(X, y, train_size=0.7, stratify=y)
+    trnX, tstX, trnY, tstY = train_test_split(X, y, train_size=0.7, stratify=y, random_state=8)
 
     # Train CSV
     train = concat([DataFrame(trnX, columns=data.columns), DataFrame(trnY,columns=[target])], axis=1)

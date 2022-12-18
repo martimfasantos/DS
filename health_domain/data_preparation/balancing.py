@@ -39,14 +39,15 @@ y = train['readmitted'].values
 y_train = pd.Index(y)
 target_count = y_train.value_counts().sort_index()
 # print(target_count)
+labels = ['NO', '<30', '>30']
 
 values = {'Original': [target_count[0], target_count[1], target_count[2]]}
 plt.clf()
-bar_chart([str(i) for i in [0, 1, 2]], target_count.values, title='readmitted balance')
+bar_chart(labels, target_count.values, title='readmitted balance')
 savefig(f'images/balancing/{file_tag}_readmitted_balance.png')
 
-readmitted_one = train[train['readmitted'] == 1]
 readmitted_zero = train[train['readmitted'] == 0]
+readmitted_one = train[train['readmitted'] == 1]
 readmitted_two = train[train['readmitted'] == 2]
 
 
@@ -68,7 +69,7 @@ values['SMOTE'] = [smote_target_count[0], smote_target_count[1], smote_target_co
 print("After Smote:", values['SMOTE'])
 
 figure()
-multiple_bar_chart([str(i) for i in [0, 1, 2]], values, title='SMOTE Target', xlabel='frequency', ylabel='Class balance')
+multiple_bar_chart(labels, values, title='SMOTE Target', xlabel='frequency', ylabel='Class balance')
 savefig(f'images/balancing/{file_tag}_readmitted_smote_balance_bar_chart.png')
 
 
@@ -76,16 +77,16 @@ savefig(f'images/balancing/{file_tag}_readmitted_smote_balance_bar_chart.png')
 #    Undersampling  #
 # ----------------- #
 
-df_one_sample = DataFrame(readmitted_one.sample(len(readmitted_two)))
-df_zero_sample = DataFrame(readmitted_zero.sample(len(readmitted_two)))
-df_under = concat([readmitted_two, df_one_sample, df_zero_sample], axis=0)
+df_zero_sample = DataFrame(readmitted_zero.sample(len(readmitted_one)))
+df_two_sample = DataFrame(readmitted_two.sample(len(readmitted_one)))
+df_under = concat([readmitted_one, df_zero_sample, df_two_sample], axis=0)
 df_under.to_csv(f'data/balancing/{file_tag}_under_train.csv', index=False)
 df_under.to_csv(f'../classification/data/train_and_test/balancing/{file_tag}_under_train.csv', index=False)
 
-values['UnderSample'] = [len(df_zero_sample), len(df_one_sample), len(readmitted_two)]
+values['UnderSample'] = [len(df_zero_sample), len(readmitted_one), len(df_two_sample)]
 print("After UnderSampling:", values['UnderSample'])
 figure()
-bar_chart([str(i) for i in [0, 1, 2]] , values['UnderSample'], title='readmitted undersampling balance')
+bar_chart(labels , values['UnderSample'], title='readmitted undersampling balance')
 savefig(f'images/balancing/{file_tag}_readmitted_undersampling_balance_bar_chart.png')
 
 
@@ -93,16 +94,16 @@ savefig(f'images/balancing/{file_tag}_readmitted_undersampling_balance_bar_chart
 #    Oversampling   #
 # ----------------- #
 
-df_two_sample = DataFrame(readmitted_two.sample(len(readmitted_one), replace=True))
-df_zero_sample = DataFrame(readmitted_zero.sample(len(readmitted_one), replace=True))
-df_over = concat([df_zero_sample, df_one_sample, readmitted_two], axis=0)
+df_one_sample = DataFrame(readmitted_one.sample(len(readmitted_zero), replace=True))
+df_two_sample = DataFrame(readmitted_two.sample(len(readmitted_zero), replace=True))
+df_over = concat([ readmitted_zero, df_one_sample, df_two_sample], axis=0)
 df_over.to_csv(f'data/balancing/{file_tag}_over_train.csv', index=False)
 df_over.to_csv(f'../classification/data/train_and_test/balancing/{file_tag}_over_train.csv', index=False)
 
-values['OverSample'] = [len(df_zero_sample), len(readmitted_one), len(df_two_sample)]
+values['OverSample'] = [len(readmitted_zero), len(df_one_sample), len(df_two_sample)]
 print("After OverSampling:", values['OverSample'])
 figure()
-bar_chart([str(i) for i in [0, 1, 2]], values['OverSample'], title='readmitted oversampling balance')
+bar_chart(labels, values['OverSample'], title='readmitted oversampling balance')
 savefig(f'images/balancing/{file_tag}_readmitted_oversampling_balance_bar_chart.png')
 
 
@@ -110,19 +111,14 @@ savefig(f'images/balancing/{file_tag}_readmitted_oversampling_balance_bar_chart.
 #    Oversampling + Undersampling   #
 # --------------------------------- #
 
-df_two_sample = DataFrame(readmitted_two.sample(len(readmitted_zero), replace=True))
-df_one_sample = DataFrame(readmitted_one.sample(len(readmitted_zero)))
-df_mix = concat([readmitted_zero, df_one_sample, df_two_sample], axis=0)
+df_one_sample = DataFrame(readmitted_one.sample(len(readmitted_two), replace=True))
+df_zero_sample = DataFrame(readmitted_zero.sample(len(readmitted_two)))
+df_mix = concat([df_zero_sample, df_one_sample, readmitted_two], axis=0)
 df_mix.to_csv(f'data/balancing/{file_tag}_mix_train.csv', index=False)
 df_mix.to_csv(f'../classification/data/train_and_test/balancing/{file_tag}_mix_train.csv', index=False)
 
-values['Mix'] = [len(readmitted_zero), len(df_one_sample), len(df_two_sample)]
+values['Mix'] = [len(df_zero_sample), len(df_one_sample), len(readmitted_two)]
 print("After Mix:", values['Mix'])
 figure()
-bar_chart([str(i) for i in [0, 1, 2]], values['Mix'], title='readmitted mix sampling balance')
+bar_chart(labels, values['Mix'], title='readmitted mix sampling balance')
 savefig(f'images/balancing/{file_tag}_readmitted_mixsampling_balance_bar_chart.png')
-
-
-
-
-

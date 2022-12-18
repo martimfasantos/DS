@@ -16,8 +16,6 @@ target = 'readmitted'
 
 # Train 
 train = read_csv(f'{file_path}_train.csv')
-unnamed_column = train.columns[0]
-train = train.drop([unnamed_column], axis=1)
 trnY = train.pop(target).values
 trnX = train.values
 labels = unique(trnY)
@@ -25,8 +23,6 @@ labels.sort()
 
 # Test
 test = read_csv(f'data/train_and_test/balancing/{file_tag}_test.csv')
-unnamed_column = test.columns[0]
-test = test.drop([unnamed_column], axis=1)
 tstY = test.pop(target).values
 tstX = test.values
 
@@ -36,7 +32,8 @@ tstX = test.values
 # ----- #
 
 eval_metric = accuracy_score
-nvalues = [1, 5, 15, 25, 50, 100]
+max_k = int(np.sqrt(test.shape[0]))
+nvalues = [1, 25, 50, 100, 200, 300, max_k]
 dist = ['manhattan', 'euclidean', 'chebyshev']
 values = {}
 best = (0, '')
@@ -49,7 +46,7 @@ for d in dist:
         knn.fit(trnX, trnY)
         prd_tst_Y = knn.predict(tstX)
         y_tst_values.append(eval_metric(tstY, prd_tst_Y))
-        if y_tst_values[-1] > last_best:
+        if y_tst_values[-1] > last_best and n <= max_k:
             best = (n, d)
             last_best = y_tst_values[-1]
     # print(f'{file_tag} - Accuracies using {d} distance: {y_tst_values}')
@@ -86,8 +83,6 @@ eval_metric = accuracy_score
 nvalues_int = list(range(best[0]-5, best[0]+6))
 dist = ['manhattan', 'euclidean', 'chebyshev']
 values_int = {}
-best = (0, '')
-last_best = 0
 
 for d in dist:
     y_tst_values = []
@@ -96,9 +91,6 @@ for d in dist:
         knn.fit(trnX, trnY)
         prd_tst_Y = knn.predict(tstX)
         y_tst_values.append(eval_metric(tstY, prd_tst_Y))
-        if y_tst_values[-1] > last_best and n < 100:
-            best = (n, d)
-            last_best = y_tst_values[-1]
     # print(f'{file_tag} - Accuracies using {d} distance: {y_tst_values}')
     values_int[d] = y_tst_values
 

@@ -142,12 +142,12 @@ def plot_evaluation_results_ternary(labels: ndarray, trn_y, prd_trn, tst_y, prd_
     precision_test = precision_score(tst_y, prd_tst, average=None)
     evaluation = { 
         'Accuracy': [accuracy_score(trn_y, prd_trn), accuracy_score(tst_y, prd_tst)], 
-        'Recall Label=0.0': [recall_train[0], recall_test[0]], 
-        'Recall Label=1.0': [recall_train[1], recall_test[1]],
-        'Recall Label=2.0': [recall_train[2], recall_test[2]],
-        'Precision Label=0.0': [precision_train[0], precision_test[0]],
-        'Precision Label=1.0': [precision_train[1], precision_test[1]],
-        'Precision Label=2.0': [precision_train[2], precision_test[2]]
+        f'Recall {labels[0]}': [recall_train[0], recall_test[0]], 
+        f'Recall {labels[1]}': [recall_train[1], recall_test[1]],
+        f'Recall {labels[2]}': [recall_train[2], recall_test[2]],
+        f'Precision {labels[0]}': [precision_train[0], precision_test[0]],
+        f'Precision {labels[1]}': [precision_train[1], precision_test[1]],
+        f'Precision {labels[2]}': [precision_train[2], precision_test[2]]
         }
     
     _, axs = subplots(1, 2, figsize=(2.5 * HEIGHT, HEIGHT))

@@ -245,13 +245,13 @@ data = concat([data, X[1][0]], axis=1)
 data = concat([data, X[1][1]], axis=1)
     
 # class variable
-class_var = ('readmitted')
-class_var_mapping = [['>30', 0], ['NO', 1], ['<30', 2]]
+class_var = 'readmitted'
+class_var_mapping = [['NO', 0], ['<30', 1], ['>30', 2]]
 
 X = data[class_var]
 for j in class_var_mapping:
     X.replace(to_replace=j[0], value=j[1], inplace=True) 
-other_vars = [c for c in data.columns if not c in class_var]
+other_vars = [c for c in data.columns if c != class_var]
 data = concat([data[other_vars], X], axis=1)
 
 # dummify the rest

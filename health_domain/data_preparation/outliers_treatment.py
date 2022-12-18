@@ -54,37 +54,43 @@ def determine_outlier_thresholds(summary5: DataFrame, var:str, OUTLIER_PARAM: in
     return top_threshold, bottom_threshold
 
 # variables in which we'll need to treat outliers
-expon_vars = ['time_in_hospital', 'num_procedures', 'number_inpatient']
+expon_vars = ['encounter_id', 'time_in_hospital', 'number_inpatient', 'race', 'age', 'diag_1', 'diag_2', 'diag_3']
 norml_vars = ['num_lab_procedures', 'num_medications', 'number_outpatient', 'number_emergency', 'number_diagnoses']
 
 df = data.copy(deep=True)
 summary5 = data.describe(include='number')
-
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-# APPROACH 1: dropping outliers beyond 2.5 iqr            #
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-
 print('Original data:', data.shape)
+
+
+# ------------------------- #
+# APPROACH 1: Drop outliers #
+# ------------------------- #
+
+IQR_PARAM = 2.5
 
 summary5 = data.describe(include='number')
 df = data.copy(deep=True)
 for var in expon_vars + norml_vars:
-    top_threshold, bottom_threshold = determine_outlier_thresholds(summary5, var, 2.5, 'iqr')
+    top_threshold, bottom_threshold = determine_outlier_thresholds(summary5, var, IQR_PARAM, 'iqr')
     outliers = df[(df[var] > top_threshold) | (df[var] < bottom_threshold)]
     df.drop(outliers.index, axis=0, inplace=True)
 df.to_csv(f'data/outliers/{file_tag}_drop_outliers.csv', index=True)
 
 print('Data after dropping outliers:', df.shape)
 
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-# APPROACH 2: truncating outliers beyond 2.5 iqr          #
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+# ----------------------------- #
+# APPROACH 2: Truncate outliers #
+# ----------------------------- #
+
+IQR_PARAM = 2
 
 summary5 = data.describe(include='number')
 df = data.copy(deep=True)
 for var in expon_vars + norml_vars:
-    top_threshold, bottom_threshold = determine_outlier_thresholds(summary5, var, 2.5, 'iqr')
+    top_threshold, bottom_threshold = determine_outlier_thresholds(summary5, var, IQR_PARAM, 'iqr')
     df[var] = df[var].apply(lambda x: top_threshold if x > top_threshold else bottom_threshold if x < bottom_threshold else x)
+df.to_csv(f'data/outliers/{file_tag}_truncate_outliers.csv', index=True)
 
 print('Data after truncating outliers:', df.shape)
 

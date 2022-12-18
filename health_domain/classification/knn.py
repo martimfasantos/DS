@@ -42,8 +42,6 @@ for i in range(len(file_names)):
         train = read_csv(f'{file_path}.csv')
     else:
         train = read_csv(f'{file_path}_train.csv')
-    unnamed_column = train.columns[0]
-    train = train.drop([unnamed_column], axis=1)
     trnY = train.pop(target).values
     trnX = train.values
     labels = unique(trnY)
@@ -53,8 +51,6 @@ for i in range(len(file_names)):
         test = read_csv(f'data/train_and_test/balancing/diabetic_data_test.csv')
     else:
         test = read_csv(f'{file_path}_test.csv')
-    unnamed_column = test.columns[0]
-    test = test.drop([unnamed_column], axis=1)
     tstY = test.pop(target).values
     tstX = test.values
 
@@ -98,7 +94,7 @@ for i in range(len(file_names)):
     clf.fit(trnX, trnY)
     prd_trn = clf.predict(trnX)
     prd_tst = clf.predict(tstX)
-    plot_evaluation_results_ternary(labels, trnY, prd_trn, tstY, prd_tst)
+    plot_evaluation_results_ternary(['NO', '<30', '>30'], trnY, prd_trn, tstY, prd_tst)
     savefig(f'../data_preparation/images/{FLAG}/knn/{file_name}_knn_best.png')
     # show()
 
