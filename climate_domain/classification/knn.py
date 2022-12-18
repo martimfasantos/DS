@@ -16,11 +16,11 @@ from sklearn.metrics import accuracy_score
 
 # Parse terminal input
 FLAG = ''
-valid_flags = ('outliers', 'scaling', 'balancing')
+valid_flags = ('outliers', 'scaling', 'balancing', 'feature_selection', 'feature_extraction')
 if len(sys.argv) == 2 and sys.argv[1] in valid_flags:
     FLAG = sys.argv[1]
 else:
-    print("Invalid format, try:  python train_test_split.py [outliers|scaling|balancing]")
+    print("Invalid format, try:  python train_test_split.py [outliers|scaling|balancing|feature_selection|feature_extraction]")
     exit(1)
 
 # Folder path
@@ -50,9 +50,6 @@ for i in range(len(file_names)):
         train = read_csv(f'{file_path}.csv')
     else:
         train = read_csv(f'{file_path}_train.csv')
-    #train = read_csv(f'{file_path}_train.csv')
-    # unnamed_column = train.columns[0]
-    # train = train.drop([unnamed_column], axis=1)
     trnY = train.pop(target).values
     trnX = train.values
     labels = unique(trnY)
@@ -62,9 +59,6 @@ for i in range(len(file_names)):
         test = read_csv(f'data/train_and_test/balancing/drought_test.csv')
     else:
         test = read_csv(f'{file_path}_test.csv')
-    #test = read_csv(f'{file_path}_test.csv')
-    # unnamed_column = test.columns[0]
-    # test = test.drop([unnamed_column], axis=1)
     tstY = test.pop(target).values
     tstX = test.values
 

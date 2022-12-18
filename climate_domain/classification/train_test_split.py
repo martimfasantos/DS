@@ -9,11 +9,11 @@ from sklearn.model_selection import train_test_split
 
 # Parse terminal input
 FLAG = ''
-valid_flags = ('outliers', 'scaling')
+valid_flags = ('outliers', 'scaling', 'feature_selection', 'feature_extraction')
 if len(sys.argv) == 2 and sys.argv[1] in valid_flags:
     FLAG = sys.argv[1]
 else:
-    print("Invalid format, try:  python train_test_split.py [outliers|scaling]")
+    print("Invalid format, try:  python train_test_split.py [outliers|scaling|feature_selection|feature_extraction]")
     exit(1)
 
 # Folder path
@@ -51,13 +51,12 @@ for i in range(len(file_names)):
     file_path = file_paths[i]
 
     data = read_csv(f'{file_path}.csv')
-    unnamed_column = data.columns[0]
-    data = data.drop([unnamed_column], axis=1)
         
     values = {'Original': [len(data[data[target] == ZERO]), len(data[data[target] == ONE])]}
     
-    train_size = int(0.7 * data.shape[0])
-
+    train_size = round(0.7 * data.shape[0])
+    test_size = data.shape[0] - train_size
+    
     date_column = ''
     for column in data:
         if column.split(' ')[0] == 'date':
@@ -78,10 +77,10 @@ for i in range(len(file_names)):
     if (FLAG == 'outliers'): 
         for ind in data.index:
             data[date_column][ind] = dates[ind]
-        
-    train = data.loc[0:train_size-1].sample(frac=1)    
-    test = data.loc[train_size:].sample(frac=1)
     
+    train = data.head(train_size)
+    test = data.tail(test_size)
+
     # Train CSV
     train.to_csv(f'data/train_and_test/{FLAG}/{file_name}_train.csv', index=False)
 

@@ -61,7 +61,7 @@ for var in numeric_vars:
     outliers = df[(df[var] > top_threshold) | (df[var] < bottom_threshold)]
     # print(f'{var} has {outliers.shape[0]} outliers')
     df.drop(outliers.index, axis=0, inplace=True)
-df.to_csv(f'data/outliers/{file_tag}_drop_outliers.csv', index=True)
+df.to_csv(f'data/outliers/{file_tag}_drop_outliers.csv', index=False)
 print('data after dropping outliers:', df.shape)
 
 
@@ -82,5 +82,5 @@ for var in numeric_vars:
         top_threshold, bottom_threshold = determine_outlier_thresholds(summary5, var, 'iqr', IQR_PARAM)
     df[var] = df[var].apply(lambda x: top_threshold if x > top_threshold else bottom_threshold if x < bottom_threshold else x)
 
-df.to_csv(f'data/outliers/{file_tag}_truncate_outliers.csv', index=True)
+df.to_csv(f'data/outliers/{file_tag}_truncate_outliers.csv', index=False)
 # print('data after truncating outliers:', df.describe())
