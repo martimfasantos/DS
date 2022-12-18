@@ -163,6 +163,16 @@ def horizontal_bar_chart(elements: list, values: list, error: list, ax: Axes = N
     ax.set_yticklabels(elements)
     ax.invert_yaxis()  # labels read top-to-bottom
 
+def horizontal_bar_chart_dt(elements: list, values: list, error: list, ax: Axes = None, title: str = '', xlabel: str = '', ylabel: str = ''):
+    ax = set_elements(ax=ax, title=title, xlabel=xlabel, ylabel=ylabel)
+    y_pos = arange(len(elements))
+
+    ax.barh(y_pos, values, xerr=error, align='center', error_kw={'lw': 0.5, 'ecolor': 'r'})
+    ax.set_yticks(y_pos)
+    ax.set_yticklabels(elements)
+    ax.invert_yaxis()  # labels read top-to-bottom
+    ax.figure.set_size_inches(15, 15)
+
 
 def plot_confusion_matrix(cnf_matrix: ndarray, classes_names: ndarray, ax: Axes = None, normalize: bool = False, title=''):
     if ax is None:
@@ -276,4 +286,10 @@ def plot_overfitting_study(xvalues, prd_trn, prd_tst, name, xlabel, ylabel, pct=
     evals = {'Train': prd_trn, 'Test': prd_tst}
     figure()
     multiple_line_chart(xvalues, evals, ax = None, title=f'Overfitting {name}', xlabel=xlabel, ylabel=ylabel, percentage=pct)
-    savefig('images/overfitting_{name}.png')
+    savefig(f'images/overfitting_{name}.png')
+    
+def plot_overfitting_study_dt(xvalues, prd_trn, prd_tst, name, xlabel, ylabel, pct=True):
+    evals = {'Train': prd_trn, 'Test': prd_tst}
+    figure()
+    multiple_line_chart(xvalues, evals, ax = None, title=f'Overfitting {name}', xlabel=xlabel, ylabel=ylabel, percentage=pct)
+    savefig(f'images/dt/overfitting_{name}.png')
