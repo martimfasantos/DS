@@ -69,7 +69,7 @@ for i in range(len(file_names)):
     for d in dist:
         y_tst_values = []
         for n in nvalues:
-            knn = KNeighborsClassifier(n_neighbors=n, metric=d)
+            knn = KNeighborsClassifier(n_neighbors=n, metric=d, n_jobs=3)
             knn.fit(trnX, trnY)
             prd_tst_Y = knn.predict(tstX)
             y_tst_values.append(eval_metric(tstY, prd_tst_Y))
