@@ -90,7 +90,7 @@ for i in range(len(file_names)):
     # Best KNN model #
     # -------------- #
 
-    clf = knn = KNeighborsClassifier(n_neighbors=best[0], metric=best[1])
+    clf = knn = KNeighborsClassifier(n_neighbors=best[0], metric=best[1], n_jobs=3)
     clf.fit(trnX, trnY)
     prd_trn = clf.predict(trnX)
     prd_tst = clf.predict(tstX)
@@ -114,7 +114,7 @@ for i in range(len(file_names)):
     y_tst_values = []
     y_trn_values = []
     for n in nvalues:
-        knn = KNeighborsClassifier(n_neighbors=n, metric=d)
+        knn = KNeighborsClassifier(n_neighbors=n, metric=d, n_jobs=3)
         knn.fit(trnX, trnY)
         prd_tst_Y = knn.predict(tstX)
         prd_trn_Y = knn.predict(trnX)
