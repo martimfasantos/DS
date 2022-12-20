@@ -97,6 +97,13 @@ def bar_chart(xvalues: list, yvalues: list, ax: Axes = None, title: str = '', xl
     for i in range(len(yvalues)):
         ax.text(i, yvalues[i] + TEXT_MARGIN, f'{yvalues[i]:.2f}', ha='center', fontproperties=FONT_TEXT)
 
+def bar_chart_fs(xvalues: list, yvalues: list, ax: Axes = None, title: str = '', xlabel: str = '', ylabel: str = '', percentage: bool = False, rotation: bool = False):
+    ax = set_elements(ax=ax, title=title, xlabel=xlabel, ylabel=ylabel, percentage=percentage)
+    set_locators(xvalues, ax=ax, rotation=rotation)
+    ax.bar(xvalues, yvalues, edgecolor=cfg.LINE_COLOR, color=cfg.FILL_COLOR, tick_label=xvalues)
+    for i in range(len(yvalues)):
+        ax.text(i, yvalues[i] + TEXT_MARGIN/120, f'{yvalues[i]:.2f}', ha='center', fontproperties=FONT_TEXT)
+
 
 def multiple_bar_chart(xvalues: list, yvalues: dict, ax: Axes = None, title: str = '', xlabel: str = '', ylabel: str = '', percentage: bool = False, unit=1):
     ax = set_elements(ax=ax, title=title, xlabel=xlabel, ylabel=ylabel, percentage=percentage, unit=unit)
@@ -276,4 +283,16 @@ def plot_overfitting_study(xvalues, prd_trn, prd_tst, name, xlabel, ylabel, pct=
     evals = {'Train': prd_trn, 'Test': prd_tst}
     figure()
     multiple_line_chart(xvalues, evals, ax = None, title=f'Overfitting {name}', xlabel=xlabel, ylabel=ylabel, percentage=pct)
-    savefig('images/overfitting_{name}.png')
+    savefig(f'images/overfitting_{name}.png')
+
+def plot_overfitting_study_dt(xvalues, prd_trn, prd_tst, name, xlabel, ylabel, pct=True):
+    evals = {'Train': prd_trn, 'Test': prd_tst}
+    figure()
+    multiple_line_chart(xvalues, evals, ax = None, title=f'Overfitting {name}', xlabel=xlabel, ylabel=ylabel, percentage=pct)
+    savefig(f'images/decision_trees/overfitting_{name}.png')
+
+def plot_overfitting_study_rf(xvalues, prd_trn, prd_tst, name, xlabel, ylabel, pct=True):
+    evals = {'Train': prd_trn, 'Test': prd_tst}
+    figure()
+    multiple_line_chart(xvalues, evals, ax = None, title=f'Overfitting {name}', xlabel=xlabel, ylabel=ylabel, percentage=pct)
+    savefig(f'images/random_forests/overfitting_{name}.png')

@@ -255,4 +255,16 @@ def plot_overfitting_study(xvalues, prd_trn, prd_tst, name, xlabel, ylabel, pct=
     evals = {'Train': prd_trn, 'Test': prd_tst}
     figure()
     multiple_line_chart(xvalues, evals, ax = None, title=f'Overfitting {name}', xlabel=xlabel, ylabel=ylabel, percentage=pct)
-    savefig('images/overfitting_{name}.png')
+    savefig(f'images/overfitting_{name}.png')
+
+def plot_overfitting_study_dt(xvalues, prd_trn, prd_tst, name, xlabel, ylabel, pct=True):
+    evals = {'Train': prd_trn, 'Test': prd_tst}
+    figure()
+    multiple_line_chart(xvalues, evals, ax = None, title=f'Overfitting {name}', xlabel=xlabel, ylabel=ylabel, percentage=pct)
+    savefig(f'images/decision_trees/overfitting_{name}.png')
+
+def plot_overfitting_study_rf(xvalues, prd_trn, prd_tst, name, xlabel, ylabel, pct=True):
+    evals = {'Train': prd_trn, 'Test': prd_tst}
+    figure()
+    multiple_line_chart(xvalues, evals, ax = None, title=f'Overfitting {name}', xlabel=xlabel, ylabel=ylabel, percentage=pct)
+    savefig(f'images/random_forests/overfitting_{name}.png')

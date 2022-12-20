@@ -84,13 +84,14 @@ for d in dist:
 figure()
 multiple_line_chart(nvalues_int, values_int, title=f'KNN variants: {file_tag}', xlabel='n', ylabel=str(accuracy_score), percentage=True)
 savefig(f'../data_preparation/images/best_results/knn/{file_tag}_knn_study_interval.png')
+print("KKN 2")
 
 # -------------- #
 # Best KNN model #
 # -------------- #
 
 # best = 17
-print(best[0])
+# print(best[0])
 
 clf = knn = KNeighborsClassifier(n_neighbors=best[0], metric=best[1])
 clf.fit(trnX, trnY)

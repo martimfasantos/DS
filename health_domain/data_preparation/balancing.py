@@ -12,11 +12,11 @@ from imblearn.over_sampling import SMOTE
 
 
 # Folder path
-dir_path = '../data_preparation/data/scaling/'
+dir_path = '../data_preparation/data/feature_selection/'
 
 # List to store files
 file_tag = 'diabetic_data'
-file_path = f'../classification/data/train_and_test/scaling/{file_tag}_scaled_zscore'
+file_path = f'../classification/data/train_and_test/feature_selection/{file_tag}_selected'
 
 test = read_csv(f'{file_path}_test.csv')
 test.to_csv(f'../classification/data/train_and_test/balancing/{file_tag}_test.csv', index=False)

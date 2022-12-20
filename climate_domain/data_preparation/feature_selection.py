@@ -1,13 +1,18 @@
-from pandas import read_csv
+from pandas import DataFrame, read_csv
+from matplotlib.pyplot import figure, title, savefig, show, tight_layout
+from seaborn import heatmap
+from matplotlib.pyplot import figure, savefig, show
+from ds_charts import bar_chart, get_variable_types, bar_chart_fs
 
-filename = 'data/scaling/drought_scaled_minmax.csv'
-data = read_csv(filename)
+file_tag = 'drought'
+file_name = f'data/scaling/{file_tag}_scaled_minmax.csv'
+data = read_csv(file_name)
 
-# # # # # # # # # # # # # # # #
-# Droping Redundant Variables #
-# # # # # # # # # # # # # # # #
 
-from pandas import DataFrame
+# ---------------------------- #
+# Dropping Redundant Variables #
+# ---------------------------- #
+
 THRESHOLD = 0.9
 
 def select_redundant(corr_mtx, threshold: float) -> tuple[dict, DataFrame]:
@@ -26,11 +31,8 @@ def select_redundant(corr_mtx, threshold: float) -> tuple[dict, DataFrame]:
     return vars_2drop, corr_mtx
 
 drop, corr_mtx = select_redundant(data.corr(), THRESHOLD)
-print("Redundancies: ", drop.keys())
-print("# # # # # # # # # # # # # # # #")
+# print("Redundancies: ", drop.keys())
 
-from matplotlib.pyplot import figure, title, savefig, show
-from seaborn import heatmap
 
 if corr_mtx.empty:
     raise ValueError('Matrix is empty.')
@@ -38,45 +40,43 @@ if corr_mtx.empty:
 figure(figsize=[12, 12])
 heatmap(corr_mtx, xticklabels=corr_mtx.columns, yticklabels=corr_mtx.columns, annot=False, cmap='Blues')
 title('Filtered Correlation Analysis')
-savefig(f'images/feature_selection/filtered_correlation_analysis_{THRESHOLD}.png')
+tight_layout()
+savefig(f'images/feature_selection/{file_tag}_filtered_correlation_analysis_{THRESHOLD}.png')
 
-from pandas import DataFrame
 
 def drop_redundant(data: DataFrame, vars_2drop: dict) -> DataFrame:
     sel_2drop = []
-    print(vars_2drop.keys())
+    # print(vars_2drop.keys())
     for key in vars_2drop.keys():
         if key not in sel_2drop:
             for r in vars_2drop[key]:
                 if r != key and r not in sel_2drop:
                     sel_2drop.append(r)
-    print('Variables to drop: ', sel_2drop)
-    print("# # # # # # # # # # # # # # # #")
+    # print('Variables to drop: ', sel_2drop)
     df = data.copy()
     for var in sel_2drop:
         df.drop(labels=var, axis=1, inplace=True)
     return df
 df = drop_redundant(data, drop)
-df.to_csv(f'data/feature_selection/drought_selected.csv', index=False)
+df.to_csv(f'data/feature_selection/{file_tag}_selected.csv', index=False)
 
-from matplotlib.pyplot import figure, savefig, show
-from ds_charts import bar_chart, get_variable_types
 
 def select_low_variance(data: DataFrame, threshold: float) -> list:
     lst_variables = []
     lst_variances = []
     for el in data.columns:
         value = data[el].var()
-        if value >= threshold:
+        if value <= threshold:
             lst_variables.append(el)
             lst_variances.append(value)
 
-    print(len(lst_variables), lst_variables)
-    figure(figsize=[15, 10])
-    bar_chart(lst_variables, lst_variances, title='Variance analysis', xlabel='variables', ylabel='variance', rotation=True)
-    savefig('images/feature_selection/filtered_variance_analysis.png')
+    # print(len(lst_variables), lst_variables)
+    figure(figsize=[18, 10])
+    bar_chart_fs(lst_variables, lst_variances, title='Variance analysis', xlabel='variables', ylabel='variance', rotation=True)
+    tight_layout()
+    savefig(f'images/feature_selection/{file_tag}_filtered_variance_analysis.png')
     return lst_variables
 
 numeric = get_variable_types(data)['Numeric']
 vars_2drop = select_low_variance(data[numeric], 0.1)
-print(vars_2drop)
+# print(vars_2drop)
