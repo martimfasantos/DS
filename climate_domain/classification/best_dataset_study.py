@@ -54,7 +54,7 @@ figure()
 multiple_line_chart(nvalues, values, title=f'KNN variants: {file_tag}', xlabel='n', ylabel=str(accuracy_score), percentage=True)
 savefig(f'../data_preparation/images/best_results/knn/{file_tag}_knn_study.png')
 # show()
-# print('Best results with %d neighbors and %s'%(best[0], best[1]))
+print('Best results with %d neighbors and %s'%(best[0], best[1]))
 print("KNN 1")
 
 # ------------------------------ #

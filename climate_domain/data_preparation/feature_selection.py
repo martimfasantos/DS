@@ -43,7 +43,6 @@ title('Filtered Correlation Analysis')
 tight_layout()
 savefig(f'images/feature_selection/{file_tag}_filtered_correlation_analysis_{THRESHOLD}.png')
 
-
 def drop_redundant(data: DataFrame, vars_2drop: dict) -> DataFrame:
     sel_2drop = []
     # print(vars_2drop.keys())
@@ -57,15 +56,15 @@ def drop_redundant(data: DataFrame, vars_2drop: dict) -> DataFrame:
     for var in sel_2drop:
         df.drop(labels=var, axis=1, inplace=True)
     return df
+
 df = drop_redundant(data, drop)
-df.to_csv(f'data/feature_selection/{file_tag}_selected.csv', index=False)
+#df.to_csv(f'data/feature_selection/{file_tag}_selected.csv', index=False)
 
-
-def select_low_variance(data: DataFrame, threshold: float) -> list:
+def select_low_variance(datafr: DataFrame, threshold: float) -> list:
     lst_variables = []
     lst_variances = []
-    for el in data.columns:
-        value = data[el].var()
+    for el in datafr.columns:
+        value = datafr[el].var()
         if value <= threshold:
             lst_variables.append(el)
             lst_variances.append(value)
@@ -77,6 +76,15 @@ def select_low_variance(data: DataFrame, threshold: float) -> list:
     savefig(f'images/feature_selection/{file_tag}_filtered_variance_analysis.png')
     return lst_variables
 
-numeric = get_variable_types(data)['Numeric']
-vars_2drop = select_low_variance(data[numeric], 0.1)
+numeric = get_variable_types(df)['Numeric']
+vars_2drop = select_low_variance(df[numeric], 0.05)
+
+def drop_irrelevant(datafr: DataFrame, vars_2drop: dict) -> DataFrame:
+    dfr = datafr.copy()
+    for var in vars_2drop:
+        dfr.drop(labels=var, axis=1, inplace=True)
+    return dfr
+
+df = drop_irrelevant(df, vars_2drop)
+df.to_csv(f'data/feature_selection/{file_tag}_selected.csv', index=False)
 # print(vars_2drop)

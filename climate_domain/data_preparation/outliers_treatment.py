@@ -6,9 +6,6 @@ register_matplotlib_converters()
 file_tag = 'drought'
 file_path = 'data/variables_encoding/drought_variables_encoding.csv'
 data = read_csv(file_path, na_values="na", sep=',', decimal='.', parse_dates=True, infer_datetime_format=True)
-index_column = data.columns[0]
-data = data.drop([index_column], axis = 1)
-# print(data.describe())
 
 def determine_outlier_thresholds(summary5: DataFrame, var: str, OPTION: str, OUTLIER_PARAM: int):
     # default parameter
@@ -30,7 +27,7 @@ if [] == numeric_vars:
     raise ValueError('There are no numeric variables.')
 
 # Remove non numeric variables (ordinal but not numeric)
-to_remove = ['fips', 'PRECTOT', 'date', 'Month', 'Year', 'SQ1', 'SQ2', 'SQ3', 'SQ4', 'SQ7']
+to_remove = ['fips', 'PRECTOT', 'cos_month', 'sin_month', 'year', 'SQ1', 'SQ2', 'SQ3', 'SQ4', 'SQ7']
 
 # Gather the variables with meaningful wide distributions
 wide_distribution = ['slope6', 'slope7','slope8', 'URB_LAND', 'WAT_LAND', 'CULTIR_LAND']
@@ -40,9 +37,8 @@ for el in numeric_vars.copy():
     if var in to_remove:
         numeric_vars.remove(el)
 
-# print('Original data:', data.shape)
+print('Original data:', data.shape)
 summary5 = data.describe(include='number')
-
 
 # ------------------------- #
 # APPROACH 1: Drop outliers #
@@ -64,13 +60,12 @@ for var in numeric_vars:
 df.to_csv(f'data/outliers/{file_tag}_drop_outliers.csv', index=False)
 print('data after dropping outliers:', df.shape)
 
-
 # ----------------------------- #
 # APPROACH 2: Truncate outliers #
 # ----------------------------- #
 
-IQR_PARAM = 2
-IQR_PARAM_WIDE = 4
+IQR_PARAM = 5
+IQR_PARAM_WIDE = 7
 
 df = data.copy(deep=True)
 

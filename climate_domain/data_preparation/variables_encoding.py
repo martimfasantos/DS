@@ -29,6 +29,5 @@ data["sin_month"] = np.sin(data["month_norm"])
 
 data.drop(columns='month_norm', inplace=True)
 data.drop(columns='month', inplace=True)
-data.drop(columns='date', inplace=True)
 
 data.to_csv(f'data/variables_encoding/{file_tag}_variables_encoding.csv', index=False)

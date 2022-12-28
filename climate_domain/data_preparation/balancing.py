@@ -45,6 +45,7 @@ class_one = train[train['class'] == 1]
 print('Class 1 = ', len(class_one))
 class_zero = train[train['class'] == 0]
 print('Class 0 = ', len(class_zero))
+
 # ----------- #
 #    SMOTE    #
 # ----------- #

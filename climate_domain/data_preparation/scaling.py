@@ -11,10 +11,8 @@ from sklearn.naive_bayes import GaussianNB, MultinomialNB, BernoulliNB, Categori
 
 register_matplotlib_converters()
 file_tag = 'drought'
-file_path = f'data/outliers/{file_tag}_truncate_outliers.csv'
+file_path = f'data/outliers/{file_tag}_drop_outliers.csv'
 data = read_csv(file_path, na_values="na", sep=',', decimal='.', parse_dates=True, infer_datetime_format=True)
-index_column = data.columns[0]
-data = data.drop([index_column], axis = 1)
 
 variable_types = get_variable_types(data)
 numeric_vars = variable_types['Numeric']

@@ -9,9 +9,8 @@ file_tag = 'drought'
 file_path = f'data/feature_selection/{file_tag}_selected.csv'
 data = read_csv(file_path)
 data.pop('class')
-data.pop('date     ')
+data.pop('date')
 variables = data.columns.values
-
 
 # ------- # 
 #   PCA   #
@@ -47,5 +46,5 @@ transf = pca.transform(data)
 
 new_data = pd.DataFrame(data=transf)
 new_data["class"] = read_csv(f'data/feature_selection/{file_tag}_selected.csv')['class']
-new_data["date"] = read_csv(f'data/feature_selection/{file_tag}_selected.csv')['date     ']
+new_data["date"] = read_csv(f'data/feature_selection/{file_tag}_selected.csv')['date']
 new_data.to_csv(f'data/feature_extraction/{file_tag}_extracted.csv', index=False)
