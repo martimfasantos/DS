@@ -1,9 +1,10 @@
-from numpy import ndarray
+from numpy import std, argsort
 from pandas import DataFrame, read_csv, unique
 from matplotlib.pyplot import figure, subplots, savefig, show
 from sklearn.ensemble import GradientBoostingClassifier
 from ds_charts import plot_evaluation_results_ternary, multiple_line_chart, horizontal_bar_chart, HEIGHT
 from sklearn.metrics import accuracy_score
+from ds_charts import plot_overfitting_study_gb
 
 file_tag = 'diabetic_data'
 file_name = f'{file_tag}_under'
@@ -22,6 +23,7 @@ labels.sort()
 test = read_csv(f'data/train_and_test/balancing/{file_tag}_test.csv')
 tstY = test.pop(target).values
 tstX = test.values
+
 
 # ----------------------- #
 # Gradient Boosting Study #
@@ -58,6 +60,7 @@ savefig(f'images/gradient_boosting/{file_tag}_gb_study.png')
 # show()
 print('Best results with depth=%d, learning rate=%1.2f and %d estimators, with accuracy=%1.2f'%(best[0], best[1], best[2], last_best))
 
+
 # ---------------------- #
 # Best Gradient Boosting #
 # ---------------------- #
@@ -68,11 +71,10 @@ plot_evaluation_results_ternary(labels, trnY, prd_trn, tstY, prd_tst)
 savefig(f'images/gradient_boosting/{file_tag}_gb_best.png')
 # show()
 
+
 # ------------------- #
 # Features importance #
 # ------------------- #
-
-from numpy import std, argsort
 
 variables = train.columns
 importances = best_model.feature_importances_
@@ -87,11 +89,10 @@ figure()
 horizontal_bar_chart(elems, importances[indices], stdevs[indices], title='Gradient Boosting Features importance', xlabel='importance', ylabel='variables')
 savefig(f'images/gradient_boosting/{file_tag}_gb_ranking.png')
 
+
 # ----------- #
 # Overfitting #
 # ----------- #
-
-from ds_charts import plot_overfitting_study_gb
 
 lr = 0.7
 max_depth = 10
