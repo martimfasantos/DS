@@ -1,5 +1,5 @@
 from numpy import random
-from pandas import DataFrame, read_csv, unique, Series
+from pandas import DataFrame, read_csv, unique
 from matplotlib.pyplot import figure, subplots, savefig, show
 from sklearn.neural_network import MLPClassifier
 from ds_charts import plot_evaluation_results_ternary, multiple_line_chart, HEIGHT

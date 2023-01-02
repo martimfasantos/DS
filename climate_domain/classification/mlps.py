@@ -11,7 +11,8 @@ file_path = f'data/train_and_test/balancing/{file_name}'
 target = 'class'
 
 # Train 
-train = read_csv(f'{file_path}_train.csv')
+train = read_csv(f'{file_path}_train.csv').sample(frac=1, random_state=8)
+# print(train.shape)
 trnY = train.pop(target).values
 trnX = train.values
 labels = unique(trnY)
@@ -63,8 +64,8 @@ for k in range(len(lr_type)):
 
     multiple_line_chart(
         max_iter_warm_start, values, ax=axs[0, k], title=f'MLP with lr_type={tp}', xlabel='mx iter', ylabel=measure, percentage=flag_pct)
-savefig(f'images/mlp/{file_tag}_mlp_study.png')
-show()
+savefig(f'images/mlps/{file_tag}_mlp_study.png')
+# show()
 print(f'Best results with lr_type={best[0]}, learning rate={best[1]} and {best[2]} max iter ==> measure={last_best:.2f}')
 
 
@@ -74,9 +75,9 @@ print(f'Best results with lr_type={best[0]}, learning rate={best[1]} and {best[2
 
 prd_trn = best_model.predict(trnX)
 prd_tst = best_model.predict(tstX)
-
 plot_evaluation_results(labels, trnY, prd_trn, tstY, prd_tst)
-savefig(f'images/mlp/{file_tag}_mlp_best.png')
+savefig(f'images/mlps/{file_tag}_mlp_best.png')
+# show()
 
 
 # ----------- #
