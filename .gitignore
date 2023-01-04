@@ -1,9 +1,12 @@
 # Python caches
-health_domain/data_profiling/__pycache__/
-climate_domain/data_profiling/__pycache__/
+health_domain/classification/data_profiling/__pycache__/
+climate_domain/classification/data_profiling/__pycache__/
 
-health_domain/data_preparation/__pycache__/
-climate_domain/data_preparation/__pycache__/
+health_domain/classification/data_preparation/__pycache__/
+climate_domain/classification/data_preparation/__pycache__/
 
-health_domain/classification/__pycache__/
-climate_domain/classification/__pycache__/
+health_domain/classification/classification/__pycache__/
+climate_domain/classification/classification/__pycache__/
+
+health_domain/forecasting/analysis/__pycache__/
+climate_domain/forecasting/analysis/__pycache__/
