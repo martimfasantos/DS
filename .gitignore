@@ -8,5 +8,5 @@ climate_domain/classification/data_preparation/__pycache__/
 health_domain/classification/classification/__pycache__/
 climate_domain/classification/classification/__pycache__/
 
-health_domain/forecasting/analysis/__pycache__/
-climate_domain/forecasting/analysis/__pycache__/
+health_domain/forecasting/_and_preparation/__pycache__/
+climate_domain/forecasting/_and_preparation/__pycache__/
