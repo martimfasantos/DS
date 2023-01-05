@@ -7,27 +7,29 @@ file_name = f'{file_tag}'
 file_path = f'../datasets/{file_name}.csv'
 
 target = 'Glucose'
+index = 'Date'
 
-data = read_csv(file_path, index_col='Date', sep=',', decimal='.', parse_dates=True, infer_datetime_format=True)
+data = read_csv(file_path, index_col=index, sep=',', decimal='.', parse_dates=True, infer_datetime_format=True, dayfirst=True)
 
-# remove non-target columns for profiling
-for column in data:
-    if column != target:
-        data.drop(columns=column, inplace=True)
+# remove non-target columns for transformation
+# for column in data:
+#     if column != target:
+#         data.drop(columns=column, inplace=True)
 # print(data.shape)
 
+# sort data by date
+data.sort_values(by=data.index.name, inplace=True)
 
 # --------------------- #
 # Distribution Original #
 # --------------------- #
 
-figure(figsize=(3*HEIGHT, HEIGHT/2))
-plot_series(data, x_label='Date', y_label='Glucose', title='GLUCOSE original')
+figure(figsize=(3*HEIGHT, HEIGHT*2))
+plot_series(data[target], x_label=index, y_label='consumption', title='Glucose distribution')
+plot_series(data['Insulin'])
 xticks(rotation = 45)
-tight_layout()
-savefig(f'images/transformation/original_distribution.png')
-# show()
 
+savefig(f'images/transformation/original_distribution.png')
 
 # ----------- #
 # Aggregation #
@@ -40,55 +42,53 @@ def aggregate_by(data: Series, index_var: str, period: str):
     agg_df.set_index(index_var, drop=True, inplace=True)
     return agg_df
 
+# first aggregation
 figure(figsize=(3*HEIGHT, HEIGHT))
-agg_df = aggregate_by(data, 'Date', 'D')
-plot_series(agg_df, title='Daily quantities', x_label='Date', y_label='Glucose')
+agg_df = aggregate_by(data, index, 'D')
+plot_series(agg_df[target], title='Glucose - Daily measurements', x_label=index, y_label='measurement')
+plot_series(agg_df['Insulin'], x_label=index, y_label='measurement')
 xticks(rotation = 45)
-tight_layout()
 savefig(f'images/transformation/aggregation_daily.png')
-# show()
 
+# second aggregation
 figure(figsize=(3*HEIGHT, HEIGHT))
-agg_df = aggregate_by(data, 'Date', 'W')
-plot_series(agg_df, title='Weekly quantities', x_label='Date', y_label='Glucose')
+agg_df = aggregate_by(data, index, 'W')
+plot_series(agg_df[target], title='Glucose - Weekly measurements', x_label=index, y_label='measurement')
+plot_series(agg_df['Insulin'], x_label=index, y_label='measurement')
 xticks(rotation = 45)
-tight_layout()
 savefig(f'images/transformation/aggregation_weekly.png')
-# show()
 
+# third aggregation
 figure(figsize=(3*HEIGHT, HEIGHT))
-agg_df = aggregate_by(data, 'Date', 'M')
-plot_series(agg_df, title='Monthly quantities', x_label='Date', y_label='Glucose')
+agg_df = aggregate_by(data, index, 'M')
+plot_series(agg_df[target], title='Glucose - Monthly measurements', x_label=index, y_label='measurement')
+plot_series(agg_df['Insulin'], x_label=index, y_label='measurement')
 xticks(rotation = 45)
-tight_layout()
 savefig(f'images/transformation/aggregation_monthly.png')
-# show()
-
 
 # --------- #
 # Smoothing #
 # --------- #
 
+# first window size
 WIN_SIZE = 10
 rolling = data.rolling(window=WIN_SIZE)
 smooth_df = rolling.mean()
 figure(figsize=(3*HEIGHT, HEIGHT/2))
-plot_series(smooth_df, title=f'Smoothing (win_size={WIN_SIZE})', x_label='Date', y_label='Glucose')
+plot_series(smooth_df[target], title=f'Glucose - Smoothing (win_size={WIN_SIZE})', x_label=index, y_label='measurement')
+plot_series(smooth_df['Insulin'], x_label=index, y_label='measurement')
 xticks(rotation = 45)
-tight_layout()
 savefig(f'images/transformation/smoothing_10.png')
-# show()
 
+# second window size
 WIN_SIZE = 100
 rolling = data.rolling(window=WIN_SIZE)
 smooth_df = rolling.mean()
 figure(figsize=(3*HEIGHT, HEIGHT/2))
-plot_series(smooth_df, title=f'Smoothing (win_size={WIN_SIZE})', x_label='Date', y_label='Glucose')
+plot_series(smooth_df[target], title=f'Glucose - Smoothing (win_size={WIN_SIZE})', x_label=index, y_label='measurement')
+plot_series(smooth_df['Insulin'], x_label=index, y_label='measurement')
 xticks(rotation = 45)
-tight_layout()
 savefig(f'images/transformation/smoothing_100.png')
-# show()
-
 
 # --------------- #
 # Differentiation #
@@ -96,7 +96,7 @@ savefig(f'images/transformation/smoothing_100.png')
 
 diff_df = data.diff()
 figure(figsize=(3*HEIGHT, HEIGHT))
-plot_series(diff_df, title='Differentiation', x_label='Date', y_label='consumption')
+plot_series(diff_df[target], title='Glucose - Differentiation', x_label=index, y_label='measurement')
+plot_series(diff_df['Insulin'], x_label=index, y_label='measurement')
 xticks(rotation = 45)
 savefig(f'images/transformation/differentiation.png')
-# show()
