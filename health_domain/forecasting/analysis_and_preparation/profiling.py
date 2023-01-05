@@ -10,7 +10,7 @@ file_path = f'../datasets/{file_name}.csv'
 
 target = 'Glucose'
 
-data = read_csv(file_path, index_col='Date', sep=',', decimal='.', parse_dates=True, infer_datetime_format=True)
+data = read_csv(file_path, index_col='Date', sep=',', decimal='.', parse_dates=True, infer_datetime_format=True, dayfirst=True)
 
 # remove non-target columns for profiling
 for column in data:
@@ -18,6 +18,8 @@ for column in data:
         data.drop(columns=column, inplace=True)
 # print(data.shape)
 
+# sort data by date
+data.sort_values(by=data.index.name, inplace=True)
 
 # ------------------- #
 # Data Dimensionality #
@@ -27,12 +29,11 @@ print("Nr. Records = ", data.shape[0])
 print("First timestamp", data.index[0])
 print("Last timestamp", data.index[-1])
 figure(figsize=(3*HEIGHT, HEIGHT))
-plot_series(data, x_label='timestamp', y_label='quantity', title='Glucose')
+plot_series(data, x_label='timestamp', y_label='glucose', title='Glucose')
 xticks(rotation = 45)
 tight_layout()
 # show()
 savefig(f'images/profiling/dimensionality.png')
-
 
 # ---------------- #
 # Data Granularity #
@@ -41,7 +42,7 @@ savefig(f'images/profiling/dimensionality.png')
 # Per days
 day_df = data.copy().groupby(data.index.date).mean()
 figure(figsize=(3*HEIGHT, HEIGHT))
-plot_series(day_df, title='Daily quantities', x_label='timestamp', y_label='quantity')
+plot_series(day_df, title='Daily glucose', x_label='timestamp', y_label='quantity')
 xticks(rotation = 45)
 tight_layout()
 # show()
@@ -53,12 +54,11 @@ week_df = data.copy().groupby(index).mean()
 week_df['timestamp'] = index.drop_duplicates().to_timestamp()
 week_df.set_index('timestamp', drop=True, inplace=True)
 figure(figsize=(3*HEIGHT, HEIGHT))
-plot_series(week_df, title='Weekly quantities', x_label='timestamp', y_label='quantity')
+plot_series(week_df, title='Weekly glucose', x_label='timestamp', y_label='quantity')
 xticks(rotation = 45)
 tight_layout()
 # show()
 savefig(f'images/profiling/granularity_weeks.png')
-
 
 # Per months
 index = data.index.to_period('M')
@@ -66,14 +66,13 @@ month_df = data.copy().groupby(index).mean()
 month_df['timestamp'] = index.drop_duplicates().to_timestamp()
 month_df.set_index('timestamp', drop=True, inplace=True)
 figure(figsize=(3*HEIGHT, HEIGHT))
-plot_series(month_df, title='Monthly quantities', x_label='timestamp', y_label='quantity')
+plot_series(month_df, title='Monthly glucose', x_label='timestamp', y_label='quantity')
 tight_layout()
 # show()
 savefig(f'images/profiling/granularity_months.png')
 
 # It does not make sense to do the granularity per quarter since 
 # there the data goes from month 03 to month 07.
-
 
 # ----------------- #
 # Data Distribution #
@@ -103,34 +102,38 @@ week_df.boxplot(ax=axs[1])
 # show()
 savefig(f'images/profiling/distribution.png')
 
-
 # ---------------------- #
 # Variables Distribution #
 # ---------------------- #
 
-bins = (10, 25, 50)
-_, axs = subplots(1, len(bins), figsize=(len(bins)*HEIGHT, HEIGHT))
-for j in range(len(bins)):
-    axs[j].set_title('Histogram for hourly Glucose %d bins'%bins[j])
-    axs[j].set_xlabel('quantity')
-    axs[j].set_ylabel('Nr records')
-    axs[j].hist(data.values, bins=bins[j])
-# show()
-savefig(f'images/profiling/variable_distribution_hourly.png')
+from ds_charts import bar_chart
 
-_, axs = subplots(1, len(bins), figsize=(len(bins)*HEIGHT, HEIGHT))
-for j in range(len(bins)):
-    axs[j].set_title('Histogram for weekly Glucose %d bins'%bins[j])
-    axs[j].set_xlabel('quantity')
-    axs[j].set_ylabel('Nr records')
-    axs[j].hist(week_df.values, bins=bins[j])
-# show()
-savefig(f'images/profiling/variable_distribution_weekly.png')
+bins = ('day', 'week', 'month')
+_, axs = subplots(1, len(bins), figsize=(len(bins)*HEIGHT*2.5, HEIGHT))
 
+# Per days
+day_df = data.copy().groupby(data.index.date)
+counts = index.to_series().astype(str).value_counts()
+bar_chart(counts.index.to_list(), counts.values, ax=axs[0], title='Histogram for daily Glucose: 149 bins', xlabel='glucose', ylabel='nr records', percentage=False)
+
+# Per weeks
+index = data.index.to_period('W')
+counts = index.to_series().astype(str).value_counts()
+bar_chart(counts.index.to_list(), counts.values, ax=axs[1], title='Histogram for weekly Glucose: 22 bins', xlabel='glucose', ylabel='nr records', percentage=False)
+
+# Per months
+index = data.index.to_period('M')
+counts = index.to_series().astype(str).value_counts()
+bar_chart(counts.index.to_list(), counts.values, ax=axs[2], title='Histogram for montly Glucose: 5 bins', xlabel='glucose', ylabel='nr records', percentage=False)
+
+savefig(f'images/profiling/variable_distribution_granularities.png')
 
 # ----------------- #
 # Data Stationarity #
 # ----------------- #
+
+from numpy import ones
+from pandas import Series
 
 dt_series = Series(data['Glucose'])
 
@@ -145,7 +148,7 @@ line += [line[-1]] * (n - len(line))
 mean_line = Series(line, index=dt_series.index)
 series = {'values': dt_series, 'mean': mean_line}
 figure(figsize=(3*HEIGHT, HEIGHT))
-plot_series(series, x_label='time', y_label='quantities', title='Stationary study', show_std=True)
+plot_series(series, x_label='time', y_label='quantities', title='Stationarity study', show_std=True)
 # show()
 savefig(f'images/profiling/stationarity.png')
 
