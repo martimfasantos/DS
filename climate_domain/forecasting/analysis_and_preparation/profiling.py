@@ -4,7 +4,7 @@ from ts_functions import plot_series, HEIGHT
 from numpy import ones
 from pandas import Series
 
-file_path = f'../datasets/drought_forecasting'
+file_path = f'../datasets/drought'
 
 target = 'QV2M'
 
@@ -36,12 +36,13 @@ savefig(f'images/profiling/dimensionality.png')
 # Data Granularity #
 # ---------------- #
 
+# Daily 
 day_df = data.copy().groupby(data.index.date).mean()
 figure(figsize=(3*HEIGHT, HEIGHT))
 plot_series(day_df, title='Drought Granularity', x_label='date', y_label='Humidity')
 xticks(rotation = 45)
 tight_layout()
-savefig(f'images/profiling/granularity.png')
+savefig(f'images/profiling/granularity_daily.png')
 # show()
 
 # Weekly 
@@ -146,13 +147,7 @@ savefig(f'images/profiling/variables_distribution_monthly.png')
 # ----------------- #
 
 dt_series = Series(data[target])
-
 mean_line = Series(ones(len(dt_series.values)) * dt_series.mean(), index=dt_series.index)
-series = {'drought': dt_series, 'mean': mean_line}
-figure(figsize=(3*HEIGHT, HEIGHT))
-plot_series(series, x_label='date', y_label='Humidity', title='Stationary study', show_std=True)
-savefig(f'images/profiling/stationarity.png')
-# show()
 
 BINS = 10
 line = []
@@ -166,7 +161,7 @@ mean_line = Series(line, index=dt_series.index)
 series = {'humidity': dt_series, 'mean': mean_line}
 figure(figsize=(3*HEIGHT, HEIGHT))
 plot_series(series, x_label='date', y_label='Humidity', title='Stationary study', show_std=True)
-savefig(f'images/profiling/stationarity2.png')
+savefig(f'images/profiling/stationarity.png')
 # show()
 
 
