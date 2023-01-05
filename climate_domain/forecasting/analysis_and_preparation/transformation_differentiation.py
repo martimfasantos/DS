@@ -20,6 +20,7 @@ data = read_csv(file_path, index_col=index, sep=',', decimal='.', parse_dates=Tr
 # sort data by date
 data.sort_values(by=data.index.name, inplace=True)
 
+
 # --------------- #
 # Differentiation #
 # --------------- #
@@ -29,20 +30,17 @@ diff_df = data.diff()
 diff_df.to_csv(f'data/differentiation/{file_tag}_1_differentiation.csv', index=True)
 
 figure(figsize=(3*HEIGHT, HEIGHT))
-plot_series(diff_df['Insulin'], x_label=index, y_label='measurement')
 plot_series(diff_df[target], title='Glucose - Differentiation (1st derivative)', x_label=index, y_label='measurement')
+plot_series(diff_df['Insulin'], x_label=index, y_label='measurement')
 xticks(rotation = 45)
-tight_layout()
-savefig('images/transformation/differentiation_1.png')
-# show()
+savefig(f'images/transformation/differentiation_1.png')
 
 # second derivative
 diff_df = diff_df.diff()
 diff_df.to_csv(f'data/differentiation/{file_tag}_2_differentiation.csv', index=True)
 
 figure(figsize=(3*HEIGHT, HEIGHT))
-plot_series(diff_df['Insulin'], x_label=index, y_label='measurement')
 plot_series(diff_df[target], title='Glucose - Differentiation (2nd derivative)', x_label=index, y_label='measurement')
+plot_series(diff_df['Insulin'], x_label=index, y_label='measurement')
 xticks(rotation = 45)
-tight_layout()
-savefig('images/transformation/differentiation_2.png')
+savefig(f'images/transformation/differentiation_2.png')

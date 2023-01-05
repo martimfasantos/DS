@@ -20,6 +20,7 @@ data = read_csv(file_path, index_col=index, sep=',', decimal='.', parse_dates=Tr
 # sort data by date
 data.sort_values(by=data.index.name, inplace=True)
 
+
 # --------- #
 # Smoothing #
 # --------- #
@@ -31,12 +32,10 @@ smooth_df = rolling.mean()
 smooth_df.to_csv(f'data/smoothing/{file_tag}_10_smoothing.csv', index=True)
 
 figure(figsize=(3*HEIGHT, HEIGHT/2))
-plot_series(smooth_df['Insulin'], x_label=index, y_label='measurement')
 plot_series(smooth_df[target], title=f'Glucose - Smoothing (win_size={WIN_SIZE})', x_label=index, y_label='measurement')
+plot_series(smooth_df['Insulin'], x_label=index, y_label='measurement')
 xticks(rotation = 45)
-tight_layout()
-savefig('images/transformation/smoothing_10.png')
-# show()
+savefig(f'images/transformation/smoothing_10.png')
 
 # second window size
 WIN_SIZE = 100
@@ -45,9 +44,7 @@ smooth_df = rolling.mean()
 smooth_df.to_csv(f'data/smoothing/{file_tag}_100_smoothing.csv', index=True)
 
 figure(figsize=(3*HEIGHT, HEIGHT/2))
-plot_series(smooth_df['Insulin'], x_label=index, y_label='measurement')
 plot_series(smooth_df[target], title=f'Glucose - Smoothing (win_size={WIN_SIZE})', x_label=index, y_label='measurement')
+plot_series(smooth_df['Insulin'], x_label=index, y_label='measurement')
 xticks(rotation = 45)
-tight_layout()
-savefig('images/transformation/smoothing_100.png')
-# show()
+savefig(f'images/transformation/smoothing_100.png')
