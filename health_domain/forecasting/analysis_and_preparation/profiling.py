@@ -24,6 +24,7 @@ for column in data:
 # sort data by date
 data.sort_values(by=data.index.name, inplace=True)
 
+
 # ------------------- #
 # Data Dimensionality #
 # ------------------- #
@@ -37,6 +38,7 @@ xticks(rotation = 45)
 tight_layout()
 savefig(f'images/profiling/dimensionality.png')
 # show()
+
 
 # ---------------- #
 # Data Granularity #
@@ -129,44 +131,41 @@ tight_layout()
 savefig(f'images/profiling/distribution.png')
 # show()
 
+
 # ---------------------- #
 # Variables Distribution #
 # ---------------------- #
 
 # TODO target NOT index
+bins = (10, 25, 50)
 
-bins = ('hour', 'day', 'week')
-_, axs = subplots(1, len(bins), figsize=(len(bins)*HEIGHT*6, 3*HEIGHT))
+_, axs = subplots(1, len(bins), figsize=(len(bins)*HEIGHT, HEIGHT))
+for j in range(len(bins)):
+    axs[j].set_title('Histogram for Glucose %d bins'%bins[j])
+    axs[j].set_xlabel('quantity')
+    axs[j].set_ylabel('Nr records')
+    axs[j].hist(data[target].values, bins=bins[j])
+# show()
+savefig(f'images/profiling/variable_distribution.png')
 
-# Per hours
-index = data.index.to_period('H')
-counts = index.to_series().astype(str).value_counts()
-bar_chart(counts.index.to_list(), counts.values, ax=axs[0], title='Histogram for hourly Glucose: 596 bins', xlabel='glucose', ylabel='nr records', percentage=False)
-axs[0].tick_params(labelrotation=90)
-
-# Per days
-index = data.index.to_period('D')
-counts = index.to_series().astype(str).value_counts()
-bar_chart(counts.index.to_list(), counts.values, ax=axs[1], title='Histogram for daily Glucose: 149 bins', xlabel='glucose', ylabel='nr records', percentage=False)
-axs[1].tick_params(labelrotation=90)
-
-# Per weeks
-index = data.index.to_period('W')
-counts = index.to_series().astype(str).value_counts()
-bar_chart(counts.index.to_list(), counts.values, ax=axs[2], title='Histogram for weekly Glucose: 22 bins', xlabel='glucose', ylabel='nr records', percentage=False)
-axs[2].tick_params(labelrotation=90)
-
-tight_layout()
-savefig(f'images/profiling/variable_distribution_granularities.png')
 
 # ----------------- #
 # Data Stationarity #
 # ----------------- #
 
-# TODO mean line
+# Constant mean line
+dt_series = Series(data['Glucose'])
+
+mean_line = Series(ones(len(dt_series.values)) * dt_series.mean(), index=dt_series.index)
+series = {'values': dt_series, 'mean': mean_line}
+figure(figsize=(3*HEIGHT, HEIGHT))
+plot_series(series, x_label='time', y_label='glucose', title='Stationarity study', show_std=True)
+savefig(f'images/profiling/stationarity_1.png')
+# show()
 
 dt_series = Series(data['Glucose'])
 
+# Changing mean line
 BINS = 10
 line = []
 n = len(dt_series)
@@ -179,5 +178,5 @@ mean_line = Series(line, index=dt_series.index)
 series = {'values': dt_series, 'mean': mean_line}
 figure(figsize=(3*HEIGHT, HEIGHT))
 plot_series(series, x_label='time', y_label='glucose', title='Stationarity study', show_std=True)
-savefig(f'images/profiling/stationarity.png')
+savefig(f'images/profiling/stationarity_2.png')
 # show()
