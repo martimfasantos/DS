@@ -60,24 +60,19 @@ for i in range(len(file_names)):
     
     file_name = file_names[i]
     file_path = file_paths[i]
+    print(file_path)
+    train = read_csv(f'{file_path}.csv', index_col=index_col, sep=',', decimal='.', parse_dates=True, infer_datetime_format=True, dayfirst=True)
+    train.sort_values(by=train.index.name, inplace=True)
     
-    data = read_csv(f'{file_path}.csv', index_col=index_col, sep=',', decimal='.', parse_dates=True, infer_datetime_format=True, dayfirst=True)
-    data.sort_values(by=data.index.name, inplace=True)
-
-    
-    # remove non-target columns
-    for column in data:
-        if column != target:
-            data.drop(columns=column, inplace=True)
+    test = read_csv('../analysis_and_preparation/data/train_and_test/drought_test.csv', index_col=index_col, sep=',', decimal='.', parse_dates=True, infer_datetime_format=True, dayfirst=True)
+    test.sort_values(by=test.index.name, inplace=True)
 
     # TODO: MARTELAR AGGRESSIVO PQ NAO FUNCIONA COM OS PRIMEIROS NAN
     if FLAG == 'differentiation':
-        if i == 0:
-            data = data[2:] # second derivate has no derivative on the first 2 points
+        if i == 1:
+            train = train[2:] # second derivate has no derivative on the first 2 points
         else: 
-            data = data[1:] # first derivate has no derivative on the first point
-
-    train, test = split_dataframe(data, trn_pct=0.75)
+            train = train[1:] # first derivate has no derivative on the first point
     
     fr_mod = PersistenceRegressor()
     fr_mod.fit(train)

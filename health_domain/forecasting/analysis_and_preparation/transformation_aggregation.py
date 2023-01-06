@@ -24,14 +24,13 @@ data.sort_values(by=data.index.name, inplace=True)
 # Distribution Original #
 # --------------------- #
 
-# figure(figsize=(3*HEIGHT, HEIGHT*2))
-# plot_series(data['Insulin'])
-# plot_series(data[target], x_label=index, y_label='consumption', title='Glucose distribution')
-# xticks(rotation = 45)
-# tight_layout()
-# savefig(f'images/transformation/original_distribution.png')
-# show()
-
+figure(figsize=(3*HEIGHT, HEIGHT*2))
+#plot_series(data['Insulin'])
+plot_series(data[target], x_label=index, y_label='consumption', title='Glucose distribution')
+xticks(rotation = 45)
+tight_layout()
+savefig(f'images/transformation/original_distribution.png')
+#show()
 
 # ----------- #
 # Aggregation #

@@ -4,7 +4,7 @@ from ts_functions import plot_series, HEIGHT
 
 file_tag = 'drought'
 file_name = f'{file_tag}'
-file_path = f'../datasets/{file_name}.csv'
+file_path = f'data/train_and_test/{file_name}_train.csv'
 
 target = 'QV2M'
 index = 'date'

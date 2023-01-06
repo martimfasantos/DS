@@ -1,9 +1,11 @@
+# result: 1st derivative is slightly better
+
 from pandas import read_csv, Series
 from matplotlib.pyplot import figure, xticks, show, savefig, tight_layout
 from ts_functions import plot_series, HEIGHT
 
 file_tag = 'drought'
-file_name = f'{file_tag}_200_smoothing'
+file_name = f'{file_tag}_30_smoothing'
 file_path = f'data/smoothing/{file_name}.csv'
 
 target = 'QV2M'
