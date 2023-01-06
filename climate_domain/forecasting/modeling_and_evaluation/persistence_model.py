@@ -3,9 +3,10 @@ import os
 from pandas import read_csv, concat, unique, DataFrame
 import matplotlib.pyplot as plt
 import numpy as np
+from sklearn.base import RegressorMixin
 from sklearn.metrics import mean_squared_error
 from matplotlib.pyplot import figure, savefig, show, subplots
-from ts_functions import HEIGHT
+from ts_functions import HEIGHT, PREDICTION_MEASURES, plot_evaluation_results, plot_forecasting_series, split_dataframe
 
 # Parse terminal input
 FLAG = ''
@@ -32,7 +33,26 @@ for file in os.listdir(dir_path):
         file_paths.append(f'{dir_path}{file_name}')
 
 target = 'QV2M'
-index = 'date'
+index_col = 'date'
+
+measure = 'R2'
+flag_pct = False
+eval_results = {}
+
+class PersistenceRegressor(RegressorMixin):
+    def __init__(self):
+        super().__init__()
+        self.last = 0
+
+    def fit(self, X: DataFrame):
+        self.last = X.iloc[-1,0]
+        print(self.last)
+
+    def predict(self, X: DataFrame):
+        prd = X.shift().values
+        prd[0] = self.last
+        return prd
+
 
 for i in range(len(file_names)):
     file_name = file_names[i]
@@ -40,52 +60,32 @@ for i in range(len(file_names)):
     
     file_name = file_names[i]
     file_path = file_paths[i]
-    data = read_csv(f'{file_path}.csv', index_col=index, sep=',', decimal='.', parse_dates=True, infer_datetime_format=True, dayfirst=True)
+    
+    data = read_csv(f'{file_path}.csv', index_col=index_col, sep=',', decimal='.', parse_dates=True, infer_datetime_format=True, dayfirst=True)
     data.sort_values(by=data.index.name, inplace=True)
+
     
     # remove non-target columns
     for column in data:
         if column != target:
             data.drop(columns=column, inplace=True)
 
-    # Create lagged dataset
-    values = DataFrame(data.values)
-    dataframe = concat([values.shift(1), values], axis=1)
-    dataframe.columns = ['t-1', 't+1']
-    print(dataframe.head(5))
-    
-    # split into train and test sets
-    X = dataframe.values
-    train_size = int(len(X) * 0.7)
-    train, test = X[1:train_size], X[train_size:]
-    train_X, train_y = train[:,0], train[:,1]
-    test_X, test_y = test[:,0], test[:,1]
-    
-    # persistence model
-    def model_persistence(x):
-        return x
-    
-    # walk-forward validation
-    predictions = list()
-    for x in test_X:
-        yhat = model_persistence(x)
-        predictions.append(yhat)
-    test_score = mean_squared_error(test_y, predictions)
-    print('Test RMSE: %.3f' % test_score)
-    
-    _, axs = subplots(1, 1, figsize=(HEIGHT, HEIGHT/2))
-    axs.grid(False)
-    axs.set_axis_off()
-    axs.set_title('Test MSE', fontweight="bold")
-    axs.text(0, 0, 'Test MSE: %.3f' % test_score)
-    # show()
-    savefig(f'images/{FLAG}/{file_name}_persistence_modelrmse.png')
+    # TODO: MARTELAR AGGRESSIVO PQ NAO FUNCIONA COM OS PRIMEIROS NAN
+    if FLAG == 'differentiation':
+        if i == 0:
+            data = data[2:] # second derivate has no derivative on the first 2 points
+        else: 
+            data = data[1:] # first derivate has no derivative on the first point
 
-    # plot predictions and expected results
-    figure()
-    plt.plot(train_y)
-    plt.plot([None for i in train_y] + [x for x in test_y], label="Train")
-    plt.plot([None for i in train_y] + [x for x in predictions], label="Test")
-    plt.title("Time Series Forecasting")
-    plt.legend()
-    savefig(f'images/{FLAG}/{file_name}_persistence_model.png')
+    train, test = split_dataframe(data, trn_pct=0.75)
+    
+    fr_mod = PersistenceRegressor()
+    fr_mod.fit(train)
+    prd_trn = fr_mod.predict(train)
+    prd_tst = fr_mod.predict(test)
+
+    eval_results['Persistence'] = PREDICTION_MEASURES[measure](test.values, prd_tst)
+    print(eval_results)
+
+    plot_evaluation_results(train.values, prd_trn, test.values, prd_tst, f'images/{FLAG}/{file_name}_persistence_eval.png')
+    plot_forecasting_series(train, test, prd_trn, prd_tst, f'{file_name} Persistence Plots', saveto=f'images/{FLAG}/{file_name}_persistence_plots.png', x_label=index_col, y_label=target)

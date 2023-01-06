@@ -1,4 +1,4 @@
-from matplotlib.pyplot import subplots, Axes, gca
+from matplotlib.pyplot import subplots, Axes, gca, savefig
 import matplotlib.dates as mdates
 import config as cfg
 from pandas import concat, Series
@@ -7,6 +7,7 @@ from ds_charts import multiple_bar_chart
 from math import sqrt
 from statsmodels.tsa.seasonal import seasonal_decompose
 from numpy import ndarray, array
+
 
 NR_COLUMNS: int = 3
 HEIGHT: int = 4
@@ -73,7 +74,7 @@ def split_dataframe(data, trn_pct=0.70):
     test = df_cp.iloc[trn_size:]
     return train, test
 
-def plot_evaluation_results(trn_y, prd_trn, tst_y, prd_tst, figname):
+def plot_evaluation_results(trn_y, prd_trn, tst_y, prd_tst, saveto):
     eval1 = {
         'RMSE': [sqrt(PREDICTION_MEASURES['MSE'](trn_y, prd_trn)), sqrt(PREDICTION_MEASURES['MSE'](tst_y, prd_tst))],
         'MAE': [PREDICTION_MEASURES['MAE'](trn_y, prd_trn), PREDICTION_MEASURES['MAE'](tst_y, prd_tst)]
@@ -86,8 +87,9 @@ def plot_evaluation_results(trn_y, prd_trn, tst_y, prd_tst, figname):
     _, axs = subplots(1, 2)
     multiple_bar_chart(['Train', 'Test'], eval1, ax=axs[0], title="Predictor's performance", percentage=False)
     multiple_bar_chart(['Train', 'Test'], eval2, ax=axs[1], title="Predictor's performance", percentage=False)
+    savefig(saveto)
 
-def plot_forecasting_series(trn, tst, prd_trn, prd_tst, figname: str, x_label: str = 'time', y_label:str =''):
+def plot_forecasting_series(trn, tst, prd_trn, prd_tst, figname: str, saveto: str, x_label: str = 'time', y_label:str =''):
     _, ax = subplots(1,1,figsize=(5*HEIGHT, HEIGHT), squeeze=True)
     ax.set_xlabel(x_label)
     ax.set_ylabel(y_label)
@@ -97,9 +99,10 @@ def plot_forecasting_series(trn, tst, prd_trn, prd_tst, figname: str, x_label: s
     ax.plot(tst.index, tst, label='test', color='g')
     ax.plot(tst.index, prd_tst, '--r', label='test prediction')
     ax.legend(prop={'size': 5})
+    savefig(saveto)
 
 def plot_series(series, ax: Axes = None, title: str = '', x_label: str = '', y_label: str = '',
-                percentage=False, show_std=False, hours=False):
+                percentage=False, show_std=False):
     if ax is None:
         ax = gca()
     ax.set_title(title)
@@ -126,11 +129,10 @@ def plot_series(series, ax: Axes = None, title: str = '', x_label: str = '', y_l
     else:
         ax.plot(series)
 
-    if not hours:
-        locator = mdates.AutoDateLocator()
-        formatter = mdates.DateFormatter('%Y-%m-%d')
-        ax.xaxis.set_major_locator(locator)
-        ax.xaxis.set_major_formatter(formatter)
+    locator = mdates.AutoDateLocator()
+    formatter = mdates.DateFormatter('%Y-%m-%d')
+    ax.xaxis.set_major_locator(locator)
+    ax.xaxis.set_major_formatter(formatter)
 
 def plot_components(series: Series,  x_label: str = 'time', y_label:str =''):
     decomposition = seasonal_decompose(series, model = "add")

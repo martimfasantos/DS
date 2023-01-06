@@ -3,7 +3,7 @@ from matplotlib.pyplot import figure, xticks, show, savefig, tight_layout
 from ts_functions import plot_series, HEIGHT
 
 file_tag = 'glucose'
-file_name = f'{file_tag}_100_smoothing'
+file_name = f'{file_tag}_40_smoothing'
 file_path = f'data/smoothing/{file_name}.csv'
 
 target = 'Glucose'
@@ -19,6 +19,7 @@ data = read_csv(file_path, index_col=index, sep=',', decimal='.', parse_dates=Tr
 
 # sort data by date
 data.sort_values(by=data.index.name, inplace=True)
+
 
 # --------------- #
 # Differentiation #
