@@ -43,11 +43,8 @@ savefig(f'images/profiling/dimensionality.png')
 # ---------------- #
 
 # Per hours
-hour_df = data.copy().groupby([data.index.hour]).mean()
-hour_df['timestamp'] = hour_df.index.drop_duplicates()
-hour_df.set_index('timestamp', drop=True, inplace=True)
 figure(figsize=(3*HEIGHT, HEIGHT))
-plot_series(hour_df, hours=True, title='Hourly glucose', x_label='timestamp', y_label='glucose')
+plot_series(data, title='Hourly glucose', x_label='timestamp', y_label='glucose')
 xticks(rotation = 45)
 tight_layout()
 savefig(f'images/profiling/granularity_hours.png')
@@ -75,15 +72,15 @@ savefig(f'images/profiling/granularity_weeks.png')
 # show()
 
 # Per months
-index = data.index.to_period('M')
-month_df = data.copy().groupby(index).mean()
-month_df['timestamp'] = index.drop_duplicates().to_timestamp()
-month_df.set_index('timestamp', drop=True, inplace=True)
-figure(figsize=(3*HEIGHT, HEIGHT))
-plot_series(month_df, title='Monthly glucose', x_label='timestamp', y_label='glucose')
-xticks(rotation = 45)
-tight_layout()
-savefig(f'images/profiling/granularity_months.png')
+# index = data.index.to_period('M')
+# month_df = data.copy().groupby(index).mean()
+# month_df['timestamp'] = index.drop_duplicates().to_timestamp()
+# month_df.set_index('timestamp', drop=True, inplace=True)
+# figure(figsize=(3*HEIGHT, HEIGHT))
+# plot_series(month_df, title='Monthly glucose', x_label='timestamp', y_label='glucose')
+# xticks(rotation = 45)
+# tight_layout()
+# savefig(f'images/profiling/granularity_months.png')
 # show()
 
 # It does not make sense to do the granularity per quarter since 
@@ -94,60 +91,71 @@ savefig(f'images/profiling/granularity_months.png')
 # Data Distribution #
 # ----------------- #
 
+index = data.index.to_period('D')
+day_df = data.copy().groupby(index).sum()
+day_df['timestamp'] = index.drop_duplicates().to_timestamp()
+day_df.set_index('timestamp', drop=True, inplace=True)
+
 index = data.index.to_period('W')
 week_df = data.copy().groupby(index).sum()
 week_df['timestamp'] = index.drop_duplicates().to_timestamp()
 week_df.set_index('timestamp', drop=True, inplace=True)
 
-_, axs = subplots(1, 2, figsize=(2*HEIGHT, HEIGHT/2))
+_, axs = subplots(1, 3, figsize=(2*HEIGHT, HEIGHT/2))
 axs[0].grid(False)
 axs[0].set_axis_off()
 axs[0].set_title('HOURLY', fontweight="bold")
 axs[0].text(0, 0, str(data.describe()))
+
 axs[1].grid(False)
 axs[1].set_axis_off()
-axs[1].set_title('WEEKLY', fontweight="bold")
-axs[1].text(0, 0, str(week_df.describe()))
+axs[1].set_title('DAILY', fontweight="bold")
+axs[1].text(0, 0, str(day_df.describe()))
+
+axs[2].grid(False)
+axs[2].set_axis_off()
+axs[2].set_title('WEEKLY', fontweight="bold")
+axs[2].text(0, 0, str(week_df.describe()))
+
+tight_layout()
 savefig(f'images/profiling/distribution_analysis.png')
 # show()
 
-_, axs = subplots(1, 2, figsize=(2*HEIGHT, HEIGHT))
-axs[0].title.set_text('Hourly')
-data.boxplot(ax=axs[0])
-axs[1].title.set_text('Weekly')
-week_df.boxplot(ax=axs[1])
+# Boxplot for the most atomic granularity
+_, axs = subplots(1, 1, figsize=(2*HEIGHT, HEIGHT))
+axs.title.set_text('HOURLY')
+data.boxplot(ax=axs)
+tight_layout()
 savefig(f'images/profiling/distribution.png')
 # show()
-
 
 # ---------------------- #
 # Variables Distribution #
 # ---------------------- #
 
-bins = ('day', 'week', 'month')
-_, axs = subplots(1, len(bins), figsize=(len(bins)*HEIGHT*3, 1.5*HEIGHT))
+bins = ('hour', 'day', 'week')
+_, axs = subplots(1, len(bins), figsize=(len(bins)*HEIGHT*6, 3*HEIGHT))
+
+# Per hours
+index = data.index.to_period('H')
+counts = index.to_series().astype(str).value_counts()
+bar_chart(counts.index.to_list(), counts.values, ax=axs[0], title='Histogram for hourly Glucose: 596 bins', xlabel='glucose', ylabel='nr records', percentage=False)
+axs[0].tick_params(labelrotation=90)
 
 # Per days
-day_df = data.copy().groupby(data.index.date)
+index = data.index.to_period('D')
 counts = index.to_series().astype(str).value_counts()
-bar_chart(counts.index.to_list(), counts.values, ax=axs[0], title='Histogram for daily Glucose: 149 bins', xlabel='glucose', ylabel='nr records', percentage=False)
-axs[0].tick_params(labelrotation=90)
+bar_chart(counts.index.to_list(), counts.values, ax=axs[1], title='Histogram for daily Glucose: 149 bins', xlabel='glucose', ylabel='nr records', percentage=False)
+axs[1].tick_params(labelrotation=90)
 
 # Per weeks
 index = data.index.to_period('W')
 counts = index.to_series().astype(str).value_counts()
-bar_chart(counts.index.to_list(), counts.values, ax=axs[1], title='Histogram for weekly Glucose: 22 bins', xlabel='glucose', ylabel='nr records', percentage=False)
-axs[1].tick_params(labelrotation=90)
-
-# Per months
-index = data.index.to_period('M')
-counts = index.to_series().astype(str).value_counts()
-bar_chart(counts.index.to_list(), counts.values, ax=axs[2], title='Histogram for montly Glucose: 5 bins', xlabel='glucose', ylabel='nr records', percentage=False)
+bar_chart(counts.index.to_list(), counts.values, ax=axs[2], title='Histogram for weekly Glucose: 22 bins', xlabel='glucose', ylabel='nr records', percentage=False)
 axs[2].tick_params(labelrotation=90)
 
 tight_layout()
 savefig(f'images/profiling/variable_distribution_granularities.png')
-
 
 # ----------------- #
 # Data Stationarity #
