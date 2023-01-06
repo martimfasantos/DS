@@ -131,6 +131,8 @@ savefig(f'images/profiling/distribution.png')
 # Variables Distribution #
 # ---------------------- #
 
+# TODO target NOT index
+
 bins = ('day', 'week', 'month')
 _, axs = subplots(1, len(bins), figsize=(len(bins)*HEIGHT*6, 3*HEIGHT))
 
@@ -161,6 +163,8 @@ savefig(f'images/profiling/variable_distribution_granularities.png')
 # ----------------- #
 # Data Stationarity #
 # ----------------- #
+
+# TODO mean line
 
 dt_series = Series(data[target])
 
