@@ -3,7 +3,7 @@ from matplotlib.pyplot import figure, xticks, show, savefig, tight_layout
 from ts_functions import plot_series, HEIGHT
 
 file_tag = 'glucose'
-file_name = f'{file_tag}_40_smoothing'
+file_name = f'{file_tag}_10_smoothing'
 file_path = f'data/smoothing/{file_name}.csv'
 
 target = 'Glucose'
@@ -30,7 +30,7 @@ diff_df = data.diff()
 diff_df.to_csv(f'data/differentiation/{file_tag}_1_differentiation.csv', index=True)
 
 figure(figsize=(3*HEIGHT, HEIGHT))
-plot_series(diff_df['Insulin'], x_label=index, y_label='measurement')
+#plot_series(diff_df['Insulin'], x_label=index, y_label='measurement')
 plot_series(diff_df[target], title='Glucose - Differentiation (1st derivative)', x_label=index, y_label='measurement')
 xticks(rotation = 45)
 tight_layout()
@@ -42,7 +42,7 @@ diff_df = diff_df.diff()
 diff_df.to_csv(f'data/differentiation/{file_tag}_2_differentiation.csv', index=True)
 
 figure(figsize=(3*HEIGHT, HEIGHT))
-plot_series(diff_df['Insulin'], x_label=index, y_label='measurement')
+#plot_series(diff_df['Insulin'], x_label=index, y_label='measurement')
 plot_series(diff_df[target], title='Glucose - Differentiation (2nd derivative)', x_label=index, y_label='measurement')
 xticks(rotation = 45)
 tight_layout()

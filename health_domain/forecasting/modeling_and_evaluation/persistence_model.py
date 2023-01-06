@@ -14,7 +14,7 @@ valid_flags = ('differentiation', 'smoothing', 'aggregation')
 if len(sys.argv) == 2 and sys.argv[1] in valid_flags:
     FLAG = sys.argv[1]
 else:
-    print("Invalid format, try:  python train_test_split.py [aggregation|smoothing|differentiation]")
+    print("Invalid format, try:  python persistence_model.py [aggregation|smoothing|differentiation]")
     exit(1)
 
 # Folder path
@@ -61,22 +61,25 @@ for i in range(len(file_names)):
     file_name = file_names[i]
     file_path = file_paths[i]
     
-    data = read_csv(f'{file_path}.csv', index_col=index_col, sep=',', decimal='.', parse_dates=True, infer_datetime_format=True, dayfirst=True)
-    data.sort_values(by=data.index.name, inplace=True)
+    train = read_csv(f'{file_path}.csv', index_col=index_col, sep=',', decimal='.', parse_dates=True, infer_datetime_format=True, dayfirst=True)
+    train.sort_values(by=train.index.name, inplace=True)
+    
+    test = read_csv('../analysis_and_preparation/data/train_and_test/glucose_test.csv', index_col=index_col, sep=',', decimal='.', parse_dates=True, infer_datetime_format=True, dayfirst=True)
+    test.sort_values(by=test.index.name, inplace=True)
     
     # remove non-target columns
-    for column in data:
-        if column != target:
-            data.drop(columns=column, inplace=True)
+    # for column in data:
+    #     if column != target:
+    #         data.drop(columns=column, inplace=True)
 
     # TODO: MARTELAR AGGRESSIVO PQ NAO FUNCIONA COM OS PRIMEIROS NAN
     if FLAG == 'differentiation':
         if i == 0:
-            data = data[2:] # second derivate has no derivative on the first 2 points
+            train = train[2:] # second derivate has no derivative on the first 2 points
         else: 
-            data = data[1:] # first derivate has no derivative on the first point
+            train = train[1:] # first derivate has no derivative on the first point
 
-    train, test = split_dataframe(data, trn_pct=0.75)
+    #train, test = split_dataframe(data, trn_pct=0.75)
     
     fr_mod = PersistenceRegressor()
     fr_mod.fit(train)
