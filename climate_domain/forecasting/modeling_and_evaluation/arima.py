@@ -8,8 +8,13 @@ file_tag = 'drought'
 index_col = 'date'
 target = 'QV2M'
 
+# Train
 train = read_csv(f'../analysis_and_preparation/data/train_and_test/{file_tag}_train.csv', index_col=index_col, sep=',', decimal='.', parse_dates=True, infer_datetime_format=True)
+train.sort_values(by=train.index.name, inplace=True)
+
+# Test
 test = read_csv(f'../analysis_and_preparation/data/train_and_test/{file_tag}_test.csv', index_col=index_col, sep=',', decimal='.', parse_dates=True, infer_datetime_format=True)
+test.sort_values(by=test.index.name, inplace=True)
 
 # train.index.freq = 'H'
 # test.index.freq = 'H'
@@ -72,4 +77,4 @@ prd_tst = best_model.forecast(steps=len(test))
 print(f'\t{measure}={PREDICTION_MEASURES[measure](test, prd_tst)}')
 
 plot_evaluation_results(train.values, prd_trn, test.values, prd_tst, f'images/arima/{file_tag}_arima_eval.png')
-plot_forecasting_series(train, test, prd_trn, prd_tst, 'drought Best ARIMA Plots', saveto=f'images/arima/{file_tag}_arima_plots.png', x_label= str(index_col), y_label=str(target))
+plot_forecasting_series(train, test, prd_trn, prd_tst, f'Drought Best ARIMA Plots', saveto=f'images/arima/{file_tag}_arima_plots.png', x_label= str(index_col), y_label=str(target))
