@@ -6,21 +6,17 @@ from ts_functions import plot_series, HEIGHT
 
 file_tag = 'drought'
 file_name = f'{file_tag}_30_smoothing'
-file_path = f'data/smoothing/{file_name}.csv'
+file_paths = [f'data/smoothing/{file_name}.csv', f'data/train_and_test/{file_tag}_test.csv'] # [train, test]
 
 target = 'QV2M'
 index = 'date'
 
-data = read_csv(file_path, index_col=index, sep=',', decimal='.', parse_dates=True, infer_datetime_format=True, dayfirst=True)
-
-# remove non-target columns for transformation
-# for column in data:
-#     if column != target:
-#         data.drop(columns=column, inplace=True)
-# print(data.shape)
+train = read_csv(file_paths[0], index_col=index, sep=',', decimal='.', parse_dates=True, infer_datetime_format=True, dayfirst=True)
+test = read_csv(file_paths[1], index_col=index, sep=',', decimal='.', parse_dates=True, infer_datetime_format=True, dayfirst=True)
 
 # sort data by date
-data.sort_values(by=data.index.name, inplace=True)
+train.sort_values(by=train.index.name, inplace=True)
+test.sort_values(by=test.index.name, inplace=True)
 
 
 # --------------- #
@@ -28,17 +24,13 @@ data.sort_values(by=data.index.name, inplace=True)
 # --------------- #
 
 # first derivative
-diff_df = data.diff()
+diff_df = train.diff()
 diff_df.to_csv(f'data/differentiation/{file_tag}_1_differentiation.csv', index=True)
+test_df = test.diff()
+test_df.to_csv(f'data/differentiation/{file_tag}_1_differentiation_test.csv', index=True)
 
 figure(figsize=(3*HEIGHT, HEIGHT))
 plot_series(diff_df[target], title='Humidity - Differentiation (1st derivative)', x_label=index, y_label='measurement')
-# plot_series(diff_df['PRECTOT'], x_label=index, y_label='measurement')
-# plot_series(diff_df['PS'], x_label=index, y_label='measurement')
-# plot_series(diff_df['T2M'], x_label=index, y_label='measurement')
-# plot_series(diff_df['T2MDEW'], x_label=index, y_label='measurement')
-# plot_series(diff_df['T2MWET'], x_label=index, y_label='measurement')
-# plot_series(diff_df['TS'], x_label=index, y_label='measurement')
 xticks(rotation = 45)
 tight_layout()
 savefig(f'images/transformation/differentiation_1.png')
@@ -46,15 +38,12 @@ savefig(f'images/transformation/differentiation_1.png')
 # second derivative
 diff_df = diff_df.diff()
 diff_df.to_csv(f'data/differentiation/{file_tag}_2_differentiation.csv', index=True)
+test_df = test_df.diff()
+test_df.to_csv(f'data/differentiation/{file_tag}_2_differentiation_test.csv', index=True)
+
 
 figure(figsize=(3*HEIGHT, HEIGHT))
 plot_series(diff_df[target], title='Humidity - Differentiation (2nd derivative)', x_label=index, y_label='measurement')
-# plot_series(diff_df['PRECTOT'], x_label=index, y_label='measurement')
-# plot_series(diff_df['PS'], x_label=index, y_label='measurement')
-# plot_series(diff_df['T2M'], x_label=index, y_label='measurement')
-# plot_series(diff_df['T2MDEW'], x_label=index, y_label='measurement')
-# plot_series(diff_df['T2MWET'], x_label=index, y_label='measurement')
-# plot_series(diff_df['TS'], x_label=index, y_label='measurement')
 xticks(rotation = 45)
 tight_layout()
 savefig(f'images/transformation/differentiation_2.png')

@@ -28,6 +28,8 @@ file_paths = []
 for file in os.listdir(dir_path):
     # check if current path is a file
     if os.path.isfile(os.path.join(dir_path, file)):
+        if os.path.splitext(file)[0].split('_')[-1] == 'test':
+            continue
         file_name = os.path.splitext(file)[0]
         file_names.append(file_name)
         file_paths.append(f'{dir_path}{file_name}')
@@ -58,21 +60,17 @@ for i in range(len(file_names)):
     file_name = file_names[i]
     file_path = file_paths[i]
     
-    file_name = file_names[i]
-    file_path = file_paths[i]
-    print(file_path)
     train = read_csv(f'{file_path}.csv', index_col=index_col, sep=',', decimal='.', parse_dates=True, infer_datetime_format=True, dayfirst=True)
     train.sort_values(by=train.index.name, inplace=True)
-    
-    test = read_csv('../analysis_and_preparation/data/train_and_test/drought_test.csv', index_col=index_col, sep=',', decimal='.', parse_dates=True, infer_datetime_format=True, dayfirst=True)
-    test.sort_values(by=test.index.name, inplace=True)
+    train.dropna(inplace=True)
 
-    # TODO: MARTELAR AGGRESSIVO PQ NAO FUNCIONA COM OS PRIMEIROS NAN
+    print(file_name)
     if FLAG == 'differentiation':
-        if i == 1:
-            train = train[2:] # second derivate has no derivative on the first 2 points
-        else: 
-            train = train[1:] # first derivate has no derivative on the first point
+        test = read_csv(f'../analysis_and_preparation/data/differentiation/{file_name}_test.csv', index_col=index_col, sep=',', decimal='.', parse_dates=True, infer_datetime_format=True, dayfirst=True)
+    else:
+        test = read_csv('../analysis_and_preparation/data/train_and_test/drought_test.csv', index_col=index_col, sep=',', decimal='.', parse_dates=True, infer_datetime_format=True, dayfirst=True)
+    test.sort_values(by=test.index.name, inplace=True)
+    test.dropna(inplace=True)
     
     fr_mod = PersistenceRegressor()
     fr_mod.fit(train)
