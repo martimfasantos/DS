@@ -79,5 +79,5 @@ for i in range(len(file_names)):
     eval_results['Persistence'] = PREDICTION_MEASURES[measure](test.values, prd_tst)
     print(eval_results)
 
-    plot_evaluation_results(train.values, prd_trn, test.values, prd_tst, f'images/{FLAG}/{file_name}_persistence_eval.png')
-    plot_forecasting_series(train, test, prd_trn, prd_tst, f'{file_name} Persistence Plots', saveto=f'images/{FLAG}/{file_name}_persistence_plots.png', x_label=index_col, y_label=target)
+    plot_evaluation_results(train.values, prd_trn, test.values, prd_tst, f'images/persistence_model/{FLAG}/{file_name}_persistence_eval.png')
+    plot_forecasting_series(train, test, prd_trn, prd_tst, f'{file_name} Persistence Plots', saveto=f'images/persistence_model/{FLAG}/{file_name}_persistence_plots.png', x_label=index_col, y_label=target)
