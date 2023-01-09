@@ -15,18 +15,22 @@ from matplotlib.pyplot import subplots, show, savefig
 from ts_functions import PREDICTION_MEASURES, plot_evaluation_results, plot_forecasting_series, sliding_window
 
 
-file_tag = 'glucose'
+file_tag = 'drought'
 file_name = f'{file_tag}'
 file_path = f'../datasets/{file_name}.csv'
 
-target = 'Glucose'
-index_col = 'Date'
+target = 'QV2M'
+index_col = 'date'
 
 measure = 'R2'
 flag_pct = False
 
 data = read_csv(file_path, index_col=index_col, sep=',', decimal='.', parse_dates=True, infer_datetime_format=True, dayfirst=True)
-data = data[target]
+
+# remove non-target columns
+for column in data:
+    if column != target:
+        data.drop(columns=column, inplace=True)
 
 
 class DS_LSTM(Module):
@@ -96,7 +100,9 @@ for el in max_iter[1:]:
 nCols = len(sequence_size)
 _, axs = subplots(1, nCols, figsize=(nCols*HEIGHT, HEIGHT), squeeze=False)
 values = {}
+
 for s in range(len(sequence_size)):
+
     length = sequence_size[s]
     trnX, trnY = sliding_window(train, seq_length = length)
     trnX, trnY  = Variable(Tensor(trnX)), Variable(Tensor(trnY))
