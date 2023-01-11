@@ -1,7 +1,7 @@
 from pandas import read_csv
 from pandas.plotting import register_matplotlib_converters
 from ds_charts import get_variable_types, bar_chart, choose_grid, HEIGHT
-from matplotlib.pyplot import subplots, savefig, show
+from matplotlib.pyplot import subplots, savefig, show, tight_layout
 
 register_matplotlib_converters()
 filename = '../datasets/diabetic_data.csv'
@@ -26,6 +26,7 @@ for i in range(rows):
         axs[i, j].set_xlabel(variables[i])
         axs[i, j].set_ylabel('Nr records')
         axs[i, j].hist(data[variables[i]].values, bins=bins[j])
+tight_layout()
 savefig('./images/granularity_study_numeric.png')
 # show()
 
@@ -210,7 +211,7 @@ for n in range(len(symbolic_vars)):
     bar_chart(x, y, ax=axs[i, j], title='Histogram for %s WITH %d BINS' %(symbolic_vars[n], bins), xlabel=symbolic_vars[n], ylabel='nr records', percentage=False, rotation=45)
     i, j = (i + 1, 0) if (n_graphs + 1) % cols == 0 else (i, j + 1)
     n_graphs += 1
-      
+tight_layout()    
 savefig('./images/granularity_study_symbolic.png', dpi=90)
       
 # ----------------------------- #
@@ -232,5 +233,6 @@ else:
             axs[i, j].set_xlabel(variables[i])
             axs[i, j].set_ylabel('Nr records')
             axs[i, j].hist(data[variables[i]].values, bins=bins[j])
+tight_layout()
 savefig('./images/granularity_study_date.png')
 # show()

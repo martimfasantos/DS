@@ -17,6 +17,7 @@ data = read_csv(filename, na_values='?')
 figure(figsize=(4,3))
 values = {'nr records': data.shape[0], 'nr variables': data.shape[1]}
 bar_chart(list(values.keys()), list(values.values()), title='Nr of records vs nr variables')
+tight_layout()
 savefig('./images/records_variables.png')
 # show()
 
@@ -31,6 +32,7 @@ for tp in variable_types.keys():
     counts[tp] = len(variable_types[tp])
 figure(figsize=(4,2))
 bar_chart(list(counts.keys()), list(counts.values()), title='Nr of variables per type')
+tight_layout()
 savefig('./images/variable_types.png')
 # show()
 

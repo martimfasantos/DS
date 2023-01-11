@@ -1,7 +1,7 @@
 from pandas import read_csv, to_datetime
 from pandas.plotting import register_matplotlib_converters
 import matplotlib.pyplot as plt
-from matplotlib.pyplot import figure, savefig, show
+from matplotlib.pyplot import figure, savefig, show, tight_layout
 from ds_charts import bar_chart, get_variable_types
 
 register_matplotlib_converters()
@@ -11,6 +11,7 @@ data['date'] = to_datetime(data['date'])
 
 # print(data.shape)
 
+
 # -------------------------------- #
 # Nr of records vs nr of variables #
 # -------------------------------- #
@@ -18,6 +19,7 @@ data['date'] = to_datetime(data['date'])
 figure(figsize=(4,3))
 values = {'nr records': data.shape[0], 'nr variables': data.shape[1]}
 bar_chart(list(values.keys()), list(values.values()), title='Nr of records vs nr variables')
+tight_layout()
 savefig('./images/records_variables.png')
 # show()
 
@@ -31,7 +33,9 @@ counts = {}
 for tp in variable_types.keys():
     counts[tp] = len(variable_types[tp])
 figure(figsize=(4,2))
+tight_layout()
 bar_chart(list(counts.keys()), list(counts.values()), title='Nr of variables per type')
+tight_layout()
 savefig('./images/variable_types.png')
 # show()
 
@@ -55,5 +59,6 @@ if (len(mv) == 0):
 else:
     bar_chart(list(mv.keys()), list(mv.values()), title='Nr of missing values per variable',
             xlabel='variables', ylabel='nr missing values')
+tight_layout()
 savefig('./images/missing_values.png')
 # show()

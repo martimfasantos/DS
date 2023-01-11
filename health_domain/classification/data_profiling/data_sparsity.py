@@ -1,6 +1,6 @@
 from pandas import read_csv
 from pandas.plotting import register_matplotlib_converters
-from matplotlib.pyplot import figure, subplots, savefig, show, title
+from matplotlib.pyplot import figure, subplots, savefig, show, title, tight_layout
 from ds_charts import get_variable_types, HEIGHT
 from seaborn import heatmap
 
@@ -35,6 +35,7 @@ for i in range(len(all_vars1)):
             axs[i, j-1].scatter(data[var1], data[var2])
         except:
             pass
+tight_layout()
 savefig('./images/sparsity_study1.png')
 # show()
 
@@ -52,6 +53,7 @@ for i in range(len(all_vars2)):
             axs[i, j-1].scatter(data[var1], data[var2])
         except:
             pass
+tight_layout()
 savefig('./images/sparsity_study2.png')
 # show()
 
@@ -69,6 +71,7 @@ for i in range(len(all_vars3)):
             axs[i, j-1].scatter(data[var1], data[var2])
         except:
             pass
+tight_layout()
 savefig('./images/sparsity_study3.png')
 # show()
 
@@ -83,5 +86,6 @@ corr_mtx = abs(data.corr())
 fig = figure(figsize=[12, 12])
 heatmap(abs(corr_mtx), xticklabels=corr_mtx.columns, yticklabels=corr_mtx.columns, annot=True, cmap='Blues')
 title('Correlation analysis')
+tight_layout()
 savefig('./images/correlation_analysis.png')
 # show()

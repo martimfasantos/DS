@@ -1,7 +1,7 @@
 from pandas import read_csv, to_datetime
 from pandas.plotting import register_matplotlib_converters
 from ds_charts import get_variable_types, choose_grid, bar_chart, HEIGHT
-from matplotlib.pyplot import subplots, savefig, show
+from matplotlib.pyplot import subplots, savefig, show, tight_layout
 
 register_matplotlib_converters()
 filename = '../datasets/drought.csv'
@@ -12,7 +12,7 @@ data = read_csv(filename, na_values="na", sep=',', decimal='.', parse_dates=True
 # -------------------------------- #
 # Histograms for numeric variables #
 # -------------------------------- #
-'''
+
 variables = get_variable_types(data)['Numeric']
 binary_vars = get_variable_types(data)['Binary']
 
@@ -33,6 +33,7 @@ for i in range(rows):
         axs[i, j].set_xlabel(variables[i])
         axs[i, j].set_ylabel('Nr records')
         axs[i, j].hist(data[variables[i]].values, bins=bins[j])
+tight_layout()
 savefig('./images/granularity_study_numeric.png', dpi=95)
 # show()
 
@@ -58,10 +59,10 @@ for n in range(len(variables)):
     bar_chart(counts.index.to_list(), counts.values, ax=axs[i, j], title='Histogram for %s' %variables[n], xlabel=variables[n], ylabel='nr records', percentage=False, rotation=45)
     i, j = (i + 1, 0) if (n_graphs + 1) % cols == 0 else (i, j + 1)
     n_graphs += 1  
-
+tight_layout()
 savefig('./images/granularity_study_symbolic.png')
 # show()
-'''
+
 # ----------------------------- #
 # Histograms for date variables #
 # ----------------------------- #
@@ -142,5 +143,6 @@ for key in counts_day:
     y.append(counts_day[key])
 bar_chart(x, y, ax=axs[1, 1], title='Histogram for day (date) WITH 12 BINS', xlabel='day', ylabel='nr records', percentage=False, rotation=45)
 
+tight_layout()
 savefig('./images/granularity_study_date.png')
 # show()

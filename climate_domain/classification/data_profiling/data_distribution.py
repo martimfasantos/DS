@@ -1,7 +1,7 @@
 from numpy import log
 from pandas import read_csv, Series
 from pandas.plotting import register_matplotlib_converters
-from matplotlib.pyplot import figure, savefig, show, subplots, Axes
+from matplotlib.pyplot import figure, savefig, show, subplots, Axes, tight_layout
 from ds_charts import get_variable_types, choose_grid, bar_chart, multiple_bar_chart, multiple_line_chart, HEIGHT
 from seaborn import distplot
 import random
@@ -23,6 +23,7 @@ data['date'] = to_datetime(data['date'])
 # -------------- #
 
 data.boxplot(rot=45, figsize=(3*HEIGHT, 1.5*HEIGHT))
+tight_layout()
 savefig('./images/global_boxplot.png')
 # show()
 
@@ -47,6 +48,7 @@ for n in range(len(numeric_vars)):
     axs[i, j].set_title('Boxplot for %s'%numeric_vars[n])
     axs[i, j].boxplot(data[numeric_vars[n]].dropna().values)
     i, j = (i + 1, 0) if (n+1) % cols == 0 else (i, j + 1)
+tight_layout()
 savefig('./images/single_boxplots.png')
 # show()
 
@@ -83,6 +85,7 @@ for var in numeric_vars:
 outliers = {'iqr': outliers_iqr, 'stdev': outliers_stdev}
 figure(figsize=(32, HEIGHT)) #figure(figsize=(12, HEIGHT))
 multiple_bar_chart(numeric_vars, outliers, title='Nr of outliers per variable', xlabel='variables', ylabel='nr outliers', percentage=False)
+tight_layout()
 savefig('./images/outliers.png')
 # show()
 
@@ -108,6 +111,7 @@ for n in range(len(numeric_vars)):
     axs[i, j].set_ylabel("nr records")
     axs[i, j].hist(data[numeric_vars[n]].dropna().values, 'auto')
     i, j = (i + 1, 0) if (n+1) % cols == 0 else (i, j + 1)
+tight_layout()
 savefig('./images/single_histograms_numeric.png')
 # show()
 
@@ -132,6 +136,7 @@ for n in range(len(numeric_vars)):
     axs[i, j].set_title('Histogram with trend for %s'%numeric_vars[n])
     distplot(data[numeric_vars[n]].dropna().values, norm_hist=True, ax=axs[i, j], axlabel=numeric_vars[n])
     i, j = (i + 1, 0) if (n+1) % cols == 0 else (i, j + 1)
+tight_layout()
 savefig('./images/histograms_trend_numeric.png')
 # show()
 
@@ -178,8 +183,6 @@ def histogram_with_distributions(ax: Axes, series: Series, var: str):
     else:
         distributions, values = compute_known_distributions(values)
     multiple_line_chart(values, distributions, ax=ax, title='Best fit for %s'%var, xlabel=var, ylabel='')
-    # print("Another one...")
-
 
 numeric_vars = get_variable_types(data)['Numeric']
 binary_vars = get_variable_types(data)['Binary']
@@ -197,8 +200,10 @@ i, j = 0, 0
 for n in range(len(numeric_vars)):
     histogram_with_distributions(axs[i, j], data[numeric_vars[n]].dropna(), numeric_vars[n])
     i, j = (i + 1, 0) if (n+1) % cols == 0 else (i, j + 1)
+tight_layout()
 savefig('./images/histogram_numeric_distribution.png', dpi=90)
 # show()
+
 
 #------------------------ #
 # Histograms for symbolic #
@@ -208,7 +213,6 @@ symbolic_vars = get_variable_types(data)['Symbolic']
 binary_vars = get_variable_types(data)['Binary']
 
 symbolic_vars = symbolic_vars + binary_vars
-print(symbolic_vars)
         
 if [] == symbolic_vars:
     raise ValueError('There are no symbolic variables.')
@@ -218,10 +222,12 @@ fig, axs = subplots(rows, cols, figsize=(cols*HEIGHT, rows*HEIGHT), squeeze=Fals
 i, j = 0, 0
 for n in range(len(symbolic_vars)):
     counts = data[symbolic_vars[n]].value_counts()
-    bar_chart(counts.index.to_list(), counts.values, ax=axs[i, j], title='Histogram for %s'%symbolic_vars[n], xlabel=symbolic_vars[n], ylabel='nr records', percentage=False)
+    bar_chart([str(i) for i in counts.index.to_list()], list(counts.values), ax=axs[i, j], title='Histogram for %s'%symbolic_vars[n], xlabel=symbolic_vars[n], ylabel='nr records', percentage=False)
     i, j = (i + 1, 0) if (n+1) % cols == 0 else (i, j + 1)
+tight_layout()
 savefig('./images/histograms_symbolic.png')
 # show()
+
 
 #------------------- #
 # Class distribution #
@@ -230,5 +236,6 @@ savefig('./images/histograms_symbolic.png')
 class_ = data['class'].dropna()
 counts = class_.value_counts()
 bar_chart(counts.index.to_list(), counts.values, title='Class distribution', xlabel='class', ylabel='nr records', percentage=False)
+tight_layout()
 savefig('./images/class_distribution.png')
 # show()
