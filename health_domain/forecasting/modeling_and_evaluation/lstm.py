@@ -26,7 +26,11 @@ measure = 'R2'
 flag_pct = False
 
 data = read_csv(file_path, index_col=index_col, sep=',', decimal='.', parse_dates=True, infer_datetime_format=True, dayfirst=True)
-data = data[target]
+
+# remove non-target columns
+for column in data:
+    if column != target:
+        data.drop(columns=column, inplace=True)
 
 
 class DS_LSTM(Module):
@@ -76,7 +80,6 @@ manual_seed(1)
 
 train, test = split_dataframe(data, trn_pct=.70)
 
-
 # ---------- #
 # LSTM Study #
 # ---------- #
@@ -96,7 +99,9 @@ for el in max_iter[1:]:
 nCols = len(sequence_size)
 _, axs = subplots(1, nCols, figsize=(nCols*HEIGHT, HEIGHT), squeeze=False)
 values = {}
+
 for s in range(len(sequence_size)):
+
     length = sequence_size[s]
     trnX, trnY = sliding_window(train, seq_length = length)
     trnX, trnY  = Variable(Tensor(trnX)), Variable(Tensor(trnY))
@@ -153,4 +158,3 @@ prd_tst.columns = [target]
 
 plot_evaluation_results(trnY.data.numpy(), prd_trn, tstY.data.numpy(), prd_tst, f'images/lstm/{file_tag}_lstm_eval.png')
 plot_forecasting_series(trainY, testY, prd_trn.values, prd_tst.values, f'{file_name} LSTM Plots', f'images/lstm/{file_tag}_lstm_plots.png', x_label=index_col, y_label=target)
-
